@@ -21,7 +21,8 @@ This telegram bot provides the ability to keep a shopping list, and its key feat
 
 - The bot is only available in personal correspondence due to the implementation features.
 - Supports two languages: Russian and English, with the ability to change the command.
-- A user can send a request to another user to join a group and maintain a single list.
+- A user can send a request to another user to join a group and maintain a single list. If the user to whom the request was sent already belongs to another group, then show an error about the inability to join one group
+- The application for joining a group is valid for 3 days, after that it goes bad and is deleted
 - Confirmation from the list owner is required to join the group.
 - The user who accepted the request is considered the owner of the group
 - In the future, it is planned to add the ability to remove users from the group and block connection requests.
@@ -59,6 +60,7 @@ This telegram bot provides the ability to keep a shopping list, and its key feat
 
 <h3><a name="db_scheme">Database schema</a>&nbsp;&nbsp;<a href="#menu">&#9650;</a></h3>
 
-<p>
-    TODO
+<p align="center">
+  <img src="img/2.png" height="600" title="general view">
 </p>
+
