@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.6.xsd">
+
+    <include file="users.sql" relativeToChangelogFile="true"/>
+    <include file="list.sql" relativeToChangelogFile="true"/>
+    <include file="users_list.sql" relativeToChangelogFile="true"/>
+    <include file="message_list.sql" relativeToChangelogFile="true"/>
+    <include file="list_item.sql" relativeToChangelogFile="true"/>
+    <include file="merge_request.sql" relativeToChangelogFile="true"/>
+
+</databaseChangeLog>

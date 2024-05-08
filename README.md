@@ -46,6 +46,7 @@ This telegram bot provides the ability to keep a shopping list, and its key feat
 <ul>
     <li>Java 17</li>
     <li>Spring Boot</li>
+    <li>Spring Data JDBC</li>
     <li>PostgreSQL</li>
     <li>Maven</li>
     <li><a href="https://github.com/rubenlagus/TelegramBots">Telegram bot library</a></li>
