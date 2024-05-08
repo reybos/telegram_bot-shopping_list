@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "telegram")
 @Getter
 @Setter
-public class TelegramBotConfig {
+public class ShoppingListBotConfig {
 
     private String token;
 

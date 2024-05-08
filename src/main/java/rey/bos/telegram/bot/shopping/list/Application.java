@@ -7,30 +7,30 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.telegram.telegrambots.longpolling.TelegramBotsLongPollingApplication;
-import rey.bos.telegram.bot.shopping.list.bot.TelegramBot;
-import rey.bos.telegram.bot.shopping.list.config.TelegramBotConfig;
+import rey.bos.telegram.bot.shopping.list.bot.ShoppingListBot;
+import rey.bos.telegram.bot.shopping.list.config.ShoppingListBotConfig;
 
 @SpringBootApplication
 @EnableScheduling
 @AllArgsConstructor
 @Slf4j
-public class TelegramBotApplication implements CommandLineRunner {
+public class Application implements CommandLineRunner {
 
-    private final TelegramBotConfig telegramBotConfig;
-    private final TelegramBot telegramBot;
+    private final ShoppingListBotConfig shoppingListBotConfig;
+    private final ShoppingListBot shoppingListBot;
 
     public static void main(String[] args) {
-        SpringApplication.run(TelegramBotApplication.class, args);
+        SpringApplication.run(Application.class, args);
     }
 
     @Override
     public void run(String... args) throws Exception {
         try (final var botsApplication = new TelegramBotsLongPollingApplication()) {
-            botsApplication.registerBot(telegramBotConfig.getToken(), telegramBot);
+            botsApplication.registerBot(shoppingListBotConfig.getToken(), shoppingListBot);
             log.info("Bot successfully started!");
             Thread.currentThread().join();
         } catch (Exception e) {
-            log.error("Can't start TelegramBot", e);
+            log.error("Can't start bot", e);
             throw e;
         }
     }

@@ -19,11 +19,11 @@ import java.util.List;
 
 @Component
 @Slf4j
-public class TelegramBot implements LongPollingSingleThreadUpdateConsumer {
+public class ShoppingListBot implements LongPollingSingleThreadUpdateConsumer {
 
     private final TelegramClient telegramClient;
 
-    public TelegramBot(@Value("${telegram.token}") String botToken) {
+    public ShoppingListBot(@Value("${telegram.token}") String botToken) {
         telegramClient = new OkHttpTelegramClient(botToken);
         setCommands();
     }
