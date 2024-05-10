@@ -4,11 +4,11 @@
 CREATE TABLE IF NOT EXISTS merge_request
 (
     id         BIGSERIAL PRIMARY KEY,
-    user_id    BIGINT REFERENCES users (id),
-    owner_id   BIGINT REFERENCES users (id),
-    approved   BOOLEAN     NOT NULL,
-    expired    BOOLEAN     NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    user_id    BIGINT REFERENCES users (id) NOT NULL,
+    owner_id   BIGINT REFERENCES users (id) NOT NULL,
+    approved   BOOLEAN                      NOT NULL,
+    expired    BOOLEAN                      NOT NULL,
+    created_at TIMESTAMPTZ                  NOT NULL DEFAULT NOW()
 );
 
 --changeset reybos:2 runOnChange:true

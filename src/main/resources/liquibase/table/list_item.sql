@@ -4,9 +4,9 @@
 CREATE TABLE IF NOT EXISTS list_item
 (
     id         BIGSERIAL PRIMARY KEY,
-    list_id    BIGINT REFERENCES list (id),
-    value      VARCHAR(30) NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    list_id    BIGINT REFERENCES list (id) NOT NULL,
+    value      VARCHAR(30)                 NOT NULL,
+    created_at TIMESTAMPTZ                 NOT NULL DEFAULT NOW()
 );
 
 --changeset reybos:2 runOnChange:true
