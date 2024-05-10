@@ -4,10 +4,10 @@
 CREATE TABLE IF NOT EXISTS message_list
 (
     id         BIGSERIAL PRIMARY KEY,
-    chat_id    BIGINT REFERENCES users (id),
-    list_id    BIGINT REFERENCES list (id),
-    message_id INT         NOT NULL,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    chat_id    BIGINT REFERENCES users (id) NOT NULL,
+    list_id    BIGINT REFERENCES list (id)  NOT NULL,
+    message_id INT                          NOT NULL,
+    created_at TIMESTAMPTZ                  NOT NULL DEFAULT NOW()
 );
 
 --changeset reybos:2 runOnChange:true

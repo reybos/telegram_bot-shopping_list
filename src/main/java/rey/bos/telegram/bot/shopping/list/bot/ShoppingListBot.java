@@ -4,6 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
+import org.telegram.telegrambots.longpolling.BotSession;
+import org.telegram.telegrambots.longpolling.interfaces.LongPollingUpdateConsumer;
+import org.telegram.telegrambots.longpolling.starter.AfterBotRegistration;
+import org.telegram.telegrambots.longpolling.starter.SpringLongPollingBot;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -19,11 +23,13 @@ import java.util.List;
 
 @Component
 @Slf4j
-public class ShoppingListBot implements LongPollingSingleThreadUpdateConsumer {
+public class ShoppingListBot implements SpringLongPollingBot, LongPollingSingleThreadUpdateConsumer {
 
     private final TelegramClient telegramClient;
+    private final String botToken;
 
     public ShoppingListBot(@Value("${telegram.token}") String botToken) {
+        this.botToken = botToken;
         telegramClient = new OkHttpTelegramClient(botToken);
         setCommands();
     }
@@ -39,6 +45,16 @@ public class ShoppingListBot implements LongPollingSingleThreadUpdateConsumer {
         } catch (TelegramApiException e) {
             log.error("Can't execute command", e);
         }
+    }
+
+    @Override
+    public String getBotToken() {
+        return botToken;
+    }
+
+    @Override
+    public LongPollingUpdateConsumer getUpdatesConsumer() {
+        return this;
     }
 
     @Override
@@ -125,6 +141,11 @@ public class ShoppingListBot implements LongPollingSingleThreadUpdateConsumer {
                 }
             }
         }
+    }
+
+    @AfterBotRegistration
+    public void afterRegistration(BotSession botSession) {
+        log.info("Registered bot running state is: " + botSession.isRunning());
     }
 
 }
