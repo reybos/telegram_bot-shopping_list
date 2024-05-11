@@ -1,16 +1,17 @@
 package rey.bos.telegram.bot.shopping.list.config;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
+import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 @Configuration
-@ConfigurationProperties(prefix = "telegram")
-@Getter
-@Setter
 public class ShoppingListBotConfig {
 
-    private String token;
+    @Bean
+    public TelegramClient telegramClient(@Value("${telegram.token}") String botToken) {
+        return new OkHttpTelegramClient(botToken);
+    }
 
 }

@@ -1,37 +1,54 @@
 package rey.bos.telegram.bot.shopping.list.bot;
 
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.BotSession;
 import org.telegram.telegrambots.longpolling.interfaces.LongPollingUpdateConsumer;
 import org.telegram.telegrambots.longpolling.starter.AfterBotRegistration;
 import org.telegram.telegrambots.longpolling.starter.SpringLongPollingBot;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
+import rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey;
+import rey.bos.telegram.bot.shopping.list.bot.handler.BotHandler;
+import rey.bos.telegram.bot.shopping.list.bot.util.BotUtil;
+import rey.bos.telegram.bot.shopping.list.service.UserService;
+import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
+import rey.bos.telegram.bot.shopping.list.shared.mapper.UserDtoMapper;
 
 import java.util.List;
 
 @Component
 @Slf4j
+@Setter
 public class ShoppingListBot implements SpringLongPollingBot, LongPollingSingleThreadUpdateConsumer {
 
     private final TelegramClient telegramClient;
-    private final String botToken;
+    private final List<BotHandler> handlers;
+    private final BotUtil botUtil;
+    private final UserDtoMapper userDtoMapper;
+    private final UserService userService;
 
-    public ShoppingListBot(@Value("${telegram.token}") String botToken) {
-        this.botToken = botToken;
-        telegramClient = new OkHttpTelegramClient(botToken);
-        setCommands();
+
+    @Value("${telegram.token}")
+    private String botToken;
+
+    public ShoppingListBot(
+        TelegramClient telegramClient, List<BotHandler> handlers, BotUtil botUtil,
+        UserDtoMapper userDtoMapper, UserService userService
+    ) {
+        this.telegramClient = telegramClient;
+        this.handlers = handlers;
+        this.botUtil = botUtil;
+        this.userDtoMapper = userDtoMapper;
+        this.userService = userService;
+//        setCommands();
     }
 
     private void setCommands() {
@@ -59,88 +76,27 @@ public class ShoppingListBot implements SpringLongPollingBot, LongPollingSingleT
 
     @Override
     public void consume(Update update) {
-        log.info(update.getMessage().getFrom().toString());
-        if (update.hasMessage() && update.getMessage().hasText()) {
-            // Set variables
-            String message_text = update.getMessage().getText();
-            long chat_id = update.getMessage().getChatId();
-            switch (message_text) {
-                case "/start" -> {
-                    String greeting = """
-                        The user's greeting!
-                        Description of the bot's work.
-                        """;
-                    // User send /start
-                    SendMessage message = SendMessage // Create a message object
-                        .builder()
-                        .parseMode("HTML")
-                        .chatId(chat_id)
-                        .text(greeting)
-                        .build();
-                    try {
-                        telegramClient.execute(message); // Sending our message object to user
-                    } catch (TelegramApiException e) {
-                        log.error("Can't execute command", e);
-                    }
-                }
-                case "/list" -> {
-                    SendMessage message = SendMessage.builder()
-                        .parseMode("HTML")
-                        .chatId(chat_id)
-                        .text(
-                            """
-                            <b>Your list</b>
-                            
-                            Click on any item to delete
-                            """
-                        )
-                        .replyMarkup(InlineKeyboardMarkup.builder()
-                            .keyboard(List.of(
-                                new InlineKeyboardRow(
-                                    InlineKeyboardButton
-                                        .builder()
-                                        .text("mandrake root 3 pieces")
-                                        .callbackData("update_msg_text")
-                                        .build()
-                                ),
-                                new InlineKeyboardRow(
-                                    InlineKeyboardButton
-                                        .builder()
-                                        .text("unicorn meat 500g")
-                                        .callbackData("update_msg_text")
-                                        .build()
-                                ),
-                                new InlineKeyboardRow(
-                                    InlineKeyboardButton
-                                        .builder()
-                                        .text("123456789012345678901234567890")
-                                        .callbackData("update_msg_text")
-                                        .build()
-                                )
-                            ))
-                            .build())
-                        .build();
-                    try {
-                        telegramClient.execute(message); // Sending our message object to user
-                    } catch (TelegramApiException e) {
-                        log.error("Can't execute command", e);
-                    }
-                }
-                default -> {
-                    // Unknown command
-                    SendMessage message = SendMessage // Create a message object
-                        .builder()
-                        .chatId(chat_id)
-                        .text("The item has been added to your list")
-                        .build();
-                    try {
-                        telegramClient.execute(message); // Sending our message object to user
-                    } catch (TelegramApiException e) {
-                        log.error("Can't execute command", e);
-                    }
-                }
+        UserDto user = getOrCreateUser(update);
+        boolean handled = false;
+        for (BotHandler handler : handlers) {
+            if (handler.support(update)) {
+                handled = handler.handle(update, user);
             }
         }
+        if (!handled) {
+            showUnhandledMessage(user);
+        }
+    }
+
+    public UserDto getOrCreateUser(Update update) {
+        User user = update.getMessage().getFrom();
+        UserDto userDto = userDtoMapper.map(user);
+        return userService.getOrCreateUser(userDto);
+    }
+
+    private void showUnhandledMessage(UserDto user) {
+        String unhandledMessage = botUtil.getText(user.getLanguageCode(), DictionaryKey.UNHANDLED_COMMAND);
+        botUtil.sendMessage(user.getTelegramId(), unhandledMessage);
     }
 
     @AfterBotRegistration
