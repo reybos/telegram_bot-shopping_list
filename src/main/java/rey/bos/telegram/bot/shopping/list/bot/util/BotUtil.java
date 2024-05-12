@@ -20,6 +20,11 @@ public class BotUtil {
     private final TelegramClient telegramClient;
     private final List<Dictionary> dictionaries;
 
+    public void sendMessageByKey(Long chatId, LanguageCode languageCode, DictionaryKey key) {
+        String error = getText(languageCode, key);
+        sendMessage(chatId, error);
+    }
+
     public void sendMessage(Long chatId, String text) {
         SendMessage message = SendMessage // Create a message object
             .builder()

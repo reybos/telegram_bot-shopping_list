@@ -8,7 +8,7 @@ import rey.bos.telegram.bot.shopping.list.io.LanguageCode;
 import java.util.HashMap;
 import java.util.Map;
 
-import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.UNHANDLED_COMMAND;
+import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.*;
 
 @Component
 public class DictionaryRu implements Dictionary {
@@ -33,9 +33,20 @@ public class DictionaryRu implements Dictionary {
     }
 
     private void addValues() {
-        dictionary.put(UNHANDLED_COMMAND, """
-        Спасибо за интерес проявленный к боту! 
-        Правда сейчас он находится на стадии разработки и почти ничего не умеет 😿 Когда это изменится, мы пришлем вам уведомление.
+        dictionary.put(ERROR_OR_UNHANDLED_COMMAND, """
+        Что-то пошло не так 😿 Если проблемы сохраняются, напишите создателю бота @reybos он попробует помочь. 
+        """
+        );
+        dictionary.put(TOO_LONG_ITEM, """
+        Слишком длинное сообщение, должно содержать не более 30 символов.
+        """
+        );
+        dictionary.put(TOO_LONG_LIST, """
+        В текущем списке слишком много элементов. Удалите ненужные или полностью очистите список с помощью команды /clear_list
+        """
+        );
+        dictionary.put(ITEM_ADDED_TO_LIST, """
+        Элемент успешно добавлен в список.
         """
         );
     }
