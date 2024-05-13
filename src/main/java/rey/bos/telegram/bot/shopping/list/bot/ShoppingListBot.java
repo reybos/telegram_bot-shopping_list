@@ -21,6 +21,7 @@ import rey.bos.telegram.bot.shopping.list.service.UserService;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 import rey.bos.telegram.bot.shopping.list.shared.mapper.UserDtoMapper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.ERROR_OR_UNHANDLED_COMMAND;
@@ -49,17 +50,17 @@ public class ShoppingListBot implements SpringLongPollingBot, LongPollingSingleT
         this.botUtil = botUtil;
         this.userDtoMapper = userDtoMapper;
         this.userService = userService;
-//        setCommands();
+        setCommands();
     }
 
     private void setCommands() {
-        SetMyCommands setMyCommands = new SetMyCommands(List.of(
-            new BotCommand("/list", "view the list"),
-            new BotCommand("/clear_list", "clear the list"),
-            new BotCommand("/help", "instruction")
-        ));
+        List<BotCommand> commands = new ArrayList<>();
+        for (MenuCommand menuCommand : MenuCommand.values()) {
+            commands.add(new BotCommand(menuCommand.getCommand(), menuCommand.getDescription()));
+        }
+        SetMyCommands setMyCommands = new SetMyCommands(commands);
         try {
-            telegramClient.execute(setMyCommands); // Sending our message object to user
+            telegramClient.execute(setMyCommands);
         } catch (TelegramApiException e) {
             log.error("Can't execute command", e);
         }
@@ -91,7 +92,14 @@ public class ShoppingListBot implements SpringLongPollingBot, LongPollingSingleT
     }
 
     public UserDto getOrCreateUser(Update update) {
-        User user = update.hasMyChatMember() ? update.getMyChatMember().getFrom() : update.getMessage().getFrom();
+        User user;
+        if (update.hasMyChatMember()) {
+            user = update.getMyChatMember().getFrom();
+        } else if (update.hasCallbackQuery()) {
+            user = update.getCallbackQuery().getFrom();
+        } else {
+            user = update.getMessage().getFrom();
+        }
         UserDto userDto = userDtoMapper.map(user);
         return userService.getOrCreateUser(userDto);
     }
