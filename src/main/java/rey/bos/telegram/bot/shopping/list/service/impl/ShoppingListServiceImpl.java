@@ -7,7 +7,6 @@ import rey.bos.telegram.bot.shopping.list.io.entity.ShoppingList;
 import rey.bos.telegram.bot.shopping.list.io.entity.ShoppingListItem;
 import rey.bos.telegram.bot.shopping.list.io.repository.ShoppingListRepository;
 import rey.bos.telegram.bot.shopping.list.service.ShoppingListService;
-import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 
 import java.util.List;
 
@@ -17,11 +16,11 @@ public class ShoppingListServiceImpl implements ShoppingListService {
 
     public final ShoppingListRepository shoppingListRepository;
 
-    public ShoppingList findActiveList(UserDto userDto) {
-        List<ShoppingList> lists = shoppingListRepository.findActiveList(userDto.getId());
+    public ShoppingList findActiveList(long userId) {
+        List<ShoppingList> lists = shoppingListRepository.findActiveList(userId);
         if (CollectionUtils.isEmpty(lists) || lists.size() != 1) {
             throw new IllegalStateException(
-                "The number of active lists for a user with id = " + userDto.getId() + " is not equal to 1"
+                "The number of active lists for a user with id = " + userId + " is not equal to 1"
             );
         }
         return lists.get(0);

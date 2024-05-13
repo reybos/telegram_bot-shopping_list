@@ -37,16 +37,26 @@ public class DictionaryEn implements Dictionary {
         Something went wrong 😿 If problems persist, write to the creator of the bot @reybos, he will try to help.
         """
         );
-        dictionary.put(TOO_LONG_ITEM, """
+        dictionary.put(ERROR_ITEM_ADD_TOO_LONG_ITEM, """
         Message is too long, should be no more than 30 characters.
         """
         );
-        dictionary.put(TOO_LONG_LIST, """
+        dictionary.put(ERROR_ITEM_ADD_TOO_LONG_LIST, """
         There are too many items in the current list. Delete unnecessary ones or clear the list completely with the /clear_list command
         """
         );
-        dictionary.put(ITEM_ADDED_TO_LIST, """
+        dictionary.put(ACTION_ITEM_ADDED_TO_LIST, """
         The item was successfully added to the list
+        """
+        );
+        dictionary.put(EMPTY_LIST_MESSAGE, """
+        The list is empty, send a message to the bot to add an item to the list.
+        """
+        );
+        dictionary.put(NOT_EMPTY_LIST_MESSAGE, """
+        <b>Your list 📋</b>
+                
+        Click on any item to delete it.
         """
         );
     }

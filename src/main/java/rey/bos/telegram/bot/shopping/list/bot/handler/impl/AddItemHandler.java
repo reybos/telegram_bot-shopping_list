@@ -29,22 +29,22 @@ public class AddItemHandler extends BotHandler {
     public boolean handle(Update update, UserDto user) {
         String item = update.getMessage().getText();
         if (item.length() > MAX_ITEM_LENGTH) {
-            botUtil.sendMessageByKey(user.getTelegramId(), user.getLanguageCode(), TOO_LONG_ITEM);
+            botUtil.sendMessageByKey(user.getTelegramId(), user.getLanguageCode(), ERROR_ITEM_ADD_TOO_LONG_ITEM);
             return true;
         }
         ShoppingList shoppingList;
         try {
-            shoppingList = shoppingListService.findActiveList(user);
+            shoppingList = shoppingListService.findActiveList(user.getId());
         } catch (IllegalStateException e) {
             log.error(e.getMessage(), e);
             return false;
         }
-        if (shoppingList.getItems().size() > MAX_ITEM_NUMBER) {
-            botUtil.sendMessageByKey(user.getTelegramId(), user.getLanguageCode(), TOO_LONG_LIST);
+        if (shoppingList.getItems().size() >= MAX_ITEM_NUMBER) {
+            botUtil.sendMessageByKey(user.getTelegramId(), user.getLanguageCode(), ERROR_ITEM_ADD_TOO_LONG_LIST);
             return true;
         }
         shoppingListService.addItem(shoppingList, item);
-        botUtil.sendMessageByKey(user.getTelegramId(), user.getLanguageCode(), ITEM_ADDED_TO_LIST);
+        botUtil.sendMessageByKey(user.getTelegramId(), user.getLanguageCode(), ACTION_ITEM_ADDED_TO_LIST);
         return true;
     }
 
@@ -55,8 +55,7 @@ public class AddItemHandler extends BotHandler {
                 || update.getMessage().getEntities()
                     .stream()
                     .map(MessageEntity::getType)
-                    .noneMatch(BOT_COMMAND_TYPE::equals))
-            && !update.hasCallbackQuery();
+                    .noneMatch(BOT_COMMAND_TYPE::equals));
     }
 
 }

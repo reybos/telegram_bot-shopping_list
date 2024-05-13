@@ -21,8 +21,8 @@ public class BotUtil {
     private final List<Dictionary> dictionaries;
 
     public void sendMessageByKey(Long chatId, LanguageCode languageCode, DictionaryKey key) {
-        String error = getText(languageCode, key);
-        sendMessage(chatId, error);
+        String message = getText(languageCode, key);
+        sendMessage(chatId, message);
     }
 
     public void sendMessage(Long chatId, String text) {
