@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.message.Message;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -12,9 +13,13 @@ import rey.bos.telegram.bot.shopping.list.bot.handler.BotHandler;
 import rey.bos.telegram.bot.shopping.list.bot.util.BotUtil;
 import rey.bos.telegram.bot.shopping.list.bot.util.ShoppingListHelper;
 import rey.bos.telegram.bot.shopping.list.io.entity.ShoppingList;
+import rey.bos.telegram.bot.shopping.list.io.repository.MessageParams;
 import rey.bos.telegram.bot.shopping.list.service.MessageShoppingListService;
 import rey.bos.telegram.bot.shopping.list.service.ShoppingListService;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.EMPTY_LIST_MESSAGE;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.command.MenuCommand.MENU_COMMAND_SHOW_LIST;
@@ -44,13 +49,21 @@ public class ShowListCommandHandler extends BotHandler {
             return true;
         }
         SendMessage message = shoppingListHelper.buildShoppingListSendMessage(user, shoppingList);
+        List<MessageParams> oldMessages = new ArrayList<>();
         try {
             Message sentMessage = telegramClient.execute(message);
-            messageShoppingListService.saveShoppingListMessage(
+            oldMessages = messageShoppingListService.saveShoppingListMessage(
                 user.getId(), shoppingList.getId(), sentMessage.getMessageId()
             );
         } catch (TelegramApiException e) {
             log.error("Can't execute command", e);
+        }
+        for (MessageParams messageParams : oldMessages) {
+            DeleteMessage deleteMessage = DeleteMessage.builder()
+                .chatId(messageParams.getTelegramId())
+                .messageId(messageParams.getMessageId())
+                .build();
+            botUtil.executeMethod(deleteMessage);
         }
         return true;
     }

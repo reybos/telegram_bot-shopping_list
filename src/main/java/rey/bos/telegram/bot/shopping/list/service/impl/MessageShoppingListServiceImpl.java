@@ -19,7 +19,10 @@ public class MessageShoppingListServiceImpl implements MessageShoppingListServic
 
     @Override
     @Transactional
-    public void saveShoppingListMessage(long userId, long listId, int messageId) {
+    public List<MessageParams> saveShoppingListMessage(long userId, long listId, int messageId) {
+        List<MessageParams> deletedMessages = messageShoppingListRepository.findAllByShoppingListIdAndUser(
+            listId, userId
+        );
         messageShoppingListRepository.deleteOldMessage(userId, listId);
         messageShoppingListRepository.save(
             MessageShoppingList.builder()
@@ -28,6 +31,7 @@ public class MessageShoppingListServiceImpl implements MessageShoppingListServic
                 .messageId(messageId)
                 .build()
         );
+        return deletedMessages;
     }
 
     @Override

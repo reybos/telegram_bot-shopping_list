@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface MessageShoppingListService {
 
-    void saveShoppingListMessage(long chatId, long listId, int messageId);
+    List<MessageParams> saveShoppingListMessage(long chatId, long listId, int messageId);
 
     Optional<MessageShoppingList> findMessageByUserAndListAndId(long userId, long listId, int messageId);
 
