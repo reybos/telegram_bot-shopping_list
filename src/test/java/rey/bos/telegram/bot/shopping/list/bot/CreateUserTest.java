@@ -32,7 +32,6 @@ class CreateUserTest {
 
     @Autowired
     private ShoppingListBot shoppingListBot;
-
     @Autowired
     private UserService userService;
 

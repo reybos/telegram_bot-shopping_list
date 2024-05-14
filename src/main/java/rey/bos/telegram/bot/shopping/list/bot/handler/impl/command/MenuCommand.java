@@ -1,4 +1,4 @@
-package rey.bos.telegram.bot.shopping.list.bot;
+package rey.bos.telegram.bot.shopping.list.bot.handler.impl.command;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

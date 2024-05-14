@@ -6,4 +6,6 @@ public interface UserService {
 
     UserDto getOrCreateUser(UserDto userDto);
 
+    UserDto createUser(UserDto userDto);
+
 }

@@ -13,12 +13,11 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import rey.bos.telegram.bot.shopping.list.Application;
 import rey.bos.telegram.bot.shopping.list.BaeldungPostgresqlContainer;
 import rey.bos.telegram.bot.shopping.list.config.ApplicationConfig;
+import rey.bos.telegram.bot.shopping.list.factory.ShoppingListItemFactory;
+import rey.bos.telegram.bot.shopping.list.factory.UserFactory;
 import rey.bos.telegram.bot.shopping.list.io.entity.ShoppingList;
 import rey.bos.telegram.bot.shopping.list.service.ShoppingListService;
-import rey.bos.telegram.bot.shopping.list.service.UserService;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
-
-import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.AddItemHandler.MAX_ITEM_LENGTH;
@@ -34,56 +33,53 @@ class AddItemToListTest {
 
     @Autowired
     private ShoppingListBot shoppingListBot;
-
     @Autowired
     private ShoppingListService shoppingListService;
-
     @Autowired
-    private UserService userService;
+    private UserFactory userFactory;
+    @Autowired
+    private ShoppingListItemFactory shoppingListItemFactory;
 
     @Test
     public void whenAddItemThenSuccess() {
-        long telegramId = new Random().nextLong();
+        UserDto user = userFactory.createUser();
         String itemValue = RandomStringUtils.randomAlphanumeric(10);
-        Update update = createUpdateObjectWithItem(telegramId, itemValue);
+        Update update = createUpdateObjectWithItem(user, itemValue);
         shoppingListBot.consume(update);
-        UserDto storedUser = userService.getOrCreateUser(UserDto.builder().telegramId(telegramId).build());
-        ShoppingList shoppingList = shoppingListService.findActiveList(storedUser.getId());
+
+        ShoppingList shoppingList = shoppingListService.findActiveList(user.getId());
         assertThat(shoppingList.getItems().stream().toList().get(0).getValue()).isEqualTo(itemValue);
     }
 
     @Test
     public void whenAddTooLongItemThenError() {
-        long telegramId = new Random().nextLong();
+        UserDto user = userFactory.createUser();
         String itemValue = RandomStringUtils.randomAlphanumeric(MAX_ITEM_LENGTH + 1);
-        Update update = createUpdateObjectWithItem(telegramId, itemValue);
+        Update update = createUpdateObjectWithItem(user, itemValue);
         shoppingListBot.consume(update);
-        UserDto storedUser = userService.getOrCreateUser(UserDto.builder().telegramId(telegramId).build());
-        ShoppingList shoppingList = shoppingListService.findActiveList(storedUser.getId());
+
+        ShoppingList shoppingList = shoppingListService.findActiveList(user.getId());
         assertThat(shoppingList.getItems()).isEmpty();
     }
 
     @Test
     public void whenAddTooManyItemThenError() {
-        long telegramId = new Random().nextLong();
-        String itemValue = RandomStringUtils.randomAlphanumeric(10);
-        Update update = createUpdateObjectWithItem(telegramId, itemValue);
+        UserDto user = userFactory.createUser();
+        ShoppingList shoppingList = shoppingListService.findActiveList(user.getId());
         for (int i = 0; i < MAX_ITEM_NUMBER; i++) {
-            shoppingListBot.consume(update);
+            shoppingListItemFactory.addItem(shoppingList);
         }
-        update = createUpdateObjectWithItem(telegramId, "not added");
+        Update update = createUpdateObjectWithItem(user, "not added");
         shoppingListBot.consume(update);
-        UserDto storedUser = userService.getOrCreateUser(UserDto.builder().telegramId(telegramId).build());
-        ShoppingList shoppingList = shoppingListService.findActiveList(storedUser.getId());
+
         assertThat(shoppingList.getItems()).noneMatch(item -> item.getValue().equals("not added"));
     }
 
-    private Update createUpdateObjectWithItem(long telegramId, String item) {
+    private Update createUpdateObjectWithItem(UserDto userDto, String item) {
         Update update = new Update();
         Message message = new Message();
         message.setText(item);
-        User user = new User(telegramId, RandomStringUtils.randomAlphanumeric(10), false);
-        user.setUserName(RandomStringUtils.randomAlphanumeric(10));
+        User user = new User(userDto.getTelegramId(), userDto.getFirstName(), false);
         message.setFrom(user);
         update.setMessage(message);
         return update;

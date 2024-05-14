@@ -16,6 +16,7 @@ import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 import rey.bos.telegram.bot.shopping.list.bot.handler.BotHandler;
+import rey.bos.telegram.bot.shopping.list.bot.handler.impl.command.MenuCommand;
 import rey.bos.telegram.bot.shopping.list.bot.util.BotUtil;
 import rey.bos.telegram.bot.shopping.list.service.UserService;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
@@ -24,7 +25,7 @@ import rey.bos.telegram.bot.shopping.list.shared.mapper.UserDtoMapper;
 import java.util.ArrayList;
 import java.util.List;
 
-import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.ERROR_OR_UNHANDLED_COMMAND;
+import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.SOMETHING_WENT_WRONG;
 
 @Component
 @Slf4j
@@ -78,7 +79,9 @@ public class ShoppingListBot implements SpringLongPollingBot, LongPollingSingleT
 
     @Override
     public void consume(Update update) {
-//        log.info(update.toString());
+//        if (update.hasCallbackQuery()) {
+//            log.info(update.getCallbackQuery().toString());
+//        }
         UserDto user = getOrCreateUser(update);
         boolean handled = false;
         for (BotHandler handler : handlers) {
@@ -87,7 +90,7 @@ public class ShoppingListBot implements SpringLongPollingBot, LongPollingSingleT
             }
         }
         if (!handled) {
-            botUtil.sendMessageByKey(user.getTelegramId(), user.getLanguageCode(), ERROR_OR_UNHANDLED_COMMAND);
+            botUtil.sendMessageByKey(user.getTelegramId(), user.getLanguageCode(), SOMETHING_WENT_WRONG);
         }
     }
 
