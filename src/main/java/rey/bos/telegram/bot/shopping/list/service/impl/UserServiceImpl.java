@@ -31,6 +31,11 @@ public class UserServiceImpl implements UserService {
         if (userO.isPresent()) {
             return userDtoMapper.map(userO.get());
         }
+        return createUser(userDto);
+    }
+
+    @Override
+    public UserDto createUser(UserDto userDto) {
         User storedUser = transactionTemplate.execute(status -> {
             User user = userRepository.save(userDtoMapper.map(userDto));
             ShoppingList shoppingList = shoppingListRepository.save(new ShoppingList());
@@ -45,5 +50,6 @@ public class UserServiceImpl implements UserService {
         });
         return userDtoMapper.map(storedUser);
     }
+
 
 }

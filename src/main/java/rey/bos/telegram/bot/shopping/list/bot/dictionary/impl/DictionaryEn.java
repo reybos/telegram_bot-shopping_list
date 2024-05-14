@@ -33,7 +33,7 @@ public class DictionaryEn implements Dictionary {
     }
 
     private void addValues() {
-        dictionary.put(ERROR_OR_UNHANDLED_COMMAND, """
+        dictionary.put(SOMETHING_WENT_WRONG, """
         Something went wrong 😿 If problems persist, write to the creator of the bot @reybos, he will try to help.
         """
         );
@@ -57,6 +57,10 @@ public class DictionaryEn implements Dictionary {
         <b>Your list 📋</b>
                 
         Click on any item to delete it.
+        """
+        );
+        dictionary.put(UNSUPPORTED_COMMAND, """
+        The command is not supported, the list of available commands can be viewed in the menu or by calling the /help command
         """
         );
     }
