@@ -38,4 +38,16 @@ public interface MessageShoppingListRepository extends CrudRepository<MessageSho
     )
     List<MessageParams> findAllByShoppingListId(@Param("listId") long listId);
 
+    @Query(
+        """
+        SELECT u.telegram_id AS telegram_id,
+            message_list.message_id AS message_id
+        FROM message_list
+            LEFT JOIN users u on u.id = message_list.user_id
+        WHERE list_id = :listId
+            AND u.id = :userId
+        """
+    )
+    List<MessageParams> findAllByShoppingListIdAndUser(@Param("listId") long listId, @Param("userId") long userId);
+
 }

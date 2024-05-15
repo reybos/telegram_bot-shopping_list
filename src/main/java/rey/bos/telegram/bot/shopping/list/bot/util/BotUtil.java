@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethodMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
@@ -38,17 +37,9 @@ public class BotUtil {
         executeMethod(message);
     }
 
-    public void executeMethod(BotApiMethod<Serializable> method) {
+    public <T extends Serializable> void executeMethod(BotApiMethod<T> message) {
         try {
-            telegramClient.execute(method); // Sending our message object to user
-        } catch (TelegramApiException e) {
-            log.error("Can't execute command", e);
-        }
-    }
-
-    public void executeMethod(BotApiMethodMessage message) {
-        try {
-            telegramClient.execute(message); // Sending our message object to user
+            telegramClient.execute(message);
         } catch (TelegramApiException e) {
             log.error("Can't execute command", e);
         }
