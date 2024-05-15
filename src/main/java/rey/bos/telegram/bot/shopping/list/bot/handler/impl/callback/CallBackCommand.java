@@ -7,7 +7,12 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public enum CallBackCommand {
 
-    DELETE_ITEM("delete_item-");
+    DELETE_ITEM("delete_item-"),
+    CLEAR_JOIN_REQUEST("clear_join_request-"),
+    DISBAND_CURRENT_GROUP("disband_current_group-"),
+    LEAVE_CURRENT_GROUP("leave_current_group-"),
+    CONFIRM("-yes"),
+    REJECT("-no");
 
     private final String command;
 

@@ -31,7 +31,7 @@ import java.util.Random;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static rey.bos.telegram.bot.shopping.list.bot.handler.BotHandler.BOT_COMMAND_TYPE;
+import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.MessageEntityType.BOT_COMMAND;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.command.MenuCommand.MENU_COMMAND_SHOW_LIST;
 
 @SpringBootTest(classes = {Application.class, ApplicationConfig.class})
@@ -103,7 +103,7 @@ public class ShowListTest {
         message.setText(command);
         message.setEntities(List.of(
             MessageEntity.builder()
-                .type(BOT_COMMAND_TYPE)
+                .type(BOT_COMMAND.getDescription())
                 .offset(0)
                 .length(command.length())
                 .text(command)

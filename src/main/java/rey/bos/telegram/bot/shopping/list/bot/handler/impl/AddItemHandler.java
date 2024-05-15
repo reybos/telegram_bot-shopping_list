@@ -13,6 +13,7 @@ import rey.bos.telegram.bot.shopping.list.service.ShoppingListService;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 
 import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.*;
+import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.MessageEntityType.BOT_COMMAND;
 
 @Component
 @RequiredArgsConstructor
@@ -55,7 +56,7 @@ public class AddItemHandler extends BotHandler {
                 || update.getMessage().getEntities()
                     .stream()
                     .map(MessageEntity::getType)
-                    .noneMatch(BOT_COMMAND_TYPE::equals));
+                    .noneMatch(BOT_COMMAND.getDescription()::equals));
     }
 
 }

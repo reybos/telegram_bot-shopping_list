@@ -7,10 +7,9 @@ import rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackComm
 import rey.bos.telegram.bot.shopping.list.bot.handler.impl.command.MenuCommand;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 
+import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.MessageEntityType.BOT_COMMAND;
+
 public abstract class BotHandler {
-
-    public static final String BOT_COMMAND_TYPE = "bot_command";
-
     public abstract boolean handle(Update update, UserDto user);
 
     public abstract boolean support(Update update);
@@ -21,7 +20,7 @@ public abstract class BotHandler {
                 !CollectionUtils.isEmpty(update.getMessage().getEntities())
                 && update.getMessage().getEntities()
                     .stream()
-                    .filter(entity -> entity.getType().equals(BOT_COMMAND_TYPE))
+                    .filter(entity -> entity.getType().equals(BOT_COMMAND.getDescription()))
                     .map(MessageEntity::getText)
                     .anyMatch(command.getCommand()::equals)
         );

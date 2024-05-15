@@ -25,8 +25,6 @@ import rey.bos.telegram.bot.shopping.list.shared.mapper.UserDtoMapper;
 import java.util.ArrayList;
 import java.util.List;
 
-import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.SOMETHING_WENT_WRONG;
-
 @Component
 @Slf4j
 @Setter
@@ -79,9 +77,6 @@ public class ShoppingListBot implements SpringLongPollingBot, LongPollingSingleT
 
     @Override
     public void consume(Update update) {
-//        if (update.hasCallbackQuery()) {
-//            log.info(update.getCallbackQuery().toString());
-//        }
         UserDto user = getOrCreateUser(update);
         boolean handled = false;
         for (BotHandler handler : handlers) {
@@ -90,7 +85,7 @@ public class ShoppingListBot implements SpringLongPollingBot, LongPollingSingleT
             }
         }
         if (!handled) {
-            botUtil.sendMessageByKey(user.getTelegramId(), user.getLanguageCode(), SOMETHING_WENT_WRONG);
+            botUtil.sendSomethingWentMessage(user.getTelegramId(), user.getLanguageCode());
         }
     }
 

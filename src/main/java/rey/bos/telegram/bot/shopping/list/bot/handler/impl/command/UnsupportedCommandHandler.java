@@ -13,11 +13,12 @@ import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 import java.util.Arrays;
 
 import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.UNSUPPORTED_COMMAND;
+import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.MessageEntityType.BOT_COMMAND;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class UnsupportedCommand extends BotHandler {
+public class UnsupportedCommandHandler extends BotHandler {
 
     private final BotUtil botUtil;
 
@@ -34,7 +35,7 @@ public class UnsupportedCommand extends BotHandler {
             !CollectionUtils.isEmpty(update.getMessage().getEntities())
                 && update.getMessage().getEntities()
                 .stream()
-                .filter(entity -> entity.getType().equals(BOT_COMMAND_TYPE))
+                .filter(entity -> entity.getType().equals(BOT_COMMAND.getDescription()))
                 .map(MessageEntity::getText)
                 .noneMatch(
                     text -> Arrays.stream(MenuCommand.values()).map(MenuCommand::getCommand).anyMatch(text::equals)
