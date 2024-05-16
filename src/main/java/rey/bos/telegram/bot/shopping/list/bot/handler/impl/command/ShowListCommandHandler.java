@@ -57,6 +57,7 @@ public class ShowListCommandHandler extends BotHandler {
             );
         } catch (TelegramApiException e) {
             log.error("Can't execute command", e);
+            return false;
         }
         for (MessageParams messageParams : oldMessages) {
             DeleteMessage deleteMessage = DeleteMessage.builder()

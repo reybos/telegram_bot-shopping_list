@@ -15,7 +15,7 @@ public interface JoinRequestRepository extends CrudRepository<JoinRequest, Long>
     @Query(
         """
         SELECT jr.id AS requestId,
-            '@' || u.user_name AS user_name
+            '@' || u.user_name AS owner_user_name
         FROM join_request jr
         LEFT JOIN users u on u.id = jr.owner_id
         WHERE jr.user_id = :userId

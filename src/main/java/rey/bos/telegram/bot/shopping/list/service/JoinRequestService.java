@@ -8,4 +8,6 @@ public interface JoinRequestService {
 
     List<JoinRequestParams> findActiveJoinRequest(long userId);
 
+    void createJoinRequest(long userId, long ownerId, int messageId);
+
 }

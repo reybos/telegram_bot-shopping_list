@@ -84,7 +84,7 @@ public class DictionaryEn implements Dictionary {
             No ❌"""
         );
         dictionary.put(USER_NOT_EXIST, """
-            %s not found among the bot users. To join a group with a user, ask them to start using this bot @reybos_shoping_list_bot
+            %s not found among the bot users. To join a group with a user, ask them to start using this bot @shoppy_guru_bot
             """
         );
         dictionary.put(ERROR_OWNER_HAS_ACTIVE_GROUP, """
@@ -97,6 +97,32 @@ public class DictionaryEn implements Dictionary {
             You are currently in the same group as user %s. To join a group with %s, you need to exit the current one, after that the current shopping list will be unavailable.
             
             Quit the group?
+            """
+        );
+        dictionary.put(ACCEPT_JOIN_REQUEST_WITHOUT_ACTIVE_GROUP, """
+            The user %s wants to share a shopping list with you. If you accept the request, you will become the owner of the list and will be able to add other users to the group.
+            
+            Do you accept the request?
+            """
+        );
+        dictionary.put(ACCEPT_JOIN_REQUEST_WITH_OWN_ACTIVE_GROUP, """
+            User %s wants to share a shopping list with you. But you already keep a list with %s. If you accept the request, you will use the list together.
+            
+            Do you accept the request?
+            """
+        );
+        dictionary.put(ACCEPT_JOIN_REQUEST_WITH_ACTIVE_GROUP, """
+            User %s wants to share a shopping list with you. If you accept the request, you will become the owner of the list and will be able to add other users to the group. You will also leave the current group with %s and stop using the current shopping list.
+            
+            Do you accept the request?
+            """
+        );
+        dictionary.put(SEND_JOIN_REQUEST_SUCCESS, """
+            A request to merge the lists has been sent to the %s user, the request will be valid for 1 day. If it is not accepted during this time, you will need to resend the request.
+            """
+        );
+        dictionary.put(CANT_SEND_MESSAGE, """
+            %s blocked the bot. Ask the user to start using it @shoppy_guru_bot and repeat the request
             """
         );
     }

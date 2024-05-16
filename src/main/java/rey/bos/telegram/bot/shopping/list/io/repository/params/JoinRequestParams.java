@@ -8,6 +8,6 @@ import lombok.Setter;
 public class JoinRequestParams {
 
     private long requestId;
-    private String userName;
+    private String ownerUserName;
 
 }

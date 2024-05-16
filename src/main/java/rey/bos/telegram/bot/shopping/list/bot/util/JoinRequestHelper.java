@@ -23,10 +23,11 @@ import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallB
 public class JoinRequestHelper {
 
     private final BotUtil botUtil;
+    private final MessageUtil messageUtil;
 
     public SendMessage buildHasRequestMessage(UserDto user, List<JoinRequestParams> requestParams) {
         String users = requestParams.stream()
-            .map(JoinRequestParams::getUserName)
+            .map(JoinRequestParams::getOwnerUserName)
             .collect(Collectors.joining(", "));
         return SendMessage.builder()
             .parseMode("HTML")
@@ -41,11 +42,7 @@ public class JoinRequestHelper {
     public SendMessage buildHasActiveGroupMessage(
         List<UserShoppingListGroupParams> group, UserDto user, String mentionUser
     ) {
-        String groupUsers = group.stream()
-            .map(UserShoppingListGroupParams::getUserName)
-            .filter(name -> !name.equals(user.getUserName()))
-            .map(name -> "@" + name)
-            .collect(Collectors.joining(", "));
+        String groupUsers = messageUtil.getLoginsExcludingCurrentUser(group, user);
         String text = botUtil.getText(user.getLanguageCode(), DictionaryKey.ERROR_OWNER_HAS_ACTIVE_GROUP)
             .formatted(groupUsers, mentionUser, groupUsers);
 
@@ -62,10 +59,7 @@ public class JoinRequestHelper {
     public SendMessage buildLeaveGroupMessage(
         List<UserShoppingListGroupParams> group, UserDto user, String mentionUser
     ) {
-        String currentGroupOwner = group.stream()
-            .filter(UserShoppingListGroupParams::isOwner)
-            .map(item -> "@" + item.getUserName())
-            .collect(Collectors.joining());
+        String currentGroupOwner = messageUtil.getGroupOwnerLogin(group);
         String text = botUtil.getText(user.getLanguageCode(), DictionaryKey.ERROR_MEMBER_OF_GROUP)
             .formatted(currentGroupOwner, mentionUser);
 
@@ -94,6 +88,57 @@ public class JoinRequestHelper {
                     .build()
             )
         );
+    }
+
+    public SendMessage buildAcceptJoinRequestWithoutActiveGroup(UserDto currUser, UserDto mentionUser) {
+        String text = botUtil.getText(
+            mentionUser.getLanguageCode(), DictionaryKey.ACCEPT_JOIN_REQUEST_WITHOUT_ACTIVE_GROUP
+        ).formatted("@" + currUser.getUserName());
+
+        return buildAcceptJoinRequest(mentionUser, text);
+    }
+
+    public SendMessage buildAcceptJoinRequestWithOwnActiveGroup(
+        UserDto currUser, UserDto mentionUser, List<UserShoppingListGroupParams> group
+    ) {
+        String groupUsers = messageUtil.getLoginsExcludingCurrentUser(group, mentionUser);
+        String text = botUtil.getText(
+            mentionUser.getLanguageCode(), DictionaryKey.ACCEPT_JOIN_REQUEST_WITH_OWN_ACTIVE_GROUP
+        ).formatted("@" + currUser.getUserName(), groupUsers);
+
+        return buildAcceptJoinRequest(mentionUser, text);
+    }
+
+    public SendMessage buildAcceptJoinRequestWithActiveGroup(
+        UserDto currUser, UserDto mentionUser, List<UserShoppingListGroupParams> group
+    ) {
+        String currentGroupOwner = messageUtil.getGroupOwnerLogin(group);
+        String text = botUtil.getText(
+            mentionUser.getLanguageCode(), DictionaryKey.ACCEPT_JOIN_REQUEST_WITH_ACTIVE_GROUP
+        ).formatted("@" + currUser.getUserName(), currentGroupOwner);
+
+        return buildAcceptJoinRequest(mentionUser, text);
+    }
+
+    public SendMessage buildAcceptJoinRequest(UserDto user, String text) {
+        return SendMessage.builder()
+            .parseMode("HTML")
+            .chatId(user.getTelegramId())
+            .text(text)
+            .replyMarkup(InlineKeyboardMarkup.builder()
+                .keyboard(buildYesNoButtons(user, ACCEPT_JOIN_REQUEST))
+                .build())
+            .build();
+    }
+
+    public SendMessage buildSendJoinRequestSuccess(UserDto user, String mentionUserName) {
+        String text = botUtil.getText(user.getLanguageCode(), SEND_JOIN_REQUEST_SUCCESS)
+            .formatted(mentionUserName);
+        return SendMessage.builder()
+            .parseMode("HTML")
+            .chatId(user.getTelegramId())
+            .text(text)
+            .build();
     }
 
 }

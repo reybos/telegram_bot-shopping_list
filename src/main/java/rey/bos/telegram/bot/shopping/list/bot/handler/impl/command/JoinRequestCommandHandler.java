@@ -2,10 +2,15 @@ package rey.bos.telegram.bot.shopping.list.bot.handler.impl.command;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.MessageEntity;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.message.Message;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
+import org.telegram.telegrambots.meta.generics.TelegramClient;
 import rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey;
 import rey.bos.telegram.bot.shopping.list.bot.handler.BotHandler;
 import rey.bos.telegram.bot.shopping.list.bot.util.BotUtil;
@@ -36,6 +41,7 @@ public class JoinRequestCommandHandler extends BotHandler {
     private final UserService userService;
     private final UserShoppingListServiceImpl userShoppingListService;
     private final ShoppingListService shoppingListService;
+    private final TelegramClient telegramClient;
 
     @Override
     public boolean handle(Update update, UserDto user) {
@@ -51,19 +57,38 @@ public class JoinRequestCommandHandler extends BotHandler {
         if (isMentionUserNotExist(mentionUserO, mentionUserName, user)) {
             return true;
         }
-        UserDto mentionUser = mentionUserO.get();
 
-        ShoppingList currentShoppingList;
+        UserDto mentionUser = mentionUserO.get();
+        SendMessage mentionUserMessage;
         try {
-            currentShoppingList = shoppingListService.findActiveList(user.getId());
+            ShoppingList mentionUserShoppingList = shoppingListService.findActiveList(mentionUser.getId());
+            ShoppingList currentShoppingList = shoppingListService.findActiveList(user.getId());
+            if (hasActiveGroup(currentShoppingList, user, mentionUserName)) {
+                return true;
+            }
+            mentionUserMessage = buildMentionUserMessage(user, mentionUser, mentionUserShoppingList);
         } catch (IllegalStateException e) {
             log.error(e.getMessage(), e);
             return false;
         }
-        if (hasActiveGroup(currentShoppingList, user, mentionUserName)) {
-            return true;
+        SendMessage currentUserMessage = joinRequestHelper.buildSendJoinRequestSuccess(user, mentionUserName);
+        try {
+            Message sentMessage = telegramClient.execute(mentionUserMessage);
+            joinRequestService.createJoinRequest(user.getId(), mentionUser.getId(), sentMessage.getMessageId());
+            telegramClient.execute(currentUserMessage);
+        } catch (TelegramApiRequestException e) {
+            if (e.getErrorCode() == HttpStatus.FORBIDDEN.value()) {
+                String message = botUtil.getText(user.getLanguageCode(), DictionaryKey.CANT_SEND_MESSAGE)
+                    .formatted(mentionUserName);
+                botUtil.sendMessage(user.getTelegramId(), message);
+                return true;
+            }
+            log.error("Can't execute command", e);
+            return false;
+        } catch (TelegramApiException e) {
+            log.error("Can't execute command", e);
+            return false;
         }
-        log.info("All checks have passed, you can make a request to merge");
         return true;
     }
 
@@ -113,15 +138,32 @@ public class JoinRequestCommandHandler extends BotHandler {
         );
         if (group.size() == 1) {
             return false;
-        }
-        if (group.stream().anyMatch(item -> item.getUserId() == user.getId() && item.isOwner())) {
+        } else if (group.stream().anyMatch(item -> item.getUserId() == user.getId() && item.isOwner())) {
             SendMessage message = joinRequestHelper.buildHasActiveGroupMessage(group, user, mentionUser);
             botUtil.executeMethod(message);
+            return true;
         } else if (group.stream().anyMatch(item -> item.getUserId() == user.getId() && !item.isOwner())) {
             SendMessage message = joinRequestHelper.buildLeaveGroupMessage(group, user, mentionUser);
             botUtil.executeMethod(message);
+            return true;
         }
-        return true;
+        throw new IllegalStateException("The group does not have an owner " + group);
+    }
+
+    private SendMessage buildMentionUserMessage(
+        UserDto currUser, UserDto mentionUser, ShoppingList mentionUserShoppingList
+    ) {
+        List<UserShoppingListGroupParams> group = userShoppingListService.findActiveGroupByListId(
+            mentionUserShoppingList.getId()
+        );
+        if (group.size() == 1) {
+            return joinRequestHelper.buildAcceptJoinRequestWithoutActiveGroup(currUser, mentionUser);
+        } else if (group.stream().anyMatch(item -> item.getUserId() == mentionUser.getId() && item.isOwner())) {
+            return joinRequestHelper.buildAcceptJoinRequestWithOwnActiveGroup(currUser, mentionUser, group);
+        } else if (group.stream().anyMatch(item -> item.getUserId() == mentionUser.getId() && !item.isOwner())) {
+            return joinRequestHelper.buildAcceptJoinRequestWithActiveGroup(currUser, mentionUser, group);
+        }
+        throw new IllegalStateException("The group does not have an owner " + group);
     }
 
     @Override
