@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import rey.bos.telegram.bot.shopping.list.io.entity.MessageShoppingList;
-import rey.bos.telegram.bot.shopping.list.io.repository.MessageParams;
+import rey.bos.telegram.bot.shopping.list.io.repository.params.MessageParams;
 import rey.bos.telegram.bot.shopping.list.io.repository.MessageShoppingListRepository;
 import rey.bos.telegram.bot.shopping.list.service.MessageShoppingListService;
 

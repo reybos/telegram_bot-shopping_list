@@ -1,4 +1,4 @@
-package rey.bos.telegram.bot.shopping.list.io.repository;
+package rey.bos.telegram.bot.shopping.list.io.repository.params;
 
 import lombok.Getter;
 import lombok.Setter;

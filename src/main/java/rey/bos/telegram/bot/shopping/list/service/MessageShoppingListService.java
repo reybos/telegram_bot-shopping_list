@@ -1,7 +1,7 @@
 package rey.bos.telegram.bot.shopping.list.service;
 
 import rey.bos.telegram.bot.shopping.list.io.entity.MessageShoppingList;
-import rey.bos.telegram.bot.shopping.list.io.repository.MessageParams;
+import rey.bos.telegram.bot.shopping.list.io.repository.params.MessageParams;
 
 import java.util.List;
 import java.util.Optional;

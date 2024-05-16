@@ -14,6 +14,8 @@ import rey.bos.telegram.bot.shopping.list.io.LanguageCode;
 import java.io.Serializable;
 import java.util.List;
 
+import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.SOMETHING_WENT_WRONG;
+
 @Component
 @AllArgsConstructor
 @Slf4j
@@ -35,6 +37,10 @@ public class BotUtil {
             .text(text)
             .build();
         executeMethod(message);
+    }
+
+    public void sendSomethingWentMessage(Long chatId, LanguageCode languageCode) {
+        sendMessageByKey(chatId, languageCode, SOMETHING_WENT_WRONG);
     }
 
     public <T extends Serializable> void executeMethod(BotApiMethod<T> message) {

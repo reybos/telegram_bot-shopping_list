@@ -9,7 +9,7 @@ import rey.bos.telegram.bot.shopping.list.bot.handler.BotHandler;
 import rey.bos.telegram.bot.shopping.list.bot.util.BotUtil;
 import rey.bos.telegram.bot.shopping.list.bot.util.ShoppingListHelper;
 import rey.bos.telegram.bot.shopping.list.io.entity.ShoppingList;
-import rey.bos.telegram.bot.shopping.list.io.repository.MessageParams;
+import rey.bos.telegram.bot.shopping.list.io.repository.params.MessageParams;
 import rey.bos.telegram.bot.shopping.list.service.MessageShoppingListService;
 import rey.bos.telegram.bot.shopping.list.service.ShoppingListItemService;
 import rey.bos.telegram.bot.shopping.list.service.ShoppingListService;

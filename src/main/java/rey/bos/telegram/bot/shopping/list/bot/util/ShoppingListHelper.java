@@ -9,7 +9,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 import rey.bos.telegram.bot.shopping.list.io.entity.ShoppingList;
 import rey.bos.telegram.bot.shopping.list.io.entity.ShoppingListItem;
-import rey.bos.telegram.bot.shopping.list.io.repository.MessageParams;
+import rey.bos.telegram.bot.shopping.list.io.repository.params.MessageParams;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 
 import java.util.ArrayList;

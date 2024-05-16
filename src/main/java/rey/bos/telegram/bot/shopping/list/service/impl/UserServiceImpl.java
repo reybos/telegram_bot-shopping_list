@@ -51,5 +51,11 @@ public class UserServiceImpl implements UserService {
         return userDtoMapper.map(storedUser);
     }
 
+    @Override
+    public Optional<UserDto> findUserByUserName(String userName) {
+        userName = userName.replaceFirst("@", "");
+        Optional<User> userO = userRepository.findByUserName(userName);
+        return userO.map(userDtoMapper::map);
+    }
 
 }

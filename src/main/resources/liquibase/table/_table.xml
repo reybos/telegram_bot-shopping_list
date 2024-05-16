@@ -9,6 +9,6 @@
     <include file="users_list.sql" relativeToChangelogFile="true"/>
     <include file="message_list.sql" relativeToChangelogFile="true"/>
     <include file="list_item.sql" relativeToChangelogFile="true"/>
-    <include file="merge_request.sql" relativeToChangelogFile="true"/>
+    <include file="join_request.sql" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>
