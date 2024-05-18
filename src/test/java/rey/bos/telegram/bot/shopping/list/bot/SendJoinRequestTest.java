@@ -23,9 +23,11 @@ import rey.bos.telegram.bot.shopping.list.Application;
 import rey.bos.telegram.bot.shopping.list.BaeldungPostgresqlContainer;
 import rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey;
 import rey.bos.telegram.bot.shopping.list.bot.util.BotUtil;
+import rey.bos.telegram.bot.shopping.list.bot.util.MessageUtil;
 import rey.bos.telegram.bot.shopping.list.config.ApplicationConfig;
 import rey.bos.telegram.bot.shopping.list.factory.JoinRequestFactory;
 import rey.bos.telegram.bot.shopping.list.factory.UserFactory;
+import rey.bos.telegram.bot.shopping.list.factory.UserShoppingListFactory;
 import rey.bos.telegram.bot.shopping.list.io.repository.params.JoinRequestParams;
 import rey.bos.telegram.bot.shopping.list.service.JoinRequestService;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
@@ -61,6 +63,10 @@ public class SendJoinRequestTest {
     private JoinRequestFactory joinRequestFactory;
     @Autowired
     private JoinRequestService joinRequestService;
+    @Autowired
+    private MessageUtil messageUtil;
+    @Autowired
+    private UserShoppingListFactory userShoppingListFactory;
 
     @ParameterizedTest
     @CsvSource({",,ERROR_EMPTY_MENTION_IN_JOIN", "@test,@test2,ERROR_TOO_MANY_MENTION_IN_JOIN"})
@@ -100,7 +106,20 @@ public class SendJoinRequestTest {
         shoppingListBot.consume(update);
         SendMessage message = getVerifySendMessage();
         assertThat(message.getText()).isEqualTo(
-            botUtil.getText(from.getLanguageCode(), ERROR_HAS_JOIN_REQUEST).formatted("@" + to.getUserName())
+            botUtil.getText(from.getLanguageCode(), ERROR_HAS_JOIN_REQUEST)
+                .formatted(messageUtil.getLogin(to.getUserName()))
+        );
+    }
+
+    @Test
+    public void whenMentionThemSelfThenError() throws TelegramApiException {
+        UserDto user = userFactory.createUser();
+        String mention = "@" + user.getUserName();
+        Update update = createUpdateObjectWithJoinCommand(user, mention, null);
+        shoppingListBot.consume(update);
+        SendMessage message = getVerifySendMessage();
+        assertThat(message.getText()).isEqualTo(
+            botUtil.getText(user.getLanguageCode(), ERROR_MENTION_THEMSELF).formatted(mention)
         );
     }
 
@@ -117,20 +136,46 @@ public class SendJoinRequestTest {
     }
 
     @Test
-    public void whenCurrUserHasOwnActiveGroupThenError() {
-        //todo
+    public void whenCurrUserHasOwnActiveGroupThenError() throws TelegramApiException {
+        UserDto sender = userFactory.createUser();
+        UserDto member = userFactory.createUser();
+        userShoppingListFactory.joinUsersList(member, sender);
+        String memberLogin = messageUtil.getLogin(member.getUserName());
+
+        UserDto otherUser = userFactory.createUser();
+        String mentionLogin = messageUtil.getLogin(otherUser.getUserName());
+        Update update = createUpdateObjectWithJoinCommand(sender, mentionLogin, null);
+        shoppingListBot.consume(update);
+        SendMessage message = getVerifySendMessage();
+        assertThat(message.getText()).isEqualTo(
+            botUtil.getText(sender.getLanguageCode(), ERROR_SENDER_IS_OWNER_ACTIVE_GROUP)
+                .formatted(memberLogin, mentionLogin, memberLogin)
+        );
     }
 
     @Test
-    public void whenCurrUserMemberActiveGroupThenError() {
-        //todo
+    public void whenCurrUserIsMemberActiveGroupThenError() throws TelegramApiException {
+        UserDto sender = userFactory.createUser();
+        UserDto owner = userFactory.createUser();
+        userShoppingListFactory.joinUsersList(sender, owner);
+        String ownerLogin = messageUtil.getLogin(owner.getUserName());
+
+        UserDto otherUser = userFactory.createUser();
+        String mentionLogin = messageUtil.getLogin(otherUser.getUserName());
+        Update update = createUpdateObjectWithJoinCommand(sender, mentionLogin, null);
+        shoppingListBot.consume(update);
+        SendMessage message = getVerifySendMessage();
+        assertThat(message.getText()).isEqualTo(
+            botUtil.getText(sender.getLanguageCode(), ERROR_SENDER_IS_MEMBER_OF_GROUP)
+                .formatted(ownerLogin, mentionLogin)
+        );
     }
 
     @Test
     public void whenSendMsgToMentionUserThenForbidden() throws TelegramApiException {
         UserDto user = userFactory.createUser();
         UserDto mentionUser = userFactory.createUser();
-        String mentionLogin = "@" + mentionUser.getUserName();
+        String mentionLogin = messageUtil.getLogin(mentionUser.getUserName());
         Update update = createUpdateObjectWithJoinCommand(user, mentionLogin, null);
         when(telegramClient.execute(any(SendMessage.class))).thenThrow(
             new TelegramApiRequestException("", new ApiResponse<>(null, HttpStatus.FORBIDDEN.value(), null, null, null))
@@ -145,9 +190,10 @@ public class SendJoinRequestTest {
     @Test
     public void whenCurrUserCreateJoinRequestToUserWithoutActiveGroupThenSuccess() throws TelegramApiException {
         UserDto user = userFactory.createUser();
-        String userLogin = "@" + user.getUserName();
+        String userLogin = messageUtil.getLogin(user.getUserName());
         UserDto mentionUser = userFactory.createUser();
-        String mentionLogin = "@" + mentionUser.getUserName();
+
+        String mentionLogin = messageUtil.getLogin(mentionUser.getUserName());
         Update update = createUpdateObjectWithJoinCommand(user, mentionLogin, null);
         int messageId = new Random().nextInt();
         when(telegramClient.execute(any(SendMessage.class))).thenReturn(Message.builder().messageId(messageId).build());
@@ -157,7 +203,7 @@ public class SendJoinRequestTest {
 
         SendMessage mentionUserMessage = messages.get(messages.size() - 2);
         assertThat(mentionUserMessage.getText()).isEqualTo(
-            botUtil.getText(user.getLanguageCode(), ACCEPT_JOIN_REQUEST_WITHOUT_ACTIVE_GROUP).formatted(userLogin)
+            botUtil.getText(user.getLanguageCode(), OWNER_ACCEPT_JOIN_REQUEST_WITHOUT_ACTIVE_GROUP).formatted(userLogin)
         );
 
         SendMessage currUserMessage = messages.get(messages.size() - 1);
@@ -171,12 +217,48 @@ public class SendJoinRequestTest {
 
     @Test
     public void whenCurrUserCreateJoinRequestToUserWithActiveGroupThenSuccess() throws TelegramApiException {
-        //todo
+        UserDto sender = userFactory.createUser();
+        UserDto owner = userFactory.createUser();
+        UserDto member = userFactory.createUser();
+        userShoppingListFactory.joinUsersList(owner, member);
+
+        String ownerLogin = messageUtil.getLogin(owner.getUserName());
+        Update update = createUpdateObjectWithJoinCommand(sender, ownerLogin, null);
+        int messageId = new Random().nextInt();
+        when(telegramClient.execute(any(SendMessage.class))).thenReturn(Message.builder().messageId(messageId).build());
+        shoppingListBot.consume(update);
+
+        List<SendMessage> messages = getVerifySendMessages();
+        SendMessage mentionUserMessage = messages.get(messages.size() - 2);
+        String senderLogin = messageUtil.getLogin(sender.getUserName());
+        String memberLogin = messageUtil.getLogin(member.getUserName());
+        assertThat(mentionUserMessage.getText()).isEqualTo(
+            botUtil.getText(owner.getLanguageCode(), OWNER_ACCEPT_JOIN_REQUEST_WITH_ACTIVE_GROUP)
+                .formatted(senderLogin, memberLogin)
+        );
     }
 
     @Test
     public void whenCurrUserCreateJoinRequestToUserWithOwnActiveGroupThenSuccess() throws TelegramApiException {
-        //todo
+        UserDto sender = userFactory.createUser();
+        UserDto owner = userFactory.createUser();
+        UserDto member = userFactory.createUser();
+        userShoppingListFactory.joinUsersList(member, owner);
+
+        String ownerLogin = messageUtil.getLogin(owner.getUserName());
+        Update update = createUpdateObjectWithJoinCommand(sender, ownerLogin, null);
+        int messageId = new Random().nextInt();
+        when(telegramClient.execute(any(SendMessage.class))).thenReturn(Message.builder().messageId(messageId).build());
+        shoppingListBot.consume(update);
+
+        List<SendMessage> messages = getVerifySendMessages();
+        SendMessage mentionUserMessage = messages.get(messages.size() - 2);
+        String senderLogin = messageUtil.getLogin(sender.getUserName());
+        String memberLogin = messageUtil.getLogin(member.getUserName());
+        assertThat(mentionUserMessage.getText()).isEqualTo(
+            botUtil.getText(owner.getLanguageCode(), OWNER_ACCEPT_JOIN_REQUEST_WITH_OWN_ACTIVE_GROUP)
+                .formatted(senderLogin, memberLogin)
+        );
     }
 
     private Update createUpdateObjectWithJoinCommand(UserDto userDto, String mention1, String mention2) {
