@@ -18,7 +18,6 @@ import rey.bos.telegram.bot.shopping.list.service.MessageShoppingListService;
 import rey.bos.telegram.bot.shopping.list.service.ShoppingListService;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.EMPTY_LIST_MESSAGE;
@@ -49,7 +48,7 @@ public class ShowListCommandHandler extends BotHandler {
             return true;
         }
         SendMessage message = shoppingListHelper.buildShoppingListSendMessage(user, shoppingList);
-        List<MessageParams> oldMessages = new ArrayList<>();
+        List<MessageParams> oldMessages;
         try {
             Message sentMessage = telegramClient.execute(message);
             oldMessages = messageShoppingListService.saveShoppingListMessage(
