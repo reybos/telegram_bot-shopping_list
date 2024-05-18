@@ -52,9 +52,12 @@ public class JoinRequestCommandHandler extends BotHandler {
             return true;
         }
 
-        String mentionUserName = mention.get(0).getText();
-        Optional<UserDto> mentionUserO = userService.findUserByUserName(mentionUserName);
-        if (isMentionUserNotExist(mentionUserO, mentionUserName, user)) {
+        String mentionLogin = mention.get(0).getText();
+        if (isMentionedHimself(user, mentionLogin)) {
+            return true;
+        }
+        Optional<UserDto> mentionUserO = userService.findUserByLogin(mentionLogin);
+        if (isMentionUserNotExist(mentionUserO, mentionLogin, user)) {
             return true;
         }
 
@@ -63,7 +66,7 @@ public class JoinRequestCommandHandler extends BotHandler {
         try {
             ShoppingList mentionUserShoppingList = shoppingListService.findActiveList(mentionUser.getId());
             ShoppingList currentShoppingList = shoppingListService.findActiveList(user.getId());
-            if (hasActiveGroup(currentShoppingList, user, mentionUserName)) {
+            if (hasActiveGroup(currentShoppingList, user, mentionLogin)) {
                 return true;
             }
             mentionUserMessage = buildMentionUserMessage(user, mentionUser, mentionUserShoppingList);
@@ -71,7 +74,7 @@ public class JoinRequestCommandHandler extends BotHandler {
             log.error(e.getMessage(), e);
             return false;
         }
-        SendMessage currentUserMessage = joinRequestHelper.buildSendJoinRequestSuccess(user, mentionUserName);
+        SendMessage currentUserMessage = joinRequestHelper.buildSendJoinRequestSuccess(user, mentionLogin);
         try {
             Message sentMessage = telegramClient.execute(mentionUserMessage);
             joinRequestService.createJoinRequest(user.getId(), mentionUser.getId(), sentMessage.getMessageId());
@@ -79,7 +82,7 @@ public class JoinRequestCommandHandler extends BotHandler {
         } catch (TelegramApiRequestException e) {
             if (e.getErrorCode() == HttpStatus.FORBIDDEN.value()) {
                 String message = botUtil.getText(user.getLanguageCode(), DictionaryKey.CANT_SEND_MESSAGE)
-                    .formatted(mentionUserName);
+                    .formatted(mentionLogin);
                 botUtil.sendMessage(user.getTelegramId(), message);
                 return true;
             }
@@ -117,6 +120,14 @@ public class JoinRequestCommandHandler extends BotHandler {
         if (!requestParams.isEmpty()) {
             SendMessage message = joinRequestHelper.buildHasRequestMessage(user, requestParams);
             botUtil.executeMethod(message);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isMentionedHimself(UserDto user, String mentionLogin) {
+        if (mentionLogin.replaceFirst("@", "").equals(user.getUserName())) {
+            botUtil.sendMessageByKey(user.getTelegramId(), user.getLanguageCode(), DictionaryKey.ERROR_MENTION_THEMSELF);
             return true;
         }
         return false;

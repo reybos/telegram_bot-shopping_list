@@ -43,7 +43,7 @@ public class JoinRequestHelper {
         List<UserShoppingListGroupParams> group, UserDto user, String mentionUser
     ) {
         String groupUsers = messageUtil.getLoginsExcludingCurrentUser(group, user);
-        String text = botUtil.getText(user.getLanguageCode(), DictionaryKey.ERROR_OWNER_HAS_ACTIVE_GROUP)
+        String text = botUtil.getText(user.getLanguageCode(), DictionaryKey.ERROR_SENDER_IS_OWNER_ACTIVE_GROUP)
             .formatted(groupUsers, mentionUser, groupUsers);
 
         return SendMessage.builder()
@@ -60,7 +60,7 @@ public class JoinRequestHelper {
         List<UserShoppingListGroupParams> group, UserDto user, String mentionUser
     ) {
         String currentGroupOwner = messageUtil.getGroupOwnerLogin(group);
-        String text = botUtil.getText(user.getLanguageCode(), DictionaryKey.ERROR_MEMBER_OF_GROUP)
+        String text = botUtil.getText(user.getLanguageCode(), DictionaryKey.ERROR_SENDER_IS_MEMBER_OF_GROUP)
             .formatted(currentGroupOwner, mentionUser);
 
         return SendMessage.builder()
@@ -92,8 +92,8 @@ public class JoinRequestHelper {
 
     public SendMessage buildAcceptJoinRequestWithoutActiveGroup(UserDto currUser, UserDto mentionUser) {
         String text = botUtil.getText(
-            mentionUser.getLanguageCode(), DictionaryKey.ACCEPT_JOIN_REQUEST_WITHOUT_ACTIVE_GROUP
-        ).formatted("@" + currUser.getUserName());
+            mentionUser.getLanguageCode(), DictionaryKey.OWNER_ACCEPT_JOIN_REQUEST_WITHOUT_ACTIVE_GROUP
+        ).formatted(messageUtil.getLogin(currUser.getUserName()));
 
         return buildAcceptJoinRequest(mentionUser, text);
     }
@@ -103,8 +103,8 @@ public class JoinRequestHelper {
     ) {
         String groupUsers = messageUtil.getLoginsExcludingCurrentUser(group, mentionUser);
         String text = botUtil.getText(
-            mentionUser.getLanguageCode(), DictionaryKey.ACCEPT_JOIN_REQUEST_WITH_OWN_ACTIVE_GROUP
-        ).formatted("@" + currUser.getUserName(), groupUsers);
+            mentionUser.getLanguageCode(), DictionaryKey.OWNER_ACCEPT_JOIN_REQUEST_WITH_OWN_ACTIVE_GROUP
+        ).formatted(messageUtil.getLogin(currUser.getUserName()), groupUsers);
 
         return buildAcceptJoinRequest(mentionUser, text);
     }
@@ -114,8 +114,8 @@ public class JoinRequestHelper {
     ) {
         String currentGroupOwner = messageUtil.getGroupOwnerLogin(group);
         String text = botUtil.getText(
-            mentionUser.getLanguageCode(), DictionaryKey.ACCEPT_JOIN_REQUEST_WITH_ACTIVE_GROUP
-        ).formatted("@" + currUser.getUserName(), currentGroupOwner);
+            mentionUser.getLanguageCode(), DictionaryKey.OWNER_ACCEPT_JOIN_REQUEST_WITH_ACTIVE_GROUP
+        ).formatted(messageUtil.getLogin(currUser.getUserName()), currentGroupOwner);
 
         return buildAcceptJoinRequest(mentionUser, text);
     }

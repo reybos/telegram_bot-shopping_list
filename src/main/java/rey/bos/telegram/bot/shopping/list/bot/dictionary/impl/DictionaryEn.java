@@ -87,31 +87,31 @@ public class DictionaryEn implements Dictionary {
             %s not found among the bot users. To join a group with a user, ask them to start using this bot @shoppy_guru_bot
             """
         );
-        dictionary.put(ERROR_OWNER_HAS_ACTIVE_GROUP, """
+        dictionary.put(ERROR_SENDER_IS_OWNER_ACTIVE_GROUP, """
             You are currently in the same group as %s, which you own. To join a group with %s, you need to dissolve the current one, after that %s will use its own shopping list.
             
             Disband the current group?
             """
         );
-        dictionary.put(ERROR_MEMBER_OF_GROUP, """
+        dictionary.put(ERROR_SENDER_IS_MEMBER_OF_GROUP, """
             You are currently in the same group as user %s. To join a group with %s, you need to exit the current one, after that the current shopping list will be unavailable.
             
             Quit the group?
             """
         );
-        dictionary.put(ACCEPT_JOIN_REQUEST_WITHOUT_ACTIVE_GROUP, """
+        dictionary.put(OWNER_ACCEPT_JOIN_REQUEST_WITHOUT_ACTIVE_GROUP, """
             The user %s wants to share a shopping list with you. If you accept the request, you will become the owner of the list and will be able to add other users to the group.
             
             Do you accept the request?
             """
         );
-        dictionary.put(ACCEPT_JOIN_REQUEST_WITH_OWN_ACTIVE_GROUP, """
+        dictionary.put(OWNER_ACCEPT_JOIN_REQUEST_WITH_OWN_ACTIVE_GROUP, """
             User %s wants to share a shopping list with you. But you already keep a list with %s. If you accept the request, you will use the list together.
             
             Do you accept the request?
             """
         );
-        dictionary.put(ACCEPT_JOIN_REQUEST_WITH_ACTIVE_GROUP, """
+        dictionary.put(OWNER_ACCEPT_JOIN_REQUEST_WITH_ACTIVE_GROUP, """
             User %s wants to share a shopping list with you. If you accept the request, you will become the owner of the list and will be able to add other users to the group. You will also leave the current group with %s and stop using the current shopping list.
             
             Do you accept the request?
@@ -123,6 +123,30 @@ public class DictionaryEn implements Dictionary {
         );
         dictionary.put(CANT_SEND_MESSAGE, """
             %s blocked the bot. Ask the user to start using it @shoppy_guru_bot and repeat the request
+            """
+        );
+        dictionary.put(CANT_FIND_ACTIVE_JOIN_REQUEST, """
+            The request to merge the lists was not found. It may have already expired or been canceled earlier. Repeat the merge request "/join @login" if necessary.
+            """
+        );
+        dictionary.put(OWNER_MSG_JOIN_REQUEST_REJECTED, """
+            The request to merge the lists with the user %s has been rejected.
+            """
+        );
+        dictionary.put(SENDER_MSG_JOIN_REQUEST_REJECTED, """
+            Your request to merge lists with user %s has been rejected.
+            """
+        );
+        dictionary.put(ERROR_MENTION_THEMSELF, """
+            You cannot specify yourself in the request to merge lists.
+            """
+        );
+        dictionary.put(JOIN_REQUEST_ACCEPTED_OWNER, """
+            You have accepted the request to merge shopping lists with the user %s. Now you are the owner of the group and will be able to accept other users into it, in which case you will use the list all together.
+            """
+        );
+        dictionary.put(JOIN_REQUEST_ACCEPTED_SENDER, """
+            The request to merge the lists with %s has been approved, now you are using one list. If you send a new request to another user or accept a request to merge lists, the current list will become inactive for you and you will start using the merged list with another user.
             """
         );
     }

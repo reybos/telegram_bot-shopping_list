@@ -10,6 +10,8 @@ public interface UserService {
 
     UserDto createUser(UserDto userDto);
 
-    Optional<UserDto> findUserByUserName(String userName);
+    Optional<UserDto> findUserByLogin(String login);
+
+    UserDto findUserById(long userId);
 
 }

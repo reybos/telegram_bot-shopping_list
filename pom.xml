@@ -10,7 +10,7 @@
     </parent>
     <groupId>rey.bos</groupId>
     <artifactId>telegram-bot-shopping-list</artifactId>
-    <version>3.1</version>
+    <version>4.0</version>
     <name>telegram-bot-shopping-list</name>
     <properties>
         <java.version>17</java.version>

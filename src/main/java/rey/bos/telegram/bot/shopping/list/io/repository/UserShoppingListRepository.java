@@ -27,4 +27,8 @@ public interface UserShoppingListRepository extends CrudRepository<UserShoppingL
     )
     List<UserShoppingListGroupParams> findActiveGroupByListId(@Param("listId") long listId);
 
+    List<UserShoppingList> findByUserIdAndActive(@Param("userId") long userId, @Param("active") boolean active);
+
+    List<UserShoppingList> findByUserIdAndOwner(@Param("userId") long userId, @Param("owner") boolean owner);
+
 }

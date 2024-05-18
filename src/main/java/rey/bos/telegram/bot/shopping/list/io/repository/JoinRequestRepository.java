@@ -8,6 +8,7 @@ import rey.bos.telegram.bot.shopping.list.io.entity.JoinRequest;
 import rey.bos.telegram.bot.shopping.list.io.repository.params.JoinRequestParams;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface JoinRequestRepository extends CrudRepository<JoinRequest, Long> {
@@ -25,5 +26,18 @@ public interface JoinRequestRepository extends CrudRepository<JoinRequest, Long>
         """
     )
     List<JoinRequestParams> findActiveJoinRequest(@Param("userId") long userId);
+
+    @Query(
+        """
+        SELECT *
+        FROM join_request
+        WHERE owner_id = :ownerId
+            AND message_id = :messageId
+            AND NOT approved
+            AND NOT expired
+            AND NOT rejected
+        """
+    )
+    Optional<JoinRequest> findByOwnerIdAndMessageId(@Param("ownerId") long ownerId, @Param("messageId") int messageId);
 
 }
