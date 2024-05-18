@@ -2,6 +2,7 @@ package rey.bos.telegram.bot.shopping.list.bot;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.ClassRule;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import rey.bos.telegram.bot.shopping.list.Application;
 import rey.bos.telegram.bot.shopping.list.BaeldungPostgresqlContainer;
 import rey.bos.telegram.bot.shopping.list.config.ApplicationConfig;
+import rey.bos.telegram.bot.shopping.list.factory.UserFactory;
 import rey.bos.telegram.bot.shopping.list.io.LanguageCode;
 import rey.bos.telegram.bot.shopping.list.service.UserService;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
@@ -24,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(classes = {Application.class, ApplicationConfig.class})
 @ActiveProfiles({"tc", "tc-auto", "stub"})
-class CreateUserTest {
+public class CreateUserTest {
 
     @ClassRule
     public static PostgreSQLContainer<BaeldungPostgresqlContainer> postgreSQLContainer
@@ -34,6 +36,8 @@ class CreateUserTest {
     private ShoppingListBot shoppingListBot;
     @Autowired
     private UserService userService;
+    @Autowired
+    private UserFactory userFactory;
 
     @ParameterizedTest
     @CsvSource({",EN", "en,EN", "ru,RU", "arn,EN"})
@@ -43,7 +47,7 @@ class CreateUserTest {
         String userName = RandomStringUtils.randomAlphanumeric(10);
         Update update = createUpdateObjectWithUser(telegramId, languageCode, firstName, userName);
         shoppingListBot.consume(update);
-        UserDto storedUser = userService.getOrCreateUser(UserDto.builder().telegramId(telegramId).build());
+        UserDto storedUser = userService.findByTelegramOrThrow(telegramId);
         UserDto expectedUser = UserDto.builder()
             .userName(userName)
             .languageCode(expectedLanguageCode)
@@ -51,6 +55,21 @@ class CreateUserTest {
             .telegramId(telegramId)
             .build();
         assertThat(storedUser).usingRecursiveComparison().ignoringFields("id").isEqualTo(expectedUser);
+    }
+
+    @Test
+    public void whenUserChangedThenSuccess() {
+        UserDto user = userFactory.createUser(
+            UserFactory.UserParams.builder().userName("abc").firstName("123").build()
+        );
+        String userName = "userName";
+        String firstName = "firstName";
+        user.setUserName(userName);
+        user.setFirstName(firstName);
+        userService.getOrCreateUser(user);
+        UserDto storedUser = userService.findByIdOrThrow(user.getId());
+        assertThat(storedUser.getUserName()).isEqualTo(userName);
+        assertThat(storedUser.getFirstName()).isEqualTo(firstName);
     }
 
     private Update createUpdateObjectWithUser(

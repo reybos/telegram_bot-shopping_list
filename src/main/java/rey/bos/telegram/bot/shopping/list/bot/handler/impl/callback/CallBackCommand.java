@@ -13,6 +13,7 @@ public enum CallBackCommand {
     LEAVE_CURRENT_GROUP("leave_current_group-"),
     ACCEPT_JOIN_REQUEST("accept_join_request-"),
     CHANGE_LANGUAGE("change_language-"),
+    CLEAR_LIST("clear_list-"),
 
     CONFIRM("-yes"),
     REJECT("-no");

@@ -37,7 +37,7 @@ public class JoinRequestCommandHandler extends BotHandler {
 
     private final BotUtil botUtil;
     private final JoinRequestService joinRequestService;
-    private  final JoinRequestHelper joinRequestHelper;
+    private final JoinRequestHelper joinRequestHelper;
     private final UserService userService;
     private final UserShoppingListServiceImpl userShoppingListService;
     private final ShoppingListService shoppingListService;

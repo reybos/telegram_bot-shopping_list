@@ -30,7 +30,15 @@ public class UserServiceImpl implements UserService {
     public UserDto getOrCreateUser(UserDto userDto) {
         Optional<User> userO = userRepository.findByTelegramId(userDto.getTelegramId());
         if (userO.isPresent()) {
-            return userDtoMapper.map(userO.get());
+            User user = userO.get();
+            if (
+                !user.getUserName().equals(userDto.getUserName()) || !user.getFirstName().equals(userDto.getFirstName())
+            ) {
+                user.setUserName(userDto.getUserName());
+                user.setFirstName(userDto.getFirstName());
+                user = userRepository.save(user);
+            }
+            return userDtoMapper.map(user);
         }
         return createUser(userDto);
     }
@@ -63,6 +71,15 @@ public class UserServiceImpl implements UserService {
     public UserDto findByIdOrThrow(long userId) {
         User user = findByUserIdOrThrow(userId);
         return userDtoMapper.map(user);
+    }
+
+    @Override
+    public UserDto findByTelegramOrThrow(long telegramId) {
+        Optional<User> userO = userRepository.findByTelegramId(telegramId);
+        if (userO.isEmpty()) {
+            throw new NoSuchElementException("The user with the telegramId=" + telegramId + " was not found");
+        }
+        return userDtoMapper.map(userO.get());
     }
 
     private User findByUserIdOrThrow(long userId) {

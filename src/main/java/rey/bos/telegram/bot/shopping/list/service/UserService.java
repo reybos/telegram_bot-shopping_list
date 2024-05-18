@@ -14,6 +14,8 @@ public interface UserService {
 
     UserDto findByIdOrThrow(long userId);
 
+    UserDto findByTelegramOrThrow(long telegramId);
+
     UserDto updateUser(UserDto user);
 
 }

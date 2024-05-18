@@ -183,6 +183,20 @@ public class DictionaryRu implements Dictionary {
             Язык успешно изменен ✅
             """
         );
+        dictionary.put(CLEAR_LIST_COMMAND, """
+            Все позиции в текущем списке будут удалены.
+            
+            Очистить?
+            """
+        );
+        dictionary.put(CLEAR_LIST_REJECTED, """
+            Команда очистки списка отменена.
+            """
+        );
+        dictionary.put(CLEAR_LIST_ACCEPTED, """
+            Текущий список был очищен.
+            """
+        );
     }
 
 }

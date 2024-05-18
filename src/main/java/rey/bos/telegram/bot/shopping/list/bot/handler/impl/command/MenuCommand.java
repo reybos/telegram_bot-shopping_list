@@ -15,14 +15,19 @@ public enum MenuCommand {
         merge lists with the user 🤝"""),
     MENU_COMMAND_START("/start", ""),
     MENU_COMMAND_CHANGE_LANGUAGE("/change_language", """
-        change language 🇺🇸""");
+        change language 🇺🇸"""),
+    MENU_COMMAND_CLEAR_LIST("/clear", """
+        clear list 🗑""");
 
     private final String command;
     private final String description;
 
     public static List<MenuCommand> getCommandsForMenu() {
         return List.of(
-            MENU_COMMAND_SHOW_LIST, MENU_COMMAND_JOIN_USER, MENU_COMMAND_CHANGE_LANGUAGE
+            MENU_COMMAND_SHOW_LIST,
+            MENU_COMMAND_JOIN_USER,
+            MENU_COMMAND_CHANGE_LANGUAGE,
+            MENU_COMMAND_CLEAR_LIST
         );
     }
 

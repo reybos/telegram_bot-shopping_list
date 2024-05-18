@@ -173,5 +173,19 @@ public class DictionaryEn implements Dictionary {
             The language has been successfully changed ✅
             """
         );
+        dictionary.put(CLEAR_LIST_COMMAND, """
+            All items in the current list will be deleted.
+            
+            Clear it?
+            """
+        );
+        dictionary.put(CLEAR_LIST_REJECTED, """
+            The list cleanup command has been canceled.
+            """
+        );
+        dictionary.put(CLEAR_LIST_ACCEPTED, """
+            The current list has been cleared.
+            """
+        );
     }
 }
