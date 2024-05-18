@@ -156,6 +156,21 @@ public class DictionaryEn implements Dictionary {
             🔸 Any message sent to the bot will be added to the list. Excluding commands and user mentions.
             🔸 Call the /list command to view the current list.
             🔸 Call the /join command to maintain a shared list with another user, or simply send the username of this user to the bot, for example: @login.
+            🔸 Call the /change_language command to change the language of the bot.
+            """
+        );
+        dictionary.put(CHANGE_LANGUAGE_COMMAND, """
+            <b>Select the language of the bot</b>
+            """
+        );
+        dictionary.put(ENGLISH_LANGUAGE, """
+            EN 🇺🇸"""
+        );
+        dictionary.put(RUSSIAN_LANGUAGE, """
+            RU 🇷🇺"""
+        );
+        dictionary.put(CHANGE_LANGUAGE_SUCCESS, """
+            The language has been successfully changed ✅
             """
         );
     }

@@ -12,6 +12,8 @@ public interface UserService {
 
     Optional<UserDto> findUserByLogin(String login);
 
-    UserDto findUserById(long userId);
+    UserDto findByIdOrThrow(long userId);
+
+    UserDto updateUser(UserDto user);
 
 }

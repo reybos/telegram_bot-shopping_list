@@ -13,6 +13,7 @@ import rey.bos.telegram.bot.shopping.list.service.UserService;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 import rey.bos.telegram.bot.shopping.list.shared.mapper.UserDtoMapper;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -59,8 +60,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto findUserById(long userId) {
-        User user = userRepository.findById(userId).get();
+    public UserDto findByIdOrThrow(long userId) {
+        User user = findByUserIdOrThrow(userId);
+        return userDtoMapper.map(user);
+    }
+
+    private User findByUserIdOrThrow(long userId) {
+        Optional<User> userO = userRepository.findById(userId);
+        if (userO.isEmpty()) {
+            throw new NoSuchElementException("The user with the id=" + userId + " was not found");
+        }
+        return userO.get();
+    }
+
+    @Override
+    public UserDto updateUser(UserDto userDto) {
+        User user = findByUserIdOrThrow(userDto.getId());
+        user.setUserName(user.getUserName());
+        user.setFirstName(userDto.getFirstName());
+        user.setLanguageCode(userDto.getLanguageCode());
+        user = userRepository.save(user);
         return userDtoMapper.map(user);
     }
 

@@ -77,7 +77,7 @@ public class AcceptJoinRequestHandler extends BotHandler {
             userShoppingListService.changeSenderActiveList(joinRequest, activeList);
             return null;
         });
-        UserDto sender = userService.findUserById(joinRequest.getUserId());
+        UserDto sender = userService.findByIdOrThrow(joinRequest.getUserId());
         EditMessageText ownerMessage = acceptJoinRequestHelper.buildJoinRequestAcceptedOwner(
             user, messageUtil.getLogin(sender.getUserName()), messageId
         );
@@ -95,7 +95,7 @@ public class AcceptJoinRequestHandler extends BotHandler {
             return;
         }
         JoinRequest joinRequest = joinRequestO.get();
-        UserDto sender = userService.findUserById(joinRequest.getUserId());
+        UserDto sender = userService.findByIdOrThrow(joinRequest.getUserId());
         String senderLogin = messageUtil.getLogin(sender.getUserName());
         EditMessageText ownerMsg = acceptJoinRequestHelper.buildOwnerMsgJoinRequestRejected(
             user, senderLogin, messageId
