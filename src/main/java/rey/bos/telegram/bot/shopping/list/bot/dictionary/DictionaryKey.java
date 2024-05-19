@@ -36,5 +36,6 @@ public enum DictionaryKey {
     CLEAR_LIST_COMMAND,
     CLEAR_LIST_REJECTED,
     CLEAR_LIST_ACCEPTED,
+    REFRESH_LIST_BUTTON,
 
 }

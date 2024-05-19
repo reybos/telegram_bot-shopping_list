@@ -14,6 +14,7 @@ public enum CallBackCommand {
     ACCEPT_JOIN_REQUEST("accept_join_request-"),
     CHANGE_LANGUAGE("change_language-"),
     CLEAR_LIST("clear_list-"),
+    REFRESH_LIST("refresh_list-"),
 
     CONFIRM("-yes"),
     REJECT("-no");

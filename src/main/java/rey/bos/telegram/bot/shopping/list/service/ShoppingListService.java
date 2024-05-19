@@ -10,4 +10,6 @@ public interface ShoppingListService {
 
     void clearActiveList(long userId);
 
+    ShoppingList findByIdOrThrow(long listId);
+
 }

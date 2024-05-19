@@ -197,6 +197,9 @@ public class DictionaryRu implements Dictionary {
             Текущий список был очищен.
             """
         );
+        dictionary.put(REFRESH_LIST_BUTTON, """
+            обновить список %s"""
+        );
     }
 
 }

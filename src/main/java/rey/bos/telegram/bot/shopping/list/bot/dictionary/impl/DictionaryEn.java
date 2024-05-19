@@ -187,5 +187,8 @@ public class DictionaryEn implements Dictionary {
             The current list has been cleared.
             """
         );
+        dictionary.put(REFRESH_LIST_BUTTON, """
+            refresh list %s"""
+        );
     }
 }
