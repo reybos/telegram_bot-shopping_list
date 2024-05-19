@@ -1,4 +1,4 @@
-package rey.bos.telegram.bot.shopping.list.bot.handler.impl;
+package rey.bos.telegram.bot.shopping.list.bot.handler.impl.action;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +15,7 @@ import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 
 import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.*;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.MessageEntityType.BOT_COMMAND;
+import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.MessageEntityType.MENTION;
 
 @Component
 @RequiredArgsConstructor
@@ -60,7 +61,9 @@ public class AddItemHandler extends BotHandler {
                 || update.getMessage().getEntities()
                     .stream()
                     .map(MessageEntity::getType)
-                    .noneMatch(BOT_COMMAND.getDescription()::equals));
+                    .noneMatch(
+                        type -> type.equals(BOT_COMMAND.getDescription()) || type.equals(MENTION.getDescription())
+                    ));
     }
 
 }

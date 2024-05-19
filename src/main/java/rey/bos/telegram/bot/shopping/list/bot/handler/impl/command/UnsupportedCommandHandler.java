@@ -31,15 +31,17 @@ public class UnsupportedCommandHandler extends BotHandler {
     @Override
     public boolean support(Update update) {
         return update.hasMessage() && update.getMessage().hasText()
-            && (
-            !CollectionUtils.isEmpty(update.getMessage().getEntities())
+            && (!CollectionUtils.isEmpty(update.getMessage().getEntities())
                 && update.getMessage().getEntities()
-                .stream()
-                .filter(entity -> entity.getType().equals(BOT_COMMAND.getDescription()))
-                .map(MessageEntity::getText)
-                .noneMatch(
-                    text -> Arrays.stream(MenuCommand.values()).map(MenuCommand::getCommand).anyMatch(text::equals)
-                )
+                    .stream()
+                    .anyMatch(entity -> entity.getType().equals(BOT_COMMAND.getDescription()))
+                && update.getMessage().getEntities()
+                    .stream()
+                    .filter(entity -> entity.getType().equals(BOT_COMMAND.getDescription()))
+                    .map(MessageEntity::getText)
+                    .noneMatch(
+                        text -> Arrays.stream(MenuCommand.values()).map(MenuCommand::getCommand).anyMatch(text::equals)
+                    )
         );
     }
 

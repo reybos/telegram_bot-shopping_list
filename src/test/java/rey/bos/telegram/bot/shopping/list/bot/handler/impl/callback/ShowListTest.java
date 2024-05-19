@@ -1,4 +1,4 @@
-package rey.bos.telegram.bot.shopping.list.bot;
+package rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback;
 
 import org.junit.ClassRule;
 import org.junit.jupiter.api.Test;
@@ -15,6 +15,7 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 import org.testcontainers.containers.PostgreSQLContainer;
 import rey.bos.telegram.bot.shopping.list.Application;
 import rey.bos.telegram.bot.shopping.list.BaeldungPostgresqlContainer;
+import rey.bos.telegram.bot.shopping.list.bot.ShoppingListBot;
 import rey.bos.telegram.bot.shopping.list.config.ApplicationConfig;
 import rey.bos.telegram.bot.shopping.list.factory.ShoppingListItemFactory;
 import rey.bos.telegram.bot.shopping.list.factory.UserFactory;

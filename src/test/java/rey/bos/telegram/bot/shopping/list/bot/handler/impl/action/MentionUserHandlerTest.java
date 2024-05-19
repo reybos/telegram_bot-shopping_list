@@ -1,9 +1,7 @@
-package rey.bos.telegram.bot.shopping.list.bot;
+package rey.bos.telegram.bot.shopping.list.bot.handler.impl.action;
 
 import org.junit.ClassRule;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,7 +19,7 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 import org.testcontainers.containers.PostgreSQLContainer;
 import rey.bos.telegram.bot.shopping.list.Application;
 import rey.bos.telegram.bot.shopping.list.BaeldungPostgresqlContainer;
-import rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey;
+import rey.bos.telegram.bot.shopping.list.bot.ShoppingListBot;
 import rey.bos.telegram.bot.shopping.list.bot.util.BotUtil;
 import rey.bos.telegram.bot.shopping.list.bot.util.MessageUtil;
 import rey.bos.telegram.bot.shopping.list.config.ApplicationConfig;
@@ -39,13 +37,11 @@ import java.util.Random;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.*;
-import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.MessageEntityType.BOT_COMMAND;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.MessageEntityType.MENTION;
-import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.command.MenuCommand.MENU_COMMAND_JOIN_USER;
 
 @SpringBootTest(classes = {Application.class, ApplicationConfig.class})
 @ActiveProfiles({"tc", "tc-auto", "stub"})
-public class SendJoinRequestTest {
+public class MentionUserHandlerTest {
 
     @ClassRule
     public static PostgreSQLContainer<BaeldungPostgresqlContainer> postgreSQLContainer
@@ -68,16 +64,13 @@ public class SendJoinRequestTest {
     @Autowired
     private UserShoppingListFactory userShoppingListFactory;
 
-    @ParameterizedTest
-    @CsvSource({",,ERROR_EMPTY_MENTION_IN_JOIN", "@test,@test2,ERROR_TOO_MANY_MENTION_IN_JOIN"})
-    public void whenTryJoinWithNotCorrectMentionThenError(
-        String mention1, String mention2, DictionaryKey key
-    ) throws TelegramApiException {
+    @Test
+    public void whenTryJoinWithTwoMentionThenError() throws TelegramApiException {
         UserDto user = userFactory.createUser();
-        Update update = createUpdateObjectWithJoinCommand(user, mention1, mention2);
+        Update update = createUpdateObjectWithJoinCommand(user, "@test", "@test");
         shoppingListBot.consume(update);
         SendMessage message = getVerifySendMessage();
-        assertThat(message.getText()).isEqualTo(botUtil.getText(user.getLanguageCode(), key));
+        assertThat(message.getText()).isEqualTo(botUtil.getText(user.getLanguageCode(), ERROR_TOO_MANY_MENTION_IN_JOIN));
     }
 
     private SendMessage getVerifySendMessage() throws TelegramApiException {
@@ -264,9 +257,7 @@ public class SendJoinRequestTest {
     private Update createUpdateObjectWithJoinCommand(UserDto userDto, String mention1, String mention2) {
         Update update = new Update();
         Message message = new Message();
-        String text = MENU_COMMAND_JOIN_USER.getCommand() +
-            (mention1 == null ? "" : " " + mention1) +
-            (mention2 == null ? "" : " " + mention2);
+        String text = (mention1 == null ? "" : mention1) + (mention2 == null ? "" : " " + mention2);
         message.setText(text);
         message.setEntities(buildEntities(mention1, mention2));
         User user = new User(userDto.getTelegramId(), userDto.getFirstName(), false);
@@ -279,15 +270,6 @@ public class SendJoinRequestTest {
     private List<MessageEntity> buildEntities(String mention1, String mention2) {
         List<MessageEntity> entities = new ArrayList<>();
         int offset = 0;
-        entities.add(
-            MessageEntity.builder()
-                .type(BOT_COMMAND.getDescription())
-                .offset(offset)
-                .length(MENU_COMMAND_JOIN_USER.getCommand().length())
-                .text(MENU_COMMAND_JOIN_USER.getCommand())
-                .build()
-        );
-        offset += MENU_COMMAND_JOIN_USER.getCommand().length() + 1;
         if (mention1 != null) {
             entities.add(buildMentionEntity(mention1, offset));
             offset += mention1.length() + 1;
