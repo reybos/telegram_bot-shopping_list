@@ -8,6 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.MessageEntity;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import rey.bos.telegram.bot.shopping.list.bot.handler.BotHandler;
 import rey.bos.telegram.bot.shopping.list.bot.util.BotUtil;
+import rey.bos.telegram.bot.shopping.list.bot.util.ShoppingListHelper;
 import rey.bos.telegram.bot.shopping.list.io.entity.ShoppingList;
 import rey.bos.telegram.bot.shopping.list.service.ShoppingListService;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
@@ -25,6 +26,7 @@ public class AddItemHandler extends BotHandler {
 
     private final BotUtil botUtil;
     private final ShoppingListService shoppingListService;
+    private final ShoppingListHelper shoppingListHelper;
 
     @Override
     public boolean handle(Update update, UserDto user) {
@@ -45,6 +47,8 @@ public class AddItemHandler extends BotHandler {
             return true;
         }
         shoppingListService.addItem(shoppingList, item);
+
+        shoppingListHelper.refreshUsersList(shoppingList);
         botUtil.sendMessageByKey(user.getTelegramId(), user.getLanguageCode(), ACTION_ITEM_ADDED_TO_LIST);
         return true;
     }

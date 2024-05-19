@@ -10,6 +10,8 @@ import rey.bos.telegram.bot.shopping.list.service.ShoppingListService;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -38,6 +40,15 @@ public class ShoppingListServiceImpl implements ShoppingListService {
         ShoppingList shoppingList = findActiveList(userId);
         shoppingList.setItems(new HashSet<>());
         shoppingListRepository.save(shoppingList);
+    }
+
+    @Override
+    public ShoppingList findByIdOrThrow(long listId) {
+        Optional<ShoppingList> shoppingListO = shoppingListRepository.findById(listId);
+        if (shoppingListO.isEmpty()) {
+            throw new NoSuchElementException("The list with the id=" + listId + " was not found");
+        }
+        return shoppingListO.get();
     }
 
 }
