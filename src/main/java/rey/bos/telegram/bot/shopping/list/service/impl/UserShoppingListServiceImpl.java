@@ -6,18 +6,15 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import rey.bos.telegram.bot.shopping.list.io.entity.JoinRequest;
-import rey.bos.telegram.bot.shopping.list.io.entity.User;
 import rey.bos.telegram.bot.shopping.list.io.entity.UserShoppingList;
 import rey.bos.telegram.bot.shopping.list.io.repository.JoinRequestRepository;
-import rey.bos.telegram.bot.shopping.list.io.repository.UserRepository;
 import rey.bos.telegram.bot.shopping.list.io.repository.UserShoppingListRepository;
 import rey.bos.telegram.bot.shopping.list.io.repository.params.UserShoppingListGroupParams;
+import rey.bos.telegram.bot.shopping.list.service.UserService;
 import rey.bos.telegram.bot.shopping.list.service.UserShoppingListService;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -25,7 +22,7 @@ public class UserShoppingListServiceImpl implements UserShoppingListService {
 
     private final UserShoppingListRepository userShoppingListRepository;
     private final JoinRequestRepository joinRequestRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     @Override
     public List<UserShoppingListGroupParams> findActiveGroupByListId(long listId) {
@@ -44,11 +41,7 @@ public class UserShoppingListServiceImpl implements UserShoppingListService {
     public void changeSenderActiveList(JoinRequest joinRequest, UserShoppingList newList) {
         joinRequest.setApproved(true);
         joinRequestRepository.save(joinRequest);
-        Optional<User> userO = userRepository.findById(joinRequest.getUserId());
-        if (userO.isEmpty()) {
-            throw new NoSuchElementException("The user with the id=" + joinRequest.getUserId() + " was not found");
-        }
-        User sender = userO.get();
+        UserDto sender = userService.findByIdOrThrow(joinRequest.getUserId());
         List<UserShoppingList> currSenderLists = userShoppingListRepository.findByUserIdAndActive(sender.getId(), true);
         checkListCount(currSenderLists, sender.getId());
         UserShoppingList currSenderList = currSenderLists.get(0);

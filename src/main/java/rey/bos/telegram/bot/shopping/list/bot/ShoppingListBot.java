@@ -54,7 +54,7 @@ public class ShoppingListBot implements SpringLongPollingBot, LongPollingSingleT
 
     private void setCommands() {
         List<BotCommand> commands = new ArrayList<>();
-        for (MenuCommand menuCommand : MenuCommand.values()) {
+        for (MenuCommand menuCommand : MenuCommand.getCommandsForMenu()) {
             commands.add(new BotCommand(menuCommand.getCommand(), menuCommand.getDescription()));
         }
         SetMyCommands setMyCommands = new SetMyCommands(commands);

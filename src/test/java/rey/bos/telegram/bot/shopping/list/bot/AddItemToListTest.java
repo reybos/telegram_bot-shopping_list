@@ -80,6 +80,7 @@ class AddItemToListTest {
         Message message = new Message();
         message.setText(item);
         User user = new User(userDto.getTelegramId(), userDto.getFirstName(), false);
+        user.setUserName(userDto.getUserName());
         message.setFrom(user);
         update.setMessage(message);
         return update;

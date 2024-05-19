@@ -149,5 +149,43 @@ public class DictionaryEn implements Dictionary {
             The request to merge the lists with %s has been approved, now you are using one list. If you send a new request to another user or accept a request to merge lists, the current list will become inactive for you and you will start using the merged list with another user.
             """
         );
+        dictionary.put(GREETING_FOR_START, """
+            Greetings %s! 👋
+            I'll help you keep a shopping list, and you can also join other users in a group and keep one common list.
+            
+            🔸 Any message sent to the bot will be added to the list. Excluding commands and user mentions.
+            🔸 Call the /list command to view the current list.
+            🔸 Call the /join command to maintain a shared list with another user, or simply send the username of this user to the bot, for example: @login.
+            🔸 Call the /change_language command to change the language of the bot.
+            """
+        );
+        dictionary.put(CHANGE_LANGUAGE_COMMAND, """
+            <b>Select the language of the bot</b>
+            """
+        );
+        dictionary.put(ENGLISH_LANGUAGE, """
+            EN 🇺🇸"""
+        );
+        dictionary.put(RUSSIAN_LANGUAGE, """
+            RU 🇷🇺"""
+        );
+        dictionary.put(CHANGE_LANGUAGE_SUCCESS, """
+            The language has been successfully changed ✅
+            """
+        );
+        dictionary.put(CLEAR_LIST_COMMAND, """
+            All items in the current list will be deleted.
+            
+            Clear it?
+            """
+        );
+        dictionary.put(CLEAR_LIST_REJECTED, """
+            The list cleanup command has been canceled.
+            """
+        );
+        dictionary.put(CLEAR_LIST_ACCEPTED, """
+            The current list has been cleared.
+            """
+        );
     }
 }

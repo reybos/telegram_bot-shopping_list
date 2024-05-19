@@ -4,10 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 import rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey;
-import rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand;
 import rey.bos.telegram.bot.shopping.list.io.repository.params.JoinRequestParams;
 import rey.bos.telegram.bot.shopping.list.io.repository.params.UserShoppingListGroupParams;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
@@ -15,7 +12,8 @@ import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.*;
+import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.ERROR_HAS_JOIN_REQUEST;
+import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.SEND_JOIN_REQUEST_SUCCESS;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand.*;
 
 @Component
@@ -34,7 +32,7 @@ public class JoinRequestHelper {
             .chatId(user.getTelegramId())
             .text(botUtil.getText(user.getLanguageCode(), ERROR_HAS_JOIN_REQUEST).formatted(users))
             .replyMarkup(InlineKeyboardMarkup.builder()
-                .keyboard(buildYesNoButtons(user, CLEAR_JOIN_REQUEST))
+                .keyboard(messageUtil.buildYesNoButtons(user, CLEAR_JOIN_REQUEST))
                 .build())
             .build();
     }
@@ -51,7 +49,7 @@ public class JoinRequestHelper {
             .chatId(user.getTelegramId())
             .text(text)
             .replyMarkup(InlineKeyboardMarkup.builder()
-                .keyboard(buildYesNoButtons(user, DISBAND_CURRENT_GROUP))
+                .keyboard(messageUtil.buildYesNoButtons(user, DISBAND_CURRENT_GROUP))
                 .build())
             .build();
     }
@@ -68,26 +66,9 @@ public class JoinRequestHelper {
             .chatId(user.getTelegramId())
             .text(text)
             .replyMarkup(InlineKeyboardMarkup.builder()
-                .keyboard(buildYesNoButtons(user, LEAVE_CURRENT_GROUP))
+                .keyboard(messageUtil.buildYesNoButtons(user, LEAVE_CURRENT_GROUP))
                 .build())
             .build();
-    }
-
-    public List<InlineKeyboardRow> buildYesNoButtons(UserDto user, CallBackCommand command) {
-        return List.of(
-            new InlineKeyboardRow(
-                InlineKeyboardButton
-                    .builder()
-                    .text(botUtil.getText(user.getLanguageCode(), CONFIRM_MSG))
-                    .callbackData(command.getCommand() + user.getId() + CONFIRM.getCommand())
-                    .build(),
-                InlineKeyboardButton
-                    .builder()
-                    .text(botUtil.getText(user.getLanguageCode(), REJECT_MSG))
-                    .callbackData(command.getCommand() + user.getId() + REJECT.getCommand())
-                    .build()
-            )
-        );
     }
 
     public SendMessage buildAcceptJoinRequestWithoutActiveGroup(UserDto currUser, UserDto mentionUser) {
@@ -126,7 +107,7 @@ public class JoinRequestHelper {
             .chatId(user.getTelegramId())
             .text(text)
             .replyMarkup(InlineKeyboardMarkup.builder()
-                .keyboard(buildYesNoButtons(user, ACCEPT_JOIN_REQUEST))
+                .keyboard(messageUtil.buildYesNoButtons(user, ACCEPT_JOIN_REQUEST))
                 .build())
             .build();
     }

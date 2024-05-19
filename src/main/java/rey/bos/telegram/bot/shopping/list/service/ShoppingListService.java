@@ -8,4 +8,6 @@ public interface ShoppingListService {
 
     void addItem(ShoppingList shoppingList, String item);
 
+    void clearActiveList(long userId);
+
 }

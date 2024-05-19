@@ -8,6 +8,7 @@ import rey.bos.telegram.bot.shopping.list.io.entity.ShoppingListItem;
 import rey.bos.telegram.bot.shopping.list.io.repository.ShoppingListRepository;
 import rey.bos.telegram.bot.shopping.list.service.ShoppingListService;
 
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -29,6 +30,13 @@ public class ShoppingListServiceImpl implements ShoppingListService {
     @Override
     public void addItem(ShoppingList shoppingList, String item) {
         shoppingList.getItems().add(ShoppingListItem.builder().value(item).build());
+        shoppingListRepository.save(shoppingList);
+    }
+
+    @Override
+    public void clearActiveList(long userId) {
+        ShoppingList shoppingList = findActiveList(userId);
+        shoppingList.setItems(new HashSet<>());
         shoppingListRepository.save(shoppingList);
     }
 
