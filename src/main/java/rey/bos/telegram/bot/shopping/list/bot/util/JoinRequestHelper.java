@@ -32,7 +32,7 @@ public class JoinRequestHelper {
             .chatId(user.getTelegramId())
             .text(botUtil.getText(user.getLanguageCode(), ERROR_HAS_JOIN_REQUEST).formatted(users))
             .replyMarkup(InlineKeyboardMarkup.builder()
-                .keyboard(messageUtil.buildYesNoButtons(user, CLEAR_JOIN_REQUEST))
+                .keyboard(messageUtil.buildYesNoButtons(user, CLEAR_EXIST_JOIN_REQUEST))
                 .build())
             .build();
     }
@@ -49,7 +49,7 @@ public class JoinRequestHelper {
             .chatId(user.getTelegramId())
             .text(text)
             .replyMarkup(InlineKeyboardMarkup.builder()
-                .keyboard(messageUtil.buildYesNoButtons(user, DISBAND_CURRENT_GROUP))
+                .keyboard(messageUtil.buildYesNoButtons(user, DISBAND_GROUP_AND_JOIN))
                 .build())
             .build();
     }
@@ -66,7 +66,7 @@ public class JoinRequestHelper {
             .chatId(user.getTelegramId())
             .text(text)
             .replyMarkup(InlineKeyboardMarkup.builder()
-                .keyboard(messageUtil.buildYesNoButtons(user, LEAVE_CURRENT_GROUP))
+                .keyboard(messageUtil.buildYesNoButtons(user, LEAVE_GROUP_AND_JOIN))
                 .build())
             .build();
     }

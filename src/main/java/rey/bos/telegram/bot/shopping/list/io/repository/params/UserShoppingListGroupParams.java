@@ -10,5 +10,6 @@ public class UserShoppingListGroupParams {
     private long userId;
     private String userName;
     private boolean owner;
+    private long userListId;
 
 }

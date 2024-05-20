@@ -54,11 +54,11 @@ class AcceptJoinRequestHandlerTest {
     @Autowired
     private BotUtil botUtil;
     @Autowired
-    UserShoppingListFactory userShoppingListFactory;
+    private UserShoppingListFactory userShoppingListFactory;
     @Autowired
     private MessageUtil messageUtil;
     @Autowired
-    UserShoppingListService userShoppingListService;
+    private UserShoppingListService userShoppingListService;
 
     @Test
     public void whenAcceptExpiredRequestThenError() throws TelegramApiException {

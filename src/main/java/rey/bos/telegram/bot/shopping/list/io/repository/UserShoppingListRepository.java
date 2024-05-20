@@ -18,7 +18,8 @@ public interface UserShoppingListRepository extends CrudRepository<UserShoppingL
         """
         SELECT ul.user_id AS user_id,
             ul.owner AS owner,
-            u.user_name AS user_name
+            u.user_name AS user_name,
+            ul.id AS user_list_id
         FROM users_list ul
             LEFT JOIN users u on u.id = ul.user_id
         WHERE ul.list_id = :listId
@@ -26,6 +27,29 @@ public interface UserShoppingListRepository extends CrudRepository<UserShoppingL
         """
     )
     List<UserShoppingListGroupParams> findActiveGroupByListId(@Param("listId") long listId);
+
+    @Query(
+        """
+        SELECT ul.user_id AS user_id,
+            ul.owner AS owner,
+            u.user_name AS user_name,
+            ul.id AS user_list_id
+        FROM users_list ul
+            LEFT JOIN users u on u.id = ul.user_id
+        WHERE ul.id = :id
+        """
+    )
+    UserShoppingListGroupParams getUserListParamsById(@Param("id") long id);
+
+    @Query(
+        """
+        SELECT *
+        FROM users_list ul
+        WHERE ul.list_id = (SELECT list_id FROM users_list WHERE user_id = :userId AND active)
+            AND ul.active
+        """
+    )
+    List<UserShoppingList> findActiveGroupByUserId(@Param("userId") long userId);
 
     List<UserShoppingList> findByUserIdAndActive(@Param("userId") long userId, @Param("active") boolean active);
 

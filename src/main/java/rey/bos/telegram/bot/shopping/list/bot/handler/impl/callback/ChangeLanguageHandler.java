@@ -18,13 +18,15 @@ import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallB
 @RequiredArgsConstructor
 public class ChangeLanguageHandler extends BotHandler {
 
+    private final CallBackCommand command = CHANGE_LANGUAGE;
+
     private final UserService userService;
     private final BotUtil botUtil;
 
     @Override
     public boolean handle(Update update, UserDto user) {
         String data = update.getCallbackQuery().getData();
-        String languageStr = data.replaceFirst(CHANGE_LANGUAGE.getCommand(), "");
+        String languageStr = data.replaceFirst(command.getCommand(), "");
         LanguageCode language = LanguageCode.valueOf(languageStr);
         user.setLanguageCode(language);
         user = userService.updateUser(user);
@@ -34,7 +36,7 @@ public class ChangeLanguageHandler extends BotHandler {
 
     @Override
     public boolean support(Update update) {
-        return supportCallbackCommand(update, CHANGE_LANGUAGE);
+        return supportCallbackCommand(update, command);
     }
 
 }

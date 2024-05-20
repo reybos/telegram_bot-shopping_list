@@ -30,6 +30,11 @@ public class UserShoppingListServiceImpl implements UserShoppingListService {
     }
 
     @Override
+    public List<UserShoppingList> findActiveGroupByUserId(long userId) {
+        return userShoppingListRepository.findActiveGroupByUserId(userId);
+    }
+
+    @Override
     public UserShoppingList findActiveUserShoppingList(long userId) {
         List<UserShoppingList> lists = userShoppingListRepository.findByUserIdAndActive(userId, true);
         checkListCount(lists, userId);
@@ -59,14 +64,29 @@ public class UserShoppingListServiceImpl implements UserShoppingListService {
 
     @Override
     @Transactional(propagation = Propagation.MANDATORY)
-    public UserShoppingList restoreMainList(UserDto user, UserShoppingList activeList) {
+    public UserShoppingList restoreMainList(long userId, UserShoppingList activeList) {
+        if (activeList.isOwner()) {
+            return activeList;
+        }
         activeList.setActive(false);
         userShoppingListRepository.save(activeList);
-        List<UserShoppingList> lists = userShoppingListRepository.findByUserIdAndOwner(user.getId(), true);
-        checkListCount(lists, user.getId());
+        List<UserShoppingList> lists = userShoppingListRepository.findByUserIdAndOwner(userId, true);
+        checkListCount(lists, userId);
         UserShoppingList ownList = lists.get(0);
         ownList.setActive(true);
         return userShoppingListRepository.save(ownList);
+    }
+
+    @Override
+    @Transactional
+    public void restoreMainList(long userId) {
+        UserShoppingList activeList = findActiveUserShoppingList(userId);
+        restoreMainList(userId, activeList);
+    }
+
+    @Override
+    public UserShoppingListGroupParams getUserListParamsById(long userListId) {
+        return userShoppingListRepository.getUserListParamsById(userListId);
     }
 
     private void checkListCount(List<UserShoppingList> lists, long userId) {

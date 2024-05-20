@@ -1,14 +1,11 @@
 package rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
-import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import rey.bos.telegram.bot.shopping.list.bot.handler.BotHandler;
 import rey.bos.telegram.bot.shopping.list.bot.util.AcceptJoinRequestHelper;
 import rey.bos.telegram.bot.shopping.list.bot.util.BotUtil;
 import rey.bos.telegram.bot.shopping.list.bot.util.MessageUtil;
@@ -23,60 +20,54 @@ import java.util.Optional;
 
 import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.JOIN_REQUEST_ACCEPTED_SENDER;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand.ACCEPT_JOIN_REQUEST;
-import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand.CONFIRM;
 
 @Slf4j
 @Component
-@RequiredArgsConstructor
-public class AcceptJoinRequestHandler extends BotHandler {
+public class AcceptJoinRequestHandler extends BotHandlerDecision {
 
     private final JoinRequestService joinRequestService;
     private final BotUtil botUtil;
     private final AcceptJoinRequestHelper acceptJoinRequestHelper;
     private final UserService userService;
-    private final MessageUtil messageUtil;
     private final UserShoppingListService userShoppingListService;
     private final TransactionTemplate transactionTemplate;
 
-    @Override
-    public boolean handle(Update update, UserDto user) {
-        CallbackQuery query = update.getCallbackQuery();
-        String data = query.getData();
-        long userId = messageUtil.getIdByText(data, ACCEPT_JOIN_REQUEST.getCommand());
-        if (user.getId() != userId) {
-            return false;
-        }
-        int messageId = query.getMessage().getMessageId();
-
-        if (data.endsWith(CONFIRM.getCommand())) {
-            try {
-                handleAccept(user, messageId);
-            } catch (IllegalStateException e) {
-                log.error(e.getMessage(), e);
-                return false;
-            }
-        } else {
-            handleReject(user, messageId);
-        }
-        return true;
+    public AcceptJoinRequestHandler(
+        MessageUtil messageUtil, JoinRequestService joinRequestService, BotUtil botUtil,
+        AcceptJoinRequestHelper acceptJoinRequestHelper, UserService userService,
+        UserShoppingListService userShoppingListService, TransactionTemplate transactionTemplate
+    ) {
+        super(ACCEPT_JOIN_REQUEST, messageUtil);
+        this.joinRequestService = joinRequestService;
+        this.botUtil = botUtil;
+        this.acceptJoinRequestHelper = acceptJoinRequestHelper;
+        this.userService = userService;
+        this.userShoppingListService = userShoppingListService;
+        this.transactionTemplate = transactionTemplate;
     }
 
-    private void handleAccept(UserDto user, int messageId) {
+    @Override
+    public boolean handleAccept(UserDto user, int messageId, long callbackId) {
         Optional<JoinRequest> joinRequestO = joinRequestService.findRequest(user.getId(), messageId);
         if (joinRequestO.isEmpty()) {
             EditMessageText message = acceptJoinRequestHelper.buildCantFindActiveJoinRequest(user, messageId);
             botUtil.executeMethod(message);
-            return;
+            return true;
         }
         JoinRequest joinRequest = joinRequestO.get();
-        transactionTemplate.execute(status -> {
-            UserShoppingList activeList = userShoppingListService.findActiveUserShoppingList(user.getId());
-            if (!activeList.isOwner()) {
-                activeList = userShoppingListService.restoreMainList(user, activeList);
-            }
-            userShoppingListService.changeSenderActiveList(joinRequest, activeList);
-            return null;
-        });
+        try {
+            transactionTemplate.execute(status -> {
+                UserShoppingList activeList = userShoppingListService.findActiveUserShoppingList(user.getId());
+                if (!activeList.isOwner()) {
+                    activeList = userShoppingListService.restoreMainList(user.getId(), activeList);
+                }
+                userShoppingListService.changeSenderActiveList(joinRequest, activeList);
+                return null;
+            });
+        } catch (IllegalStateException e) {
+            log.error(e.getMessage(), e);
+            return false;
+        }
         UserDto sender = userService.findByIdOrThrow(joinRequest.getUserId());
         EditMessageText ownerMessage = acceptJoinRequestHelper.buildJoinRequestAcceptedOwner(
             user, messageUtil.getLogin(sender.getUserName()), messageId
@@ -85,14 +76,16 @@ public class AcceptJoinRequestHandler extends BotHandler {
         String senderMessage = botUtil.getText(sender.getLanguageCode(), JOIN_REQUEST_ACCEPTED_SENDER)
             .formatted(messageUtil.getLogin(user.getUserName()));
         botUtil.sendMessage(sender.getTelegramId(), senderMessage);
+        return true;
     }
 
-    private void handleReject(UserDto user, int messageId) {
+    @Override
+    public boolean handleReject(UserDto user, int messageId, long callbackId) {
         Optional<JoinRequest> joinRequestO = joinRequestService.rejectRequest(user.getId(), messageId);
         if (joinRequestO.isEmpty()) {
             EditMessageText message = acceptJoinRequestHelper.buildCantFindActiveJoinRequest(user, messageId);
             botUtil.executeMethod(message);
-            return;
+            return true;
         }
         JoinRequest joinRequest = joinRequestO.get();
         UserDto sender = userService.findByIdOrThrow(joinRequest.getUserId());
@@ -106,11 +99,12 @@ public class AcceptJoinRequestHandler extends BotHandler {
             sender, ownerLogin
         );
         botUtil.executeMethod(senderMessage);
+        return true;
     }
 
     @Override
     public boolean support(Update update) {
-        return supportCallbackCommand(update, ACCEPT_JOIN_REQUEST);
+        return supportCallbackCommand(update, command);
     }
 
 }

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 import rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand;
+import rey.bos.telegram.bot.shopping.list.io.LanguageCode;
 import rey.bos.telegram.bot.shopping.list.io.repository.params.UserShoppingListGroupParams;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 
@@ -43,7 +44,7 @@ public class MessageUtil {
         text = text.replaceFirst(command, "");
         text = text.replaceFirst(CallBackCommand.CONFIRM.getCommand(), "");
         text = text.replaceFirst(CallBackCommand.REJECT.getCommand(), "");
-        return Long.parseLong(text);
+        return !text.isEmpty() ? Long.parseLong(text) : -1;
     }
 
     public String getLogin(String userName) {
@@ -51,17 +52,21 @@ public class MessageUtil {
     }
 
     public List<InlineKeyboardRow> buildYesNoButtons(UserDto user, CallBackCommand command) {
+        return buildYesNoButtons(user.getId(), user.getLanguageCode(), command);
+    }
+
+    public List<InlineKeyboardRow> buildYesNoButtons(long id, LanguageCode code, CallBackCommand command) {
         return List.of(
             new InlineKeyboardRow(
                 InlineKeyboardButton
                     .builder()
-                    .text(botUtil.getText(user.getLanguageCode(), CONFIRM_MSG))
-                    .callbackData(command.getCommand() + user.getId() + CONFIRM.getCommand())
+                    .text(botUtil.getText(code, CONFIRM_MSG))
+                    .callbackData(command.getCommand() + id + CONFIRM.getCommand())
                     .build(),
                 InlineKeyboardButton
                     .builder()
-                    .text(botUtil.getText(user.getLanguageCode(), REJECT_MSG))
-                    .callbackData(command.getCommand() + user.getId() + REJECT.getCommand())
+                    .text(botUtil.getText(code, REJECT_MSG))
+                    .callbackData(command.getCommand() + id + REJECT.getCommand())
                     .build()
             )
         );
