@@ -44,17 +44,17 @@ public class DeleteItemTest {
         ShoppingList shoppingList = shoppingListService.findActiveList(user.getId());
         ShoppingListItem shoppingListItem = shoppingListItemFactory.addItem(shoppingList);
 
-        Update update = createUpdateObjectWithCallback(user, shoppingListItem.getId(), DELETE_ITEM.getCommand());
+        Update update = createUpdateObjectWithCallback(user, shoppingListItem.getId());
         shoppingListBot.consume(update);
 
         Optional<ShoppingListItem> storedItem = shoppingListItemRepository.findById(shoppingListItem.getId());
         assertThat(storedItem).isEmpty();
     }
 
-    private Update createUpdateObjectWithCallback(UserDto userDto, long itemId, String command) {
+    private Update createUpdateObjectWithCallback(UserDto userDto, long itemId) {
         Update update = new Update();
         CallbackQuery callbackQuery = new CallbackQuery();
-        callbackQuery.setData(command + itemId);
+        callbackQuery.setData(DELETE_ITEM.getCommand() + itemId);
         User user = new User(userDto.getTelegramId(), userDto.getFirstName(), false);
         user.setUserName(userDto.getUserName());
         callbackQuery.setFrom(user);
