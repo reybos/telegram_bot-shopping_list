@@ -1,4 +1,4 @@
-package rey.bos.telegram.bot.shopping.list.bot;
+package rey.bos.telegram.bot.shopping.list.bot.handler.impl.action;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.ClassRule;
@@ -12,6 +12,7 @@ import org.telegram.telegrambots.meta.api.objects.message.Message;
 import org.testcontainers.containers.PostgreSQLContainer;
 import rey.bos.telegram.bot.shopping.list.Application;
 import rey.bos.telegram.bot.shopping.list.BaeldungPostgresqlContainer;
+import rey.bos.telegram.bot.shopping.list.bot.ShoppingListBot;
 import rey.bos.telegram.bot.shopping.list.config.ApplicationConfig;
 import rey.bos.telegram.bot.shopping.list.factory.ShoppingListItemFactory;
 import rey.bos.telegram.bot.shopping.list.factory.UserFactory;
@@ -20,8 +21,8 @@ import rey.bos.telegram.bot.shopping.list.service.ShoppingListService;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.AddItemHandler.MAX_ITEM_LENGTH;
-import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.AddItemHandler.MAX_ITEM_NUMBER;
+import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.action.AddItemHandler.MAX_ITEM_LENGTH;
+import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.action.AddItemHandler.MAX_ITEM_NUMBER;
 
 @SpringBootTest(classes = {Application.class, ApplicationConfig.class})
 @ActiveProfiles({"tc", "tc-auto", "stub"})

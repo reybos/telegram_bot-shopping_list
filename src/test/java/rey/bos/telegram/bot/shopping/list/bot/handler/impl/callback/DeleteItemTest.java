@@ -1,4 +1,4 @@
-package rey.bos.telegram.bot.shopping.list.bot;
+package rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import rey.bos.telegram.bot.shopping.list.Application;
+import rey.bos.telegram.bot.shopping.list.bot.ShoppingListBot;
 import rey.bos.telegram.bot.shopping.list.config.ApplicationConfig;
 import rey.bos.telegram.bot.shopping.list.factory.ShoppingListItemFactory;
 import rey.bos.telegram.bot.shopping.list.factory.UserFactory;

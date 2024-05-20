@@ -63,8 +63,9 @@ public class DictionaryEn implements Dictionary {
             The command is not supported, the list of available commands can be viewed in the menu or by calling the /help command
             """
         );
-        dictionary.put(ERROR_EMPTY_MENTION_IN_JOIN, """
-            To merge shopping lists with another user, call the command "/join @login", where @login is the name of the telegram user you want to merge with. When merging, you will use a shared list with another user, your current list will become inactive.
+        dictionary.put(JOIN_COMMAND_MESSAGE, """
+            To merge shopping list with another user, send the bot the username of another user, for example @login, we will send him a request to merge.
+            When combining lists, you will use a shared list with another user, your current list will become inactive.
             """
         );
         dictionary.put(ERROR_TOO_MANY_MENTION_IN_JOIN, """
