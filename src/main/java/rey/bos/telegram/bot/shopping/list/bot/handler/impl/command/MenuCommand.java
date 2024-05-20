@@ -17,7 +17,9 @@ public enum MenuCommand {
     MENU_COMMAND_CHANGE_LANGUAGE("/change_language", """
         change language 🇺🇸"""),
     MENU_COMMAND_CLEAR_LIST("/clear", """
-        clear list 🗑""");
+        clear list 🗑"""),
+    MENU_COMMAND_GROUP("/show_group", """
+        view your group 👥""");
 
     private final String command;
     private final String description;
@@ -26,6 +28,7 @@ public enum MenuCommand {
         return List.of(
             MENU_COMMAND_SHOW_LIST,
             MENU_COMMAND_JOIN_USER,
+            MENU_COMMAND_GROUP,
             MENU_COMMAND_CHANGE_LANGUAGE,
             MENU_COMMAND_CLEAR_LIST
         );

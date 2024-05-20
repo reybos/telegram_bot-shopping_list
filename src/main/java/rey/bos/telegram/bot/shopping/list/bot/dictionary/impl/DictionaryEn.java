@@ -143,21 +143,25 @@ public class DictionaryEn implements Dictionary {
             """
         );
         dictionary.put(JOIN_REQUEST_ACCEPTED_OWNER, """
-            You have accepted the request to merge shopping lists with the user %s. Now you are the owner of the group and will be able to accept other users into it, in which case you will use the list all together.
+            You have accepted the request to merge shopping lists with the user %s.
+            
+            Now you are the owner of the group and will be able to accept other users into it, in which case you will use the list all together.
             """
         );
         dictionary.put(JOIN_REQUEST_ACCEPTED_SENDER, """
-            The request to merge the lists with %s has been approved, now you are using one list. If you send a new request to another user or accept a request to merge lists, the current list will become inactive for you and you will start using the merged list with another user.
+            The request to merge the lists with %s has been approved, now you are using one list.
             """
         );
         dictionary.put(GREETING_FOR_START, """
             Greetings %s! 👋
             I'll help you keep a shopping list, and you can also join other users in a group and keep one common list.
             
-            🔸 Any message sent to the bot will be added to the list. Excluding commands and user mentions.
+            🔸 Any message sent will be added to the list. Excluding commands and user mentions.
             🔸 Call the /list command to view the current list.
-            🔸 Call the /join command to maintain a shared list with another user, or simply send the username of this user to the bot, for example: @login.
-            🔸 Call the /change_language command to change the language of the bot.
+            🔸 Call the /join command and I'll tell you how to make one shared list with another user.
+            🔸 Call the /show_group command to see who you are sharing a list with.
+            🔸 Call the /change_language command to change the language.
+            🔸 Call the /clear command and after confirmation, I will clear the entire current list.
             """
         );
         dictionary.put(CHANGE_LANGUAGE_COMMAND, """
@@ -190,6 +194,59 @@ public class DictionaryEn implements Dictionary {
         );
         dictionary.put(REFRESH_LIST_BUTTON, """
             refresh list %s"""
+        );
+        dictionary.put(EMPTY_GROUP_MESSAGE, """
+            You haven't joined a group with anyone yet. Call the /join command to find out how to do this.
+            """
+        );
+        dictionary.put(OWNER_GROUP_MESSAGE, """
+            You are the owner of the group and can remove members from it.
+            
+            To remove from the group, click on the button with the desired user.
+            """
+        );
+        dictionary.put(MEMBER_GROUP_MESSAGE, """
+            You keep one list together with %s.
+            
+            You can exit the group by clicking on the button below.
+            """
+        );
+        dictionary.put(LEAVE_GROUP_BUTTON, """
+            leave the group 🚜"""
+        );
+        dictionary.put(LEAVE_GROUP_CONFIRM_MESSAGE, """
+            You are going to leave the current group and keep your own list.
+            
+            Continue?
+            """
+        );
+        dictionary.put(USER_LEFT_YOUR_GROUP_MESSAGE, """
+            User %s has left your group and lost access to your list.
+            """
+        );
+        dictionary.put(LEAVE_GROUP_CANCEL_MESSAGE, """
+            The command to leave the group has been canceled
+            """
+        );
+        dictionary.put(LEFT_GROUP_MESSAGE, """
+            You left the group and now keep your own list.
+            """
+        );
+        dictionary.put(REMOVE_USER_FROM_GROUP_CONFIRM_MESSAGE, """
+            Remove %s from the group?
+            """
+        );
+        dictionary.put(REMOVE_FROM_GROUP_CANCEL_MESSAGE, """
+            The command to remove %s from the group has been canceled.
+            """
+        );
+        dictionary.put(USER_REMOVED_FROM_GROUP_MESSAGE, """
+            User %s has been removed from the group ✅
+            """
+        );
+        dictionary.put(YOU_REMOVED_FROM_GROUP_MESSAGE, """
+            User %s has deleted you from the group, now you are maintaining your own list.
+            """
         );
     }
 }
