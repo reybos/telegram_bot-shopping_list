@@ -6,7 +6,6 @@ import rey.bos.telegram.bot.shopping.list.io.entity.JoinRequest;
 import rey.bos.telegram.bot.shopping.list.io.repository.JoinRequestRepository;
 import rey.bos.telegram.bot.shopping.list.io.repository.params.JoinRequestParams;
 import rey.bos.telegram.bot.shopping.list.service.JoinRequestService;
-import rey.bos.telegram.bot.shopping.list.service.UserShoppingListService;
 
 import java.util.List;
 import java.util.Optional;
@@ -16,7 +15,6 @@ import java.util.Optional;
 public class JoinRequestServiceImpl implements JoinRequestService {
 
     private final JoinRequestRepository joinRequestRepository;
-    private final UserShoppingListService userShoppingListService;
 
     @Override
     public List<JoinRequestParams> findActiveJoinRequest(long userId) {
@@ -51,6 +49,14 @@ public class JoinRequestServiceImpl implements JoinRequestService {
     @Override
     public Optional<JoinRequest> findRequest(long ownerId, int messageId) {
         return joinRequestRepository.findByOwnerIdAndMessageId(ownerId, messageId);
+    }
+
+    @Override
+    public List<JoinRequest> clearActiveRequest(long userId) {
+        List<JoinRequest> requests = joinRequestRepository.findActiveRequestByUserId(userId);
+        requests.forEach(req -> req.setExpired(true));
+        joinRequestRepository.saveAll(requests);
+        return requests;
     }
 
 }

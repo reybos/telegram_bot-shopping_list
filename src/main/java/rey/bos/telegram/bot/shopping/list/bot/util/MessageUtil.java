@@ -3,8 +3,12 @@ package rey.bos.telegram.bot.shopping.list.bot.util;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
+import rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey;
 import rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand;
 import rey.bos.telegram.bot.shopping.list.io.LanguageCode;
 import rey.bos.telegram.bot.shopping.list.io.repository.params.UserShoppingListGroupParams;
@@ -13,10 +17,8 @@ import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.CONFIRM_MSG;
-import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.REJECT_MSG;
-import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand.CONFIRM;
-import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand.REJECT;
+import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.*;
+import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand.*;
 
 @Component
 @AllArgsConstructor
@@ -51,6 +53,68 @@ public class MessageUtil {
         return "@" + userName;
     }
 
+    public EditMessageText buildEditMessageText(UserDto user, int messageId, DictionaryKey messageKey, Object... args) {
+        return buildEditMessageText(user.getTelegramId(), user.getLanguageCode(), messageId, messageKey, args);
+    }
+
+    public EditMessageText buildEditMessageText(
+        long telegramId, LanguageCode code, int messageId, DictionaryKey messageKey, Object... args
+    ) {
+        return editMessageTextBuilder(telegramId, code, messageId, messageKey, args).build();
+    }
+
+    public EditMessageText buildEditMessageTextWithButtons(
+        UserDto user, int messageId, DictionaryKey messageKey, List<InlineKeyboardRow> buttons, Object... args
+    ) {
+        return buildEditMessageTextWithButtons(
+            user.getTelegramId(), user.getLanguageCode(), messageId, messageKey, buttons, args
+        );
+    }
+
+    public EditMessageText buildEditMessageTextWithButtons(
+        long telegramId, LanguageCode code, int messageId, DictionaryKey messageKey,
+        List<InlineKeyboardRow> buttons, Object... args
+    ) {
+        return editMessageTextBuilder(telegramId, code, messageId, messageKey, args)
+            .replyMarkup(InlineKeyboardMarkup.builder()
+                .keyboard(buttons)
+                .build())
+            .build();
+    }
+
+    private EditMessageText.EditMessageTextBuilder<?, ?> editMessageTextBuilder(
+        long telegramId, LanguageCode code, int messageId, DictionaryKey messageKey, Object... args
+    ) {
+        return EditMessageText.builder()
+            .parseMode("HTML")
+            .chatId(telegramId)
+            .messageId(messageId)
+            .text(botUtil.getText(code, messageKey).formatted(args));
+    }
+
+    public SendMessage buildSendMessage(UserDto user, DictionaryKey messageKey, Object... args) {
+        return sendMessageTextBuilder(user.getTelegramId(), user.getLanguageCode(), messageKey, args).build();
+    }
+
+    public SendMessage buildSendMessageWithButtons(
+        UserDto user, DictionaryKey messageKey, List<InlineKeyboardRow> buttons, Object... args
+    ) {
+        return sendMessageTextBuilder(user.getTelegramId(), user.getLanguageCode(), messageKey, args)
+            .replyMarkup(InlineKeyboardMarkup.builder()
+                .keyboard(buttons)
+                .build())
+            .build();
+    }
+
+    private SendMessage.SendMessageBuilder<?, ?> sendMessageTextBuilder(
+        long telegramId, LanguageCode code, DictionaryKey messageKey, Object... args
+    ) {
+        return SendMessage.builder()
+            .parseMode("HTML")
+            .chatId(telegramId)
+            .text(botUtil.getText(code, messageKey).formatted(args));
+    }
+
     public List<InlineKeyboardRow> buildYesNoButtons(UserDto user, CallBackCommand command) {
         return buildYesNoButtons(user.getId(), user.getLanguageCode(), command);
     }
@@ -58,18 +122,24 @@ public class MessageUtil {
     public List<InlineKeyboardRow> buildYesNoButtons(long id, LanguageCode code, CallBackCommand command) {
         return List.of(
             new InlineKeyboardRow(
-                InlineKeyboardButton
-                    .builder()
-                    .text(botUtil.getText(code, CONFIRM_MSG))
-                    .callbackData(command.getCommand() + id + CONFIRM.getCommand())
-                    .build(),
-                InlineKeyboardButton
-                    .builder()
-                    .text(botUtil.getText(code, REJECT_MSG))
-                    .callbackData(command.getCommand() + id + REJECT.getCommand())
-                    .build()
+                buildButton(code, CONFIRM_MSG, command.getCommand() + id + CONFIRM.getCommand()),
+                buildButton(code, REJECT_MSG, command.getCommand() + id + REJECT.getCommand())
             )
         );
+    }
+
+    public InlineKeyboardButton buildButton(
+        LanguageCode code, DictionaryKey messageKey, String callbackData, Object... args
+    ) {
+        return buildButton(botUtil.getText(code, messageKey).formatted(args), callbackData);
+    }
+
+    public InlineKeyboardButton buildButton(String text, String callbackData) {
+        return InlineKeyboardButton
+            .builder()
+            .text(text)
+            .callbackData(callbackData)
+            .build();
     }
 
 }

@@ -27,7 +27,7 @@ public class JoinRequestFactory {
         }
         if (requestParams.getOwnerId() == null) {
             UserDto to = userFactory.createUser();
-            requestParams.setUserId(to.getId());
+            requestParams.setOwnerId(to.getId());
         }
         return joinRequestRepository.save(
             JoinRequest.builder()

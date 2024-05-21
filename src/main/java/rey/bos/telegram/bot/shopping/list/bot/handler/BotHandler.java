@@ -10,6 +10,7 @@ import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.MessageEntityType.BOT_COMMAND;
 
 public abstract class BotHandler {
+
     public abstract boolean handle(Update update, UserDto user);
 
     public abstract boolean support(Update update);

@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 import rey.bos.telegram.bot.shopping.list.io.LanguageCode;
 import rey.bos.telegram.bot.shopping.list.io.entity.ShoppingList;
@@ -21,7 +20,7 @@ import java.util.Random;
 import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.*;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand.DELETE_ITEM;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand.REFRESH_LIST;
-import static rey.bos.telegram.bot.shopping.list.bot.util.RefreshButtonColor.REFRESH_BUTTON_COLOR;
+import static rey.bos.telegram.bot.shopping.list.bot.util.RefreshButtonIcon.REFRESH_BUTTON_COLOR;
 
 @Component
 @RequiredArgsConstructor
@@ -29,6 +28,7 @@ public class ShoppingListHelper {
 
     private final BotUtil botUtil;
     private final MessageShoppingListService messageShoppingListService;
+    private final MessageUtil messageUtil;
 
     public SendMessage buildShoppingListSendMessage(UserDto user, ShoppingList shoppingList) {
         return SendMessage.builder()
@@ -45,20 +45,14 @@ public class ShoppingListHelper {
         new Random().nextInt(9);
         List<InlineKeyboardRow> rows = new ArrayList<>();
         rows.add(new InlineKeyboardRow(
-            InlineKeyboardButton
-                .builder()
-                .text(botUtil.getText(languageCode, REFRESH_LIST_BUTTON)
-                    .formatted(REFRESH_BUTTON_COLOR.get(new Random().nextInt(REFRESH_BUTTON_COLOR.size()))))
-                .callbackData(REFRESH_LIST.getCommand())
-                .build()
+            messageUtil.buildButton(
+                languageCode, REFRESH_LIST_BUTTON, REFRESH_LIST.getCommand(),
+                REFRESH_BUTTON_COLOR.get(new Random().nextInt(REFRESH_BUTTON_COLOR.size()))
+            )
         ));
         for (ShoppingListItem item : shoppingList.getItems()) {
             rows.add(new InlineKeyboardRow(
-                InlineKeyboardButton
-                    .builder()
-                    .text(item.getValue())
-                    .callbackData(DELETE_ITEM.getCommand() + item.getId())
-                    .build()
+                messageUtil.buildButton(item.getValue(), DELETE_ITEM.getCommand() + item.getId())
             ));
         }
         return rows;
@@ -82,7 +76,10 @@ public class ShoppingListHelper {
 
     private void refreshListMessage(ShoppingList shoppingList, MessageParams messageParams) {
         if (shoppingList.getItems().isEmpty()) {
-            EditMessageText message = buildEmptyListEditMessage(messageParams);
+            EditMessageText message = messageUtil.buildEditMessageText(
+                messageParams.getTelegramId(), messageParams.getLanguageCode(), messageParams.getMessageId(),
+                EMPTY_LIST_MESSAGE
+            );
             botUtil.executeMethod(message);
         } else {
             EditMessageText editMessage = buildShoppingListEditMessage(messageParams, shoppingList);
@@ -91,25 +88,10 @@ public class ShoppingListHelper {
     }
 
     public EditMessageText buildShoppingListEditMessage(MessageParams message, ShoppingList shoppingList) {
-        return EditMessageText.builder()
-            .parseMode("HTML")
-            .chatId(message.getTelegramId())
-            .messageId(message.getMessageId())
-            .text(botUtil.getText(message.getLanguageCode(), NOT_EMPTY_LIST_MESSAGE))
-            .replyMarkup(InlineKeyboardMarkup.builder()
-                .keyboard(buildItems(shoppingList, message.getLanguageCode()))
-                .build())
-            .build();
-    }
-
-    public EditMessageText buildEmptyListEditMessage(MessageParams message) {
-        return EditMessageText
-            .builder()
-            .parseMode("HTML")
-            .chatId(message.getTelegramId())
-            .messageId(message.getMessageId())
-            .text(botUtil.getText(message.getLanguageCode(), EMPTY_LIST_MESSAGE))
-            .build();
+        return messageUtil.buildEditMessageTextWithButtons(
+            message.getTelegramId(), message.getLanguageCode(), message.getMessageId(), NOT_EMPTY_LIST_MESSAGE,
+            buildItems(shoppingList, message.getLanguageCode())
+        );
     }
 
 }

@@ -13,6 +13,7 @@ import rey.bos.telegram.bot.shopping.list.service.UserService;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 import rey.bos.telegram.bot.shopping.list.shared.mapper.UserDtoMapper;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -98,6 +99,12 @@ public class UserServiceImpl implements UserService {
         user.setLanguageCode(userDto.getLanguageCode());
         user = userRepository.save(user);
         return userDtoMapper.map(user);
+    }
+
+    @Override
+    public List<UserDto> findUsersByIds(List<Long> ids) {
+        List<User> users = userRepository.findByIds(ids);
+        return userDtoMapper.map(users);
     }
 
 }

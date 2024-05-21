@@ -2,6 +2,7 @@ package rey.bos.telegram.bot.shopping.list.service;
 
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
@@ -17,5 +18,7 @@ public interface UserService {
     UserDto findByTelegramOrThrow(long telegramId);
 
     UserDto updateUser(UserDto user);
+
+    List<UserDto> findUsersByIds(List<Long> ids);
 
 }

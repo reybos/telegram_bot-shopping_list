@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import rey.bos.telegram.bot.shopping.list.bot.util.BotUtil;
-import rey.bos.telegram.bot.shopping.list.bot.util.ClearListHelper;
 import rey.bos.telegram.bot.shopping.list.bot.util.MessageUtil;
 import rey.bos.telegram.bot.shopping.list.service.ShoppingListService;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
@@ -20,16 +19,13 @@ public class ClearListHandler extends BotHandlerDecision {
 
     private final BotUtil botUtil;
     private final ShoppingListService shoppingListService;
-    private final ClearListHelper clearListHelper;
 
     public ClearListHandler(
-        MessageUtil messageUtil, BotUtil botUtil, ShoppingListService shoppingListService,
-        ClearListHelper clearListHelper
+        MessageUtil messageUtil, BotUtil botUtil, ShoppingListService shoppingListService
     ) {
         super(CLEAR_LIST, messageUtil);
         this.botUtil = botUtil;
         this.shoppingListService = shoppingListService;
-        this.clearListHelper = clearListHelper;
     }
 
     @Override
@@ -40,14 +36,14 @@ public class ClearListHandler extends BotHandlerDecision {
             log.error(e.getMessage(), e);
             return false;
         }
-        EditMessageText message = clearListHelper.buildMessage(user, messageId, CLEAR_LIST_ACCEPTED);
+        EditMessageText message = messageUtil.buildEditMessageText(user, messageId, CLEAR_LIST_ACCEPTED);
         botUtil.executeMethod(message);
         return true;
     }
 
     @Override
     public boolean handleReject(UserDto user, int messageId, long callbackId) {
-        EditMessageText message = clearListHelper.buildMessage(user, messageId, CLEAR_LIST_REJECTED);
+        EditMessageText message = messageUtil.buildEditMessageText(user, messageId, CLEAR_LIST_REJECTED);
         botUtil.executeMethod(message);
         return true;
     }

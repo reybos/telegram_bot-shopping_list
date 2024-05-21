@@ -6,12 +6,16 @@ import rey.bos.telegram.bot.shopping.list.io.LanguageCode;
 import rey.bos.telegram.bot.shopping.list.io.entity.User;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 
+import java.util.List;
+
 @Mapper(componentModel="spring")
 public abstract class UserDtoMapper {
 
     public abstract User map(UserDto userDto);
 
     public abstract UserDto map(User user);
+
+    public abstract List<UserDto> map(List<User> users);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "telegramId", source = "id")

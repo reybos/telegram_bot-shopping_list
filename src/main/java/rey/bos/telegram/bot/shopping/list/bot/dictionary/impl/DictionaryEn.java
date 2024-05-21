@@ -72,10 +72,19 @@ public class DictionaryEn implements Dictionary {
             You have specified too many users in the request, you can only join one
             """
         );
-        dictionary.put(ERROR_HAS_JOIN_REQUEST, """
+        dictionary.put(ERROR_HAS_ACTIVE_JOIN_REQUEST, """
             You have already made requests to merge with users: %s, wait for confirmation from them, or cancel the current requests to make a new one.
                                                                                    
             Cancel current applications?
+            """
+        );
+        dictionary.put(REJECT_JOINING_PROCCESS, """
+            The creation of a request to merge lists has been canceled.
+            """
+        );
+        dictionary.put(ACTIVE_JOIN_REQUEST_CLEARED, """
+            Active requests to merge lists have been canceled.
+            Please re-send the login of the user you want to merge the lists with.
             """
         );
         dictionary.put(CONFIRM_MSG, """
@@ -127,7 +136,8 @@ public class DictionaryEn implements Dictionary {
             """
         );
         dictionary.put(CANT_FIND_ACTIVE_JOIN_REQUEST, """
-            The request to merge the lists was not found. It may have already expired or been canceled earlier. Repeat the merge request "/join @login" if necessary.
+            The request to merge the lists was not found. 
+            It may have already expired or been canceled earlier.
             """
         );
         dictionary.put(OWNER_MSG_JOIN_REQUEST_REJECTED, """
@@ -154,7 +164,7 @@ public class DictionaryEn implements Dictionary {
         );
         dictionary.put(GREETING_FOR_START, """
             Greetings %s! 👋
-            I'll help you keep a shopping list, and you can also join other users in a group and keep one common list.
+            I will help you easily keep a shopping list. You can use the list yourself or team up with other users. Add and edit purchases conveniently and quickly!
             
             🔸 Any message sent will be added to the list. Excluding commands and user mentions.
             🔸 Call the /list command to view the current list.
@@ -162,6 +172,8 @@ public class DictionaryEn implements Dictionary {
             🔸 Call the /show_group command to see who you are sharing a list with.
             🔸 Call the /change_language command to change the language.
             🔸 Call the /clear command and after confirmation, I will clear the entire current list.
+            
+            Creator: @reybos
             """
         );
         dictionary.put(CHANGE_LANGUAGE_COMMAND, """
@@ -196,7 +208,8 @@ public class DictionaryEn implements Dictionary {
             refresh list %s"""
         );
         dictionary.put(EMPTY_GROUP_MESSAGE, """
-            You haven't joined a group with anyone yet. Call the /join command to find out how to do this.
+            You haven't joined a group with anyone yet.
+            Call the /join command to find out how to do this.
             """
         );
         dictionary.put(OWNER_GROUP_MESSAGE, """
@@ -246,6 +259,30 @@ public class DictionaryEn implements Dictionary {
         );
         dictionary.put(YOU_REMOVED_FROM_GROUP_MESSAGE, """
             User %s has deleted you from the group, now you are maintaining your own list.
+            """
+        );
+        dictionary.put(ERROR_OWNER_CANT_LEAVE_GROUP, """
+            You are the owner of the list and cannot leave the group.
+            Delete all participants using the /show_group command and repeat the request.
+            """
+        );
+        dictionary.put(LEAVE_GROUP_BEFORE_JOIN_SUCCESS_MESSAGE, """
+            You have left the current group.
+            Please re-send the username of the user you want to merge the lists with.
+            """
+        );
+        dictionary.put(ERROR_MEMBER_CANT_DISBAND_GROUP, """
+            You are a member of the group and cannot disband it.
+            Leave the group using the /show_group command and repeat the request.
+            """
+        );
+        dictionary.put(DISBAND_GROUP_SUCCESS_MESSAGE, """
+            You have disbanded the current group.
+            Please re-send the username of the user you want to merge the lists with.
+            """
+        );
+        dictionary.put(JOIN_REQUEST_CANCELLED, """
+            %s canceled the request to merge the list with you.
             """
         );
     }

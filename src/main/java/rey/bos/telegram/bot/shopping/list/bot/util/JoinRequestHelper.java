@@ -12,8 +12,7 @@ import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.ERROR_HAS_JOIN_REQUEST;
-import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.SEND_JOIN_REQUEST_SUCCESS;
+import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.*;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand.*;
 
 @Component
@@ -27,48 +26,29 @@ public class JoinRequestHelper {
         String users = requestParams.stream()
             .map(JoinRequestParams::getOwnerUserName)
             .collect(Collectors.joining(", "));
-        return SendMessage.builder()
-            .parseMode("HTML")
-            .chatId(user.getTelegramId())
-            .text(botUtil.getText(user.getLanguageCode(), ERROR_HAS_JOIN_REQUEST).formatted(users))
-            .replyMarkup(InlineKeyboardMarkup.builder()
-                .keyboard(messageUtil.buildYesNoButtons(user, CLEAR_EXIST_JOIN_REQUEST))
-                .build())
-            .build();
+        return messageUtil.buildSendMessageWithButtons(
+            user, ERROR_HAS_ACTIVE_JOIN_REQUEST, messageUtil.buildYesNoButtons(user, CLEAR_SENT_JOIN_REQUEST), users
+        );
     }
 
     public SendMessage buildHasActiveGroupMessage(
         List<UserShoppingListGroupParams> group, UserDto user, String mentionUser
     ) {
         String groupUsers = messageUtil.getLoginsExcludingCurrentUser(group, user);
-        String text = botUtil.getText(user.getLanguageCode(), DictionaryKey.ERROR_SENDER_IS_OWNER_ACTIVE_GROUP)
-            .formatted(groupUsers, mentionUser, groupUsers);
-
-        return SendMessage.builder()
-            .parseMode("HTML")
-            .chatId(user.getTelegramId())
-            .text(text)
-            .replyMarkup(InlineKeyboardMarkup.builder()
-                .keyboard(messageUtil.buildYesNoButtons(user, DISBAND_GROUP_AND_JOIN))
-                .build())
-            .build();
+        return messageUtil.buildSendMessageWithButtons(
+            user, ERROR_SENDER_IS_OWNER_ACTIVE_GROUP, messageUtil.buildYesNoButtons(user, DISBAND_GROUP_BEFORE_JOIN),
+            groupUsers, mentionUser, groupUsers
+        );
     }
 
     public SendMessage buildLeaveGroupMessage(
         List<UserShoppingListGroupParams> group, UserDto user, String mentionUser
     ) {
         String currentGroupOwner = messageUtil.getGroupOwnerLogin(group);
-        String text = botUtil.getText(user.getLanguageCode(), DictionaryKey.ERROR_SENDER_IS_MEMBER_OF_GROUP)
-            .formatted(currentGroupOwner, mentionUser);
-
-        return SendMessage.builder()
-            .parseMode("HTML")
-            .chatId(user.getTelegramId())
-            .text(text)
-            .replyMarkup(InlineKeyboardMarkup.builder()
-                .keyboard(messageUtil.buildYesNoButtons(user, LEAVE_GROUP_AND_JOIN))
-                .build())
-            .build();
+        return messageUtil.buildSendMessageWithButtons(
+            user, ERROR_SENDER_IS_MEMBER_OF_GROUP, messageUtil.buildYesNoButtons(user, LEAVE_GROUP_BEFORE_JOIN),
+            currentGroupOwner, mentionUser
+        );
     }
 
     public SendMessage buildAcceptJoinRequestWithoutActiveGroup(UserDto currUser, UserDto mentionUser) {
@@ -109,16 +89,6 @@ public class JoinRequestHelper {
             .replyMarkup(InlineKeyboardMarkup.builder()
                 .keyboard(messageUtil.buildYesNoButtons(user, ACCEPT_JOIN_REQUEST))
                 .build())
-            .build();
-    }
-
-    public SendMessage buildSendJoinRequestSuccess(UserDto user, String mentionUserName) {
-        String text = botUtil.getText(user.getLanguageCode(), SEND_JOIN_REQUEST_SUCCESS)
-            .formatted(mentionUserName);
-        return SendMessage.builder()
-            .parseMode("HTML")
-            .chatId(user.getTelegramId())
-            .text(text)
             .build();
     }
 
