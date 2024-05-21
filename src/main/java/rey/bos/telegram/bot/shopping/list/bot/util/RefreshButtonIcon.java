@@ -2,7 +2,7 @@ package rey.bos.telegram.bot.shopping.list.bot.util;
 
 import java.util.List;
 
-public class RefreshButtonColor {
+public class RefreshButtonIcon {
 
     public final static List<String> REFRESH_BUTTON_COLOR = List.of(
         """

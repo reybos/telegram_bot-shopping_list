@@ -7,9 +7,11 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
 import org.telegram.telegrambots.meta.api.objects.Update;
 import rey.bos.telegram.bot.shopping.list.bot.handler.BotHandler;
 import rey.bos.telegram.bot.shopping.list.bot.util.BotUtil;
-import rey.bos.telegram.bot.shopping.list.bot.util.GroupHelper;
+import rey.bos.telegram.bot.shopping.list.bot.util.MessageUtil;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 
+import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.LEAVE_GROUP_CONFIRM_MESSAGE;
+import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand.LEAVE_GROUP;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand.LEAVE_GROUP_CONFIRM;
 
 @Slf4j
@@ -19,13 +21,15 @@ public class LeaveGroupConfirmHandler extends BotHandler {
 
     private final CallBackCommand command = LEAVE_GROUP_CONFIRM;
 
-    private final GroupHelper groupHelper;
+    private final MessageUtil messageUtil;
     private final BotUtil botUtil;
 
     @Override
     public boolean handle(Update update, UserDto user) {
         int messageId = update.getCallbackQuery().getMessage().getMessageId();
-        EditMessageText message = groupHelper.buildLeaveGroupConfirm(user, messageId);
+        EditMessageText message = messageUtil.buildEditMessageTextWithButtons(
+            user, messageId, LEAVE_GROUP_CONFIRM_MESSAGE, messageUtil.buildYesNoButtons(user, LEAVE_GROUP)
+        );
         botUtil.executeMethod(message);
         return true;
     }

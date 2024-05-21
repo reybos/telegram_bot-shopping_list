@@ -16,6 +16,7 @@ import rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey;
 import rey.bos.telegram.bot.shopping.list.bot.handler.BotHandler;
 import rey.bos.telegram.bot.shopping.list.bot.util.BotUtil;
 import rey.bos.telegram.bot.shopping.list.bot.util.JoinRequestHelper;
+import rey.bos.telegram.bot.shopping.list.bot.util.MessageUtil;
 import rey.bos.telegram.bot.shopping.list.io.entity.ShoppingList;
 import rey.bos.telegram.bot.shopping.list.io.repository.params.JoinRequestParams;
 import rey.bos.telegram.bot.shopping.list.io.repository.params.UserShoppingListGroupParams;
@@ -28,6 +29,7 @@ import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 import java.util.List;
 import java.util.Optional;
 
+import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.SEND_JOIN_REQUEST_SUCCESS;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.MessageEntityType.MENTION;
 
 @Component
@@ -42,6 +44,7 @@ public class MentionUserHandler extends BotHandler {
     private final UserShoppingListServiceImpl userShoppingListService;
     private final ShoppingListService shoppingListService;
     private final TelegramClient telegramClient;
+    private final MessageUtil messageUtil;
 
     @Override
     public boolean handle(Update update, UserDto user) {
@@ -74,7 +77,7 @@ public class MentionUserHandler extends BotHandler {
             log.error(e.getMessage(), e);
             return false;
         }
-        SendMessage currentUserMessage = joinRequestHelper.buildSendJoinRequestSuccess(user, mentionLogin);
+        SendMessage currentUserMessage = messageUtil.buildSendMessage(user, SEND_JOIN_REQUEST_SUCCESS, mentionLogin);
         try {
             Message sentMessage = telegramClient.execute(mentionUserMessage);
             joinRequestService.createJoinRequest(user.getId(), mentionUser.getId(), sentMessage.getMessageId());

@@ -89,6 +89,15 @@ public class UserShoppingListServiceImpl implements UserShoppingListService {
         return userShoppingListRepository.getUserListParamsById(userListId);
     }
 
+    @Override
+    @Transactional
+    public List<Long> disbandGroup(long userId) {
+        List<UserShoppingList> group = userShoppingListRepository.findActiveGroupByUserId(userId);
+        group = group.stream().filter(item -> item.getUserId() != userId).toList();
+        group.forEach(userList -> restoreMainList(userList.getUserId(), userList));
+        return group.stream().map(UserShoppingList::getUserId).toList();
+    }
+
     private void checkListCount(List<UserShoppingList> lists, long userId) {
         if (CollectionUtils.isEmpty(lists) || lists.size() != 1) {
             throw new IllegalStateException(

@@ -22,4 +22,6 @@ public interface UserShoppingListService {
 
     UserShoppingListGroupParams getUserListParamsById(long userListId);
 
+    List<Long> disbandGroup(long userId);
+
 }

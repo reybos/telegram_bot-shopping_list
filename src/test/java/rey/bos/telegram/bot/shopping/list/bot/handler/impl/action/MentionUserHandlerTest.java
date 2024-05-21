@@ -99,7 +99,7 @@ public class MentionUserHandlerTest {
         shoppingListBot.consume(update);
         SendMessage message = getVerifySendMessage();
         assertThat(message.getText()).isEqualTo(
-            botUtil.getText(from.getLanguageCode(), ERROR_HAS_JOIN_REQUEST)
+            botUtil.getText(from.getLanguageCode(), ERROR_HAS_ACTIVE_JOIN_REQUEST)
                 .formatted(messageUtil.getLogin(to.getUserName()))
         );
     }

@@ -16,4 +16,6 @@ public interface JoinRequestService {
 
     Optional<JoinRequest> findRequest(long ownerId, int messageId);
 
+    List<JoinRequest> clearActiveRequest(long userId);
+
 }

@@ -5,8 +5,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 import rey.bos.telegram.bot.shopping.list.io.repository.params.UserShoppingListGroupParams;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
@@ -21,14 +19,13 @@ import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallB
 @RequiredArgsConstructor
 public class GroupHelper {
 
-    private final BotUtil botUtil;
     private final MessageUtil messageUtil;
 
     public SendMessage buildGroupMessage(UserDto user, List<UserShoppingListGroupParams> group) {
         UserShoppingListGroupParams owner = group.stream().filter(UserShoppingListGroupParams::isOwner).toList().get(0);
         group = group.stream().filter(item -> item.getUserId() != user.getId()).toList();
         if (CollectionUtils.isEmpty(group)) {
-            return buildEmptyGroup(user);
+            return messageUtil.buildSendMessage(user, EMPTY_GROUP_MESSAGE);
         } else if (owner.getUserId() == user.getId()) {
             return buildOwnerGroup(user, group);
         } else {
@@ -36,128 +33,44 @@ public class GroupHelper {
         }
     }
 
-    private SendMessage buildEmptyGroup(UserDto user) {
-        return SendMessage
-            .builder()
-            .parseMode("HTML")
-            .chatId(user.getTelegramId())
-            .text(botUtil.getText(user.getLanguageCode(), EMPTY_GROUP_MESSAGE))
-            .build();
-    }
-
     private SendMessage buildOwnerGroup(UserDto user, List<UserShoppingListGroupParams> group) {
-        return SendMessage
-            .builder()
-            .parseMode("HTML")
-            .chatId(user.getTelegramId())
-            .text(botUtil.getText(user.getLanguageCode(), OWNER_GROUP_MESSAGE))
-            .replyMarkup(InlineKeyboardMarkup.builder()
-                .keyboard(buildItems(group))
-                .build())
-            .build();
+        return messageUtil.buildSendMessageWithButtons(user, OWNER_GROUP_MESSAGE, buildItems(group));
     }
 
     private List<InlineKeyboardRow> buildItems(List<UserShoppingListGroupParams> group) {
         List<InlineKeyboardRow> rows = new ArrayList<>();
         for (UserShoppingListGroupParams params : group) {
             rows.add(new InlineKeyboardRow(
-                InlineKeyboardButton
-                    .builder()
-                    .text(messageUtil.getLogin(params.getUserName()))
-                    .callbackData(REMOVE_USER_FROM_GROUP_CONFIRM.getCommand() + params.getUserListId())
-                    .build()
+                messageUtil.buildButton(
+                    messageUtil.getLogin(params.getUserName()),
+                    REMOVE_USER_FROM_GROUP_CONFIRM.getCommand() + params.getUserListId()
+                )
             ));
         }
         return rows;
     }
 
     private SendMessage buildMemberGroup(UserDto user, UserShoppingListGroupParams owner) {
-        return SendMessage
-            .builder()
-            .parseMode("HTML")
-            .chatId(user.getTelegramId())
-            .text(botUtil.getText(user.getLanguageCode(), MEMBER_GROUP_MESSAGE)
-                .formatted(messageUtil.getLogin(owner.getUserName())))
-            .replyMarkup(InlineKeyboardMarkup.builder()
-                .keyboard(List.of(new InlineKeyboardRow(
-                    InlineKeyboardButton
-                        .builder()
-                        .text(botUtil.getText(user.getLanguageCode(), LEAVE_GROUP_BUTTON))
-                        .callbackData(LEAVE_GROUP_CONFIRM.getCommand())
-                        .build()
-                )))
-                .build())
-            .build();
-    }
-
-    public EditMessageText buildLeaveGroupConfirm(UserDto user, int messageId) {
-        return EditMessageText.builder()
-            .parseMode("HTML")
-            .chatId(user.getTelegramId())
-            .messageId(messageId)
-            .text(botUtil.getText(user.getLanguageCode(), LEAVE_GROUP_CONFIRM_MESSAGE))
-            .replyMarkup(InlineKeyboardMarkup.builder()
-                .keyboard(messageUtil.buildYesNoButtons(user, LEAVE_GROUP))
-                .build())
-            .build();
-    }
-
-    public EditMessageText buildLeftGroup(UserDto user, int messageId) {
-        return EditMessageText
-            .builder()
-            .parseMode("HTML")
-            .chatId(user.getTelegramId())
-            .messageId(messageId)
-            .text(botUtil.getText(user.getLanguageCode(), LEFT_GROUP_MESSAGE))
-            .build();
-    }
-
-    public EditMessageText buildLeaveGroupCancel(UserDto user, int messageId) {
-        return EditMessageText
-            .builder()
-            .parseMode("HTML")
-            .chatId(user.getTelegramId())
-            .messageId(messageId)
-            .text(botUtil.getText(user.getLanguageCode(), LEAVE_GROUP_CANCEL_MESSAGE))
-            .build();
+        List<InlineKeyboardRow> buttons = List.of(new InlineKeyboardRow(
+            messageUtil.buildButton(
+                user.getLanguageCode(), LEAVE_GROUP_BUTTON, LEAVE_GROUP_CONFIRM.getCommand()
+            )
+        ));
+        return messageUtil.buildSendMessageWithButtons(
+            user, MEMBER_GROUP_MESSAGE, buttons, messageUtil.getLogin(owner.getUserName())
+        );
     }
 
     public EditMessageText buildRemoveUserFromGroup(
         UserDto user, int messageId, UserShoppingListGroupParams userShoppingList
     ) {
-        return EditMessageText
-            .builder()
-            .parseMode("HTML")
-            .chatId(user.getTelegramId())
-            .messageId(messageId)
-            .text(botUtil.getText(user.getLanguageCode(), REMOVE_USER_FROM_GROUP_CONFIRM_MESSAGE)
-                .formatted(messageUtil.getLogin(userShoppingList.getUserName())))
-            .replyMarkup(InlineKeyboardMarkup.builder()
-                .keyboard(messageUtil.buildYesNoButtons(
-                    userShoppingList.getUserListId(), user.getLanguageCode(), REMOVE_USER_FROM_GROUP)
-                )
-                .build())
-            .build();
-    }
-
-    public EditMessageText buildRemoveGroupCancel(UserDto user, int messageId, String userName) {
-        return EditMessageText.builder()
-            .parseMode("HTML")
-            .chatId(user.getTelegramId())
-            .messageId(messageId)
-            .text(botUtil.getText(user.getLanguageCode(), REMOVE_FROM_GROUP_CANCEL_MESSAGE)
-                .formatted(messageUtil.getLogin(userName)))
-            .build();
-    }
-
-    public EditMessageText buildUserRemovedFromGroup(UserDto user, int messageId, String userName) {
-        return EditMessageText.builder()
-            .parseMode("HTML")
-            .chatId(user.getTelegramId())
-            .messageId(messageId)
-            .text(botUtil.getText(user.getLanguageCode(), USER_REMOVED_FROM_GROUP_MESSAGE)
-                .formatted(messageUtil.getLogin(userName)))
-            .build();
+        return messageUtil.buildEditMessageTextWithButtons(
+            user, messageId, REMOVE_USER_FROM_GROUP_CONFIRM_MESSAGE,
+            messageUtil.buildYesNoButtons(
+                userShoppingList.getUserListId(), user.getLanguageCode(), REMOVE_USER_FROM_GROUP
+            ),
+            messageUtil.getLogin(userShoppingList.getUserName())
+        );
     }
 
 }

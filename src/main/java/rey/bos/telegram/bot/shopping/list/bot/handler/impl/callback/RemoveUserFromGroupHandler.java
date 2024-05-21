@@ -12,7 +12,7 @@ import rey.bos.telegram.bot.shopping.list.service.UserService;
 import rey.bos.telegram.bot.shopping.list.service.UserShoppingListService;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 
-import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.YOU_REMOVED_FROM_GROUP_MESSAGE;
+import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.*;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand.REMOVE_USER_FROM_GROUP;
 
 @Slf4j
@@ -40,7 +40,9 @@ public class RemoveUserFromGroupHandler extends BotHandlerDecision {
         UserShoppingListGroupParams params = userShoppingListService.getUserListParamsById(callbackId);
         UserDto removedUser = userService.findByIdOrThrow(params.getUserId());
         userShoppingListService.restoreMainList(removedUser.getId());
-        EditMessageText message = groupHelper.buildUserRemovedFromGroup(user, messageId, removedUser.getUserName());
+        EditMessageText message = messageUtil.buildEditMessageText(
+            user, messageId, USER_REMOVED_FROM_GROUP_MESSAGE, messageUtil.getLogin(removedUser.getUserName())
+        );
         botUtil.executeMethod(message);
         String removedUserMessage = botUtil.getText(removedUser.getLanguageCode(), YOU_REMOVED_FROM_GROUP_MESSAGE)
             .formatted(messageUtil.getLogin(user.getUserName()));
@@ -51,7 +53,9 @@ public class RemoveUserFromGroupHandler extends BotHandlerDecision {
     @Override
     public boolean handleReject(UserDto user, int messageId, long callbackId) {
         UserShoppingListGroupParams params = userShoppingListService.getUserListParamsById(callbackId);
-        EditMessageText message = groupHelper.buildRemoveGroupCancel(user, messageId, params.getUserName());
+        EditMessageText message = messageUtil.buildEditMessageText(
+            user, messageId, REMOVE_FROM_GROUP_CANCEL_MESSAGE, messageUtil.getLogin(params.getUserName())
+        );
         botUtil.executeMethod(message);
         return true;
     }

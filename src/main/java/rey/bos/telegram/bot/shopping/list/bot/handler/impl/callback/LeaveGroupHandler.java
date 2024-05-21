@@ -6,7 +6,6 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
 import org.telegram.telegrambots.meta.api.objects.Update;
 import rey.bos.telegram.bot.shopping.list.bot.util.BotUtil;
 import rey.bos.telegram.bot.shopping.list.bot.util.MessageUtil;
-import rey.bos.telegram.bot.shopping.list.bot.util.GroupHelper;
 import rey.bos.telegram.bot.shopping.list.io.entity.UserShoppingList;
 import rey.bos.telegram.bot.shopping.list.service.UserService;
 import rey.bos.telegram.bot.shopping.list.service.UserShoppingListService;
@@ -14,7 +13,7 @@ import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 
 import java.util.List;
 
-import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.USER_LEFT_YOUR_GROUP_MESSAGE;
+import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.*;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand.LEAVE_GROUP;
 
 @Slf4j
@@ -22,17 +21,15 @@ import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallB
 public class LeaveGroupHandler extends BotHandlerDecision {
 
     private final UserShoppingListService userShoppingListService;
-    private final GroupHelper groupHelper;
     private final BotUtil botUtil;
     private final UserService userService;
 
     public LeaveGroupHandler(
-        MessageUtil messageUtil, UserShoppingListService userShoppingListService, GroupHelper groupHelper,
+        MessageUtil messageUtil, UserShoppingListService userShoppingListService,
         BotUtil botUtil, UserService userService
     ) {
         super(LEAVE_GROUP, messageUtil);
         this.userShoppingListService = userShoppingListService;
-        this.groupHelper = groupHelper;
         this.botUtil = botUtil;
         this.userService = userService;
     }
@@ -46,14 +43,14 @@ public class LeaveGroupHandler extends BotHandlerDecision {
         String ownerText = botUtil.getText(owner.getLanguageCode(), USER_LEFT_YOUR_GROUP_MESSAGE)
             .formatted(messageUtil.getLogin(user.getUserName()));
         botUtil.sendMessage(owner.getTelegramId(), ownerText);
-        EditMessageText message = groupHelper.buildLeftGroup(user, messageId);
+        EditMessageText message = messageUtil.buildEditMessageText(user, messageId, LEFT_GROUP_MESSAGE);
         botUtil.executeMethod(message);
         return true;
     }
 
     @Override
     public boolean handleReject(UserDto user, int messageId, long callbackId) {
-        EditMessageText message = groupHelper.buildLeaveGroupCancel(user, messageId);
+        EditMessageText message = messageUtil.buildEditMessageText(user, messageId, LEAVE_GROUP_CANCEL_MESSAGE);
         botUtil.executeMethod(message);
         return true;
     }

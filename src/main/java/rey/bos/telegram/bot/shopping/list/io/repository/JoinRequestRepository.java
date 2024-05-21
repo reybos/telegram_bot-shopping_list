@@ -40,4 +40,16 @@ public interface JoinRequestRepository extends CrudRepository<JoinRequest, Long>
     )
     Optional<JoinRequest> findByOwnerIdAndMessageId(@Param("ownerId") long ownerId, @Param("messageId") int messageId);
 
+    @Query(
+        """
+        SELECT *
+        FROM join_request
+        WHERE user_id = :userId
+            AND NOT approved
+            AND NOT expired
+            AND NOT rejected
+        """
+    )
+    List<JoinRequest> findActiveRequestByUserId(@Param("userId") long userId);
+
 }

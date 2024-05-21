@@ -6,7 +6,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import rey.bos.telegram.bot.shopping.list.bot.util.AcceptJoinRequestHelper;
 import rey.bos.telegram.bot.shopping.list.bot.util.BotUtil;
 import rey.bos.telegram.bot.shopping.list.bot.util.MessageUtil;
 import rey.bos.telegram.bot.shopping.list.io.entity.JoinRequest;
@@ -18,7 +17,7 @@ import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 
 import java.util.Optional;
 
-import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.JOIN_REQUEST_ACCEPTED_SENDER;
+import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.*;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand.ACCEPT_JOIN_REQUEST;
 
 @Slf4j
@@ -27,20 +26,17 @@ public class AcceptJoinRequestHandler extends BotHandlerDecision {
 
     private final JoinRequestService joinRequestService;
     private final BotUtil botUtil;
-    private final AcceptJoinRequestHelper acceptJoinRequestHelper;
     private final UserService userService;
     private final UserShoppingListService userShoppingListService;
     private final TransactionTemplate transactionTemplate;
 
     public AcceptJoinRequestHandler(
-        MessageUtil messageUtil, JoinRequestService joinRequestService, BotUtil botUtil,
-        AcceptJoinRequestHelper acceptJoinRequestHelper, UserService userService,
+        MessageUtil messageUtil, JoinRequestService joinRequestService, BotUtil botUtil, UserService userService,
         UserShoppingListService userShoppingListService, TransactionTemplate transactionTemplate
     ) {
         super(ACCEPT_JOIN_REQUEST, messageUtil);
         this.joinRequestService = joinRequestService;
         this.botUtil = botUtil;
-        this.acceptJoinRequestHelper = acceptJoinRequestHelper;
         this.userService = userService;
         this.userShoppingListService = userShoppingListService;
         this.transactionTemplate = transactionTemplate;
@@ -50,7 +46,9 @@ public class AcceptJoinRequestHandler extends BotHandlerDecision {
     public boolean handleAccept(UserDto user, int messageId, long callbackId) {
         Optional<JoinRequest> joinRequestO = joinRequestService.findRequest(user.getId(), messageId);
         if (joinRequestO.isEmpty()) {
-            EditMessageText message = acceptJoinRequestHelper.buildCantFindActiveJoinRequest(user, messageId);
+            EditMessageText message = messageUtil.buildEditMessageText(
+                user, messageId, CANT_FIND_ACTIVE_JOIN_REQUEST
+            );
             botUtil.executeMethod(message);
             return true;
         }
@@ -69,8 +67,8 @@ public class AcceptJoinRequestHandler extends BotHandlerDecision {
             return false;
         }
         UserDto sender = userService.findByIdOrThrow(joinRequest.getUserId());
-        EditMessageText ownerMessage = acceptJoinRequestHelper.buildJoinRequestAcceptedOwner(
-            user, messageUtil.getLogin(sender.getUserName()), messageId
+        EditMessageText ownerMessage = messageUtil.buildEditMessageText(
+            user, messageId, JOIN_REQUEST_ACCEPTED_OWNER, messageUtil.getLogin(sender.getUserName())
         );
         botUtil.executeMethod(ownerMessage);
         String senderMessage = botUtil.getText(sender.getLanguageCode(), JOIN_REQUEST_ACCEPTED_SENDER)
@@ -83,21 +81,21 @@ public class AcceptJoinRequestHandler extends BotHandlerDecision {
     public boolean handleReject(UserDto user, int messageId, long callbackId) {
         Optional<JoinRequest> joinRequestO = joinRequestService.rejectRequest(user.getId(), messageId);
         if (joinRequestO.isEmpty()) {
-            EditMessageText message = acceptJoinRequestHelper.buildCantFindActiveJoinRequest(user, messageId);
+            EditMessageText message = messageUtil.buildEditMessageText(
+                user, messageId, CANT_FIND_ACTIVE_JOIN_REQUEST
+            );
             botUtil.executeMethod(message);
             return true;
         }
         JoinRequest joinRequest = joinRequestO.get();
         UserDto sender = userService.findByIdOrThrow(joinRequest.getUserId());
         String senderLogin = messageUtil.getLogin(sender.getUserName());
-        EditMessageText ownerMsg = acceptJoinRequestHelper.buildOwnerMsgJoinRequestRejected(
-            user, senderLogin, messageId
+        EditMessageText ownerMsg = messageUtil.buildEditMessageText(
+            user, messageId, OWNER_MSG_JOIN_REQUEST_REJECTED, senderLogin
         );
         botUtil.executeMethod(ownerMsg);
         String ownerLogin = messageUtil.getLogin(user.getUserName());
-        SendMessage senderMessage = acceptJoinRequestHelper.buildSenderMsgJoinRequestRejected(
-            sender, ownerLogin
-        );
+        SendMessage senderMessage = messageUtil.buildSendMessage(sender, SENDER_MSG_JOIN_REQUEST_REJECTED, ownerLogin);
         botUtil.executeMethod(senderMessage);
         return true;
     }
