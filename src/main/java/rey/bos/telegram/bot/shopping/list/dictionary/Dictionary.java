@@ -1,4 +1,4 @@
-package rey.bos.telegram.bot.shopping.list.bot.dictionary;
+package rey.bos.telegram.bot.shopping.list.dictionary;
 
 import rey.bos.telegram.bot.shopping.list.io.LanguageCode;
 

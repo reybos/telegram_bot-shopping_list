@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey;
+import rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey;
 import rey.bos.telegram.bot.shopping.list.bot.handler.BotHandler;
-import rey.bos.telegram.bot.shopping.list.bot.util.BotUtil;
+import rey.bos.telegram.bot.shopping.list.util.BotUtil;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.command.MenuCommand.MENU_COMMAND_JOIN_USER;

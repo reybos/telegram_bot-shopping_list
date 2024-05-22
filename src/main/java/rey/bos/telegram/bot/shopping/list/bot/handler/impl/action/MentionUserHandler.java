@@ -12,11 +12,11 @@ import org.telegram.telegrambots.meta.api.objects.message.Message;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
-import rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey;
+import rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey;
 import rey.bos.telegram.bot.shopping.list.bot.handler.BotHandler;
-import rey.bos.telegram.bot.shopping.list.bot.util.BotUtil;
-import rey.bos.telegram.bot.shopping.list.bot.util.JoinRequestHelper;
-import rey.bos.telegram.bot.shopping.list.bot.util.MessageUtil;
+import rey.bos.telegram.bot.shopping.list.util.BotUtil;
+import rey.bos.telegram.bot.shopping.list.bot.helper.JoinRequestHelper;
+import rey.bos.telegram.bot.shopping.list.util.MessageUtil;
 import rey.bos.telegram.bot.shopping.list.io.entity.ShoppingList;
 import rey.bos.telegram.bot.shopping.list.io.repository.params.JoinRequestParams;
 import rey.bos.telegram.bot.shopping.list.io.repository.params.UserShoppingListGroupParams;
@@ -29,7 +29,7 @@ import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 import java.util.List;
 import java.util.Optional;
 
-import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.SEND_JOIN_REQUEST_SUCCESS;
+import static rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey.SEND_JOIN_REQUEST_SUCCESS;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.MessageEntityType.MENTION;
 
 @Component

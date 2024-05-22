@@ -1,4 +1,4 @@
-package rey.bos.telegram.bot.shopping.list.bot.util;
+package rey.bos.telegram.bot.shopping.list.bot.helper;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -12,15 +12,15 @@ import rey.bos.telegram.bot.shopping.list.io.entity.ShoppingListItem;
 import rey.bos.telegram.bot.shopping.list.io.repository.params.MessageParams;
 import rey.bos.telegram.bot.shopping.list.service.MessageShoppingListService;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
+import rey.bos.telegram.bot.shopping.list.util.BotUtil;
+import rey.bos.telegram.bot.shopping.list.util.MessageUtil;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
-import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.*;
+import static rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey.*;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand.DELETE_ITEM;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand.REFRESH_LIST;
-import static rey.bos.telegram.bot.shopping.list.bot.util.RefreshButtonIcon.REFRESH_BUTTON_COLOR;
+import static rey.bos.telegram.bot.shopping.list.bot.helper.RefreshButtonIcon.REFRESH_BUTTON_COLOR;
 
 @Component
 @RequiredArgsConstructor
@@ -50,7 +50,9 @@ public class ShoppingListHelper {
                 REFRESH_BUTTON_COLOR.get(new Random().nextInt(REFRESH_BUTTON_COLOR.size()))
             )
         ));
-        for (ShoppingListItem item : shoppingList.getItems()) {
+        List<ShoppingListItem> items = new ArrayList<>(shoppingList.getItems());
+        Collections.sort(items);
+        for (ShoppingListItem item : items) {
             rows.add(new InlineKeyboardRow(
                 messageUtil.buildButton(item.getValue(), DELETE_ITEM.getCommand() + item.getId())
             ));

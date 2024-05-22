@@ -10,8 +10,8 @@ import org.telegram.telegrambots.meta.api.objects.message.Message;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 import rey.bos.telegram.bot.shopping.list.bot.handler.BotHandler;
-import rey.bos.telegram.bot.shopping.list.bot.util.BotUtil;
-import rey.bos.telegram.bot.shopping.list.bot.util.ShoppingListHelper;
+import rey.bos.telegram.bot.shopping.list.util.BotUtil;
+import rey.bos.telegram.bot.shopping.list.bot.helper.ShoppingListHelper;
 import rey.bos.telegram.bot.shopping.list.io.entity.ShoppingList;
 import rey.bos.telegram.bot.shopping.list.io.repository.params.MessageParams;
 import rey.bos.telegram.bot.shopping.list.service.MessageShoppingListService;
@@ -20,7 +20,7 @@ import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 
 import java.util.List;
 
-import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.EMPTY_LIST_MESSAGE;
+import static rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey.EMPTY_LIST_MESSAGE;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.command.MenuCommand.MENU_COMMAND_SHOW_LIST;
 
 @Component

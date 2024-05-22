@@ -1,4 +1,4 @@
-package rey.bos.telegram.bot.shopping.list.bot.util;
+package rey.bos.telegram.bot.shopping.list.util;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -7,14 +7,14 @@ import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
-import rey.bos.telegram.bot.shopping.list.bot.dictionary.Dictionary;
-import rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey;
+import rey.bos.telegram.bot.shopping.list.dictionary.Dictionary;
+import rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey;
 import rey.bos.telegram.bot.shopping.list.io.LanguageCode;
 
 import java.io.Serializable;
 import java.util.List;
 
-import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.SOMETHING_WENT_WRONG;
+import static rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey.SOMETHING_WENT_WRONG;
 
 @Component
 @AllArgsConstructor

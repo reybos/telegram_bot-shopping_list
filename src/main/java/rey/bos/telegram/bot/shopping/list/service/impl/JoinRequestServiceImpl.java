@@ -2,11 +2,15 @@ package rey.bos.telegram.bot.shopping.list.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import rey.bos.telegram.bot.shopping.list.io.entity.JoinRequest;
 import rey.bos.telegram.bot.shopping.list.io.repository.JoinRequestRepository;
 import rey.bos.telegram.bot.shopping.list.io.repository.params.JoinRequestParams;
 import rey.bos.telegram.bot.shopping.list.service.JoinRequestService;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +19,7 @@ import java.util.Optional;
 public class JoinRequestServiceImpl implements JoinRequestService {
 
     private final JoinRequestRepository joinRequestRepository;
+    private final Clock clock;
 
     @Override
     public List<JoinRequestParams> findActiveJoinRequest(long userId) {
@@ -31,6 +36,7 @@ public class JoinRequestServiceImpl implements JoinRequestService {
                 .approved(false)
                 .expired(false)
                 .rejected(false)
+                .createdAt(Instant.now(clock))
                 .build()
         );
     }
@@ -57,6 +63,19 @@ public class JoinRequestServiceImpl implements JoinRequestService {
         requests.forEach(req -> req.setExpired(true));
         joinRequestRepository.saveAll(requests);
         return requests;
+    }
+
+    @Override
+    public List<JoinRequest> expireRequests(int hoursBeforeExpire) {
+        List<JoinRequest> expiredRequests = joinRequestRepository.findExpiredRequests(
+            Instant.now(clock).minus(hoursBeforeExpire, ChronoUnit.HOURS)
+        );
+        if (CollectionUtils.isEmpty(expiredRequests)) {
+            return List.of();
+        }
+        expiredRequests.forEach(req -> req.setExpired(true));
+        joinRequestRepository.saveAll(expiredRequests);
+        return expiredRequests;
     }
 
 }

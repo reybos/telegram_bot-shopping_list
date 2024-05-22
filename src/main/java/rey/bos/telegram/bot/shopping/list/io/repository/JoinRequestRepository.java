@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import rey.bos.telegram.bot.shopping.list.io.entity.JoinRequest;
 import rey.bos.telegram.bot.shopping.list.io.repository.params.JoinRequestParams;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,5 +52,17 @@ public interface JoinRequestRepository extends CrudRepository<JoinRequest, Long>
         """
     )
     List<JoinRequest> findActiveRequestByUserId(@Param("userId") long userId);
+
+    @Query(
+        """
+        SELECT *
+        FROM join_request
+        WHERE created_at < :timeToExpire
+            AND NOT approved
+            AND NOT expired
+            AND NOT rejected
+        """
+    )
+    List<JoinRequest> findExpiredRequests(@Param("timeToExpire") Instant timeToExpire);
 
 }
