@@ -18,6 +18,7 @@ public abstract class UserDtoMapper {
     public abstract List<UserDto> map(List<User> users);
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(target = "blocked", ignore = true)
     @Mapping(target = "telegramId", source = "id")
     public abstract UserDto map(org.telegram.telegrambots.meta.api.objects.User user);
 
