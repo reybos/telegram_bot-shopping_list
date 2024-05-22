@@ -59,7 +59,7 @@ public class MentionUserHandler extends BotHandler {
         if (isMentionedHimself(user, mentionLogin)) {
             return true;
         }
-        Optional<UserDto> mentionUserO = userService.findUserByLogin(mentionLogin);
+        Optional<UserDto> mentionUserO = userService.findActiveUserByLogin(mentionLogin);
         if (isMentionUserNotExist(mentionUserO, mentionLogin, user)) {
             return true;
         }

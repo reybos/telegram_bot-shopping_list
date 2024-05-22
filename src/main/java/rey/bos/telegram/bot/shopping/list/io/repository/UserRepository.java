@@ -14,13 +14,16 @@ public interface UserRepository extends CrudRepository<User, Long> {
 
     Optional<User> findByTelegramId(long telegramId);
 
-    Optional<User> findByUserName(String userName);
+    Optional<User> findByUserNameAndBlocked(String userName, boolean blocked);
+
+    Optional<User> findByIdAndBlocked(long id, boolean blocked);
 
     @Query(
         """
         SELECT *
         FROM users
         WHERE id IN (:ids)
+            AND NOT blocked
         """
     )
     List<User> findByIds(@Param("ids") List<Long> ids);

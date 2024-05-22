@@ -3,6 +3,7 @@ package rey.bos.telegram.bot.shopping.list.service.impl;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.util.CollectionUtils;
 import rey.bos.telegram.bot.shopping.list.io.entity.ShoppingList;
 import rey.bos.telegram.bot.shopping.list.io.entity.User;
 import rey.bos.telegram.bot.shopping.list.io.entity.UserShoppingList;
@@ -13,6 +14,7 @@ import rey.bos.telegram.bot.shopping.list.service.UserService;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 import rey.bos.telegram.bot.shopping.list.shared.mapper.UserDtoMapper;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -34,9 +36,11 @@ public class UserServiceImpl implements UserService {
             User user = userO.get();
             if (
                 !user.getUserName().equals(userDto.getUserName()) || !user.getFirstName().equals(userDto.getFirstName())
+                    || user.isBlocked()
             ) {
                 user.setUserName(userDto.getUserName());
                 user.setFirstName(userDto.getFirstName());
+                user.setBlocked(false);
                 user = userRepository.save(user);
             }
             return userDtoMapper.map(user);
@@ -47,7 +51,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto createUser(UserDto userDto) {
         User storedUser = transactionTemplate.execute(status -> {
-            User user = userRepository.save(userDtoMapper.map(userDto));
+            User user = userDtoMapper.map(userDto);
+            user.setBlocked(false);
+            user = userRepository.save(user);
             ShoppingList shoppingList = shoppingListRepository.save(new ShoppingList());
             UserShoppingList userShoppingList = UserShoppingList.builder()
                 .userId(user.getId())
@@ -62,9 +68,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<UserDto> findUserByLogin(String login) {
+    public Optional<UserDto> findActiveUserByLogin(String login) {
         String userName = login.replaceFirst("@", "");
-        Optional<User> userO = userRepository.findByUserName(userName);
+        Optional<User> userO = userRepository.findByUserNameAndBlocked(userName, false);
+        return userO.map(userDtoMapper::map);
+    }
+
+    @Override
+    public Optional<UserDto> findActiveUserById(long userId) {
+        Optional<User> userO = userRepository.findByIdAndBlocked(userId, false);
         return userO.map(userDtoMapper::map);
     }
 
@@ -102,9 +114,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> findUsersByIds(List<Long> ids) {
+    public List<UserDto> findActiveUsersByIds(List<Long> ids) {
+        if (CollectionUtils.isEmpty(ids)) {
+            return new ArrayList<>();
+        }
         List<User> users = userRepository.findByIds(ids);
         return userDtoMapper.map(users);
+    }
+
+    @Override
+    public void blockUser(UserDto userDto) {
+        User user = findByUserIdOrThrow(userDto.getId());
+        user.setBlocked(true);
+        userRepository.save(user);
     }
 
 }

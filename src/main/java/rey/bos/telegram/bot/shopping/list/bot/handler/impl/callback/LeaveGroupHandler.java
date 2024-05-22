@@ -12,6 +12,7 @@ import rey.bos.telegram.bot.shopping.list.service.UserShoppingListService;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 
 import java.util.List;
+import java.util.Optional;
 
 import static rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey.*;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand.LEAVE_GROUP;
@@ -37,12 +38,15 @@ public class LeaveGroupHandler extends BotHandlerDecision {
     @Override
     public boolean handleAccept(UserDto user, int messageId, long callbackId) {
         List<UserShoppingList> lists = userShoppingListService.findActiveGroupByUserId(user.getId());
-        long ownerId = lists.stream().filter(UserShoppingList::isOwner).toList().get(0).getUserId();
-        UserDto owner = userService.findByIdOrThrow(ownerId);
         userShoppingListService.restoreMainList(user.getId());
-        String ownerText = botUtil.getText(owner.getLanguageCode(), USER_LEFT_YOUR_GROUP_MESSAGE)
-            .formatted(messageUtil.getLogin(user.getUserName()));
-        botUtil.sendMessage(owner.getTelegramId(), ownerText);
+        long ownerId = lists.stream().filter(UserShoppingList::isOwner).toList().get(0).getUserId();
+        Optional<UserDto> ownerO = userService.findActiveUserById(ownerId);
+        if (ownerO.isPresent()) {
+            UserDto owner = ownerO.get();
+            String ownerText = botUtil.getText(owner.getLanguageCode(), USER_LEFT_YOUR_GROUP_MESSAGE)
+                .formatted(messageUtil.getLogin(user.getUserName()));
+            botUtil.sendMessage(owner.getTelegramId(), ownerText);
+        }
         EditMessageText message = messageUtil.buildEditMessageText(user, messageId, LEFT_GROUP_MESSAGE);
         botUtil.executeMethod(message);
         return true;

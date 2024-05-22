@@ -50,7 +50,7 @@ public class DisbandGroupBeforeJoinHandler extends BotHandlerDecision {
         EditMessageText ownerMessage = messageUtil.buildEditMessageText(user, messageId, DISBAND_GROUP_SUCCESS_MESSAGE);
         botUtil.executeMethod(ownerMessage);
 
-        List<UserDto> removedUsers = userService.findUsersByIds(userIds);
+        List<UserDto> removedUsers = userService.findActiveUsersByIds(userIds);
         String ownerLogin = messageUtil.getLogin(user.getUserName());
         for (UserDto removedUser : removedUsers) {
             SendMessage message = messageUtil.buildSendMessage(removedUser, YOU_REMOVED_FROM_GROUP_MESSAGE, ownerLogin);

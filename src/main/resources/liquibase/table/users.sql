@@ -11,9 +11,14 @@ CREATE TABLE IF NOT EXISTS users
     created_at    TIMESTAMPTZ   NOT NULL DEFAULT NOW()
 );
 
+--changeset reybos:users_add_blocked_column
+ALTER TABLE users
+    ADD COLUMN IF NOT EXISTS blocked BOOLEAN DEFAULT false NOT NULL;
+
 --changeset reybos:2 runOnChange:true
 COMMENT ON TABLE users IS 'Users who have used the bot at least once';
 COMMENT ON COLUMN users.telegram_id IS 'User id in telegram';
 COMMENT ON COLUMN users.user_name IS 'User name in telegram';
 COMMENT ON COLUMN users.first_name IS 'First name in telegram';
 COMMENT ON COLUMN users.language_code IS 'User language';
+COMMENT ON COLUMN users.blocked IS 'User has blocked the bot';

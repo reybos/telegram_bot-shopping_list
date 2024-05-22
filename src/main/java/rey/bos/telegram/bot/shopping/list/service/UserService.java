@@ -11,7 +11,9 @@ public interface UserService {
 
     UserDto createUser(UserDto userDto);
 
-    Optional<UserDto> findUserByLogin(String login);
+    Optional<UserDto> findActiveUserByLogin(String login);
+
+    Optional<UserDto> findActiveUserById(long userId);
 
     UserDto findByIdOrThrow(long userId);
 
@@ -19,6 +21,8 @@ public interface UserService {
 
     UserDto updateUser(UserDto user);
 
-    List<UserDto> findUsersByIds(List<Long> ids);
+    List<UserDto> findActiveUsersByIds(List<Long> ids);
+
+    void blockUser(UserDto user);
 
 }

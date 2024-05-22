@@ -12,6 +12,7 @@ import rey.bos.telegram.bot.shopping.list.service.UserService;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 
 import java.util.List;
+import java.util.Optional;
 
 import static rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey.*;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand.CLEAR_SENT_JOIN_REQUEST;
@@ -39,11 +40,14 @@ public class ClearSentJoinRequestHandler extends BotHandlerDecision {
         EditMessageText message = messageUtil.buildEditMessageText(user, messageId, ACTIVE_JOIN_REQUEST_CLEARED);
         botUtil.executeMethod(message);
         for (JoinRequest request : requests) {
-            UserDto owner = userService.findByIdOrThrow(request.getOwnerId());
-            EditMessageText messageText = messageUtil.buildEditMessageText(
-                owner, request.getMessageId(), JOIN_REQUEST_CANCELLED, messageUtil.getLogin(user.getUserName())
-            );
-            botUtil.executeMethod(messageText);
+            Optional<UserDto> ownerO = userService.findActiveUserById(request.getOwnerId());
+            if (ownerO.isPresent()) {
+                EditMessageText messageText = messageUtil.buildEditMessageText(
+                    ownerO.get(), request.getMessageId(), JOIN_REQUEST_CANCELLED,
+                    messageUtil.getLogin(user.getUserName())
+                );
+                botUtil.executeMethod(messageText);
+            }
         }
         return true;
     }

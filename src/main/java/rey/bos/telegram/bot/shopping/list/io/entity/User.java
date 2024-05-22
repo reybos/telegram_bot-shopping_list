@@ -20,4 +20,6 @@ public class User {
 
     private LanguageCode languageCode;
 
+    private boolean blocked;
+
 }

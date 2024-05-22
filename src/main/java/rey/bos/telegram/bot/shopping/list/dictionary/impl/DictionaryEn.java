@@ -94,7 +94,9 @@ public class DictionaryEn implements Dictionary {
             No ❌"""
         );
         dictionary.put(USER_NOT_EXIST, """
-            %s not found among the bot users. To join a group with a user, ask them to start using this bot @shoppy_guru_bot
+            %s was not found among the bot's users, or blocked it.
+            
+            To join a group with a user, he must be an active user of the bot @shoppy_guru_bot
             """
         );
         dictionary.put(ERROR_SENDER_IS_OWNER_ACTIVE_GROUP, """
@@ -292,6 +294,14 @@ public class DictionaryEn implements Dictionary {
         );
         dictionary.put(JOIN_REQUEST_EXPIRED_OWNER_MESSAGE, """
             The request to merge the lists from %s has expired.
+            """
+        );
+        dictionary.put(OWNER_BLOCKED_BOT_YOU_REMOVED_FROM_GROUP_MESSAGE, """
+            %s has blocked the bot, you are excluded from its group and will continue to use your own list.
+            """
+        );
+        dictionary.put(USER_BLOCKED_BOT_AND_LEFT_YOUR_GROUP_MESSAGE, """
+            %s blocked the bot and left your group. Now he doesn't have access to your list.
             """
         );
     }

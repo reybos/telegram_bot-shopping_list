@@ -44,15 +44,19 @@ public class ClearJoinRequestExecutor {
             UserDto sender = userService.findByIdOrThrow(joinRequest.getUserId());
             String senderLogin = messageUtil.getLogin(sender.getUserName());
 
-            EditMessageText ownerMessage = messageUtil.buildEditMessageText(
-                owner, joinRequest.getMessageId(), JOIN_REQUEST_EXPIRED_OWNER_MESSAGE, senderLogin
-            );
-            botUtil.executeMethod(ownerMessage);
+            if (!owner.isBlocked()) {
+                EditMessageText ownerMessage = messageUtil.buildEditMessageText(
+                    owner, joinRequest.getMessageId(), JOIN_REQUEST_EXPIRED_OWNER_MESSAGE, senderLogin
+                );
+                botUtil.executeMethod(ownerMessage);
+            }
 
-            SendMessage senderMessage = messageUtil.buildSendMessage(
-                sender, JOIN_REQUEST_EXPIRED_SENDER_MESSAGE, ownerLogin
-            );
-            botUtil.executeMethod(senderMessage);
+            if (!sender.isBlocked()) {
+                SendMessage senderMessage = messageUtil.buildSendMessage(
+                    sender, JOIN_REQUEST_EXPIRED_SENDER_MESSAGE, ownerLogin
+                );
+                botUtil.executeMethod(senderMessage);
+            }
         }
 
     }
