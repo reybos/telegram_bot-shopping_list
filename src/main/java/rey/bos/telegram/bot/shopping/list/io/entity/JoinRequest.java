@@ -5,6 +5,9 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
+import java.time.Instant;
+
+
 @Table("join_request")
 @Data
 @Builder
@@ -24,5 +27,7 @@ public class JoinRequest {
     private boolean rejected;
 
     private int messageId;
+
+    private Instant createdAt;
 
 }

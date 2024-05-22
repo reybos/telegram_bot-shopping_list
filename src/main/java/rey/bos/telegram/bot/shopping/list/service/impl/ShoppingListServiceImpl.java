@@ -8,10 +8,7 @@ import rey.bos.telegram.bot.shopping.list.io.entity.ShoppingListItem;
 import rey.bos.telegram.bot.shopping.list.io.repository.ShoppingListRepository;
 import rey.bos.telegram.bot.shopping.list.service.ShoppingListService;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor

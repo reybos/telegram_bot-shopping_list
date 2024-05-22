@@ -1,14 +1,14 @@
-package rey.bos.telegram.bot.shopping.list.bot.dictionary.impl;
+package rey.bos.telegram.bot.shopping.list.dictionary.impl;
 
 import org.springframework.stereotype.Component;
-import rey.bos.telegram.bot.shopping.list.bot.dictionary.Dictionary;
-import rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey;
+import rey.bos.telegram.bot.shopping.list.dictionary.Dictionary;
+import rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey;
 import rey.bos.telegram.bot.shopping.list.io.LanguageCode;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.*;
+import static rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey.*;
 
 @Component
 public class DictionaryRu implements Dictionary {
@@ -289,6 +289,10 @@ public class DictionaryRu implements Dictionary {
         );
         dictionary.put(JOIN_REQUEST_CANCELLED, """
             %s отменил заявку на объединение списка с вами.
+            """
+        );
+        dictionary.put(JOIN_REQUEST_EXPIRED_OWNER_MESSAGE, """
+            Заявка на объединение списков от %s просрочилась.
             """
         );
     }

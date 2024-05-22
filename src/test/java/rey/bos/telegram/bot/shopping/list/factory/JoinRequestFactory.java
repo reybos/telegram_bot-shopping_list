@@ -10,6 +10,8 @@ import rey.bos.telegram.bot.shopping.list.io.entity.JoinRequest;
 import rey.bos.telegram.bot.shopping.list.io.repository.JoinRequestRepository;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.util.Random;
 
 @Component
@@ -19,6 +21,7 @@ public class JoinRequestFactory {
 
     private final UserFactory userFactory;
     private final JoinRequestRepository joinRequestRepository;
+    private final Clock clock;
 
     public JoinRequest create(JoinRequestParams requestParams) {
         if (requestParams.getUserId() == null) {
@@ -37,6 +40,7 @@ public class JoinRequestFactory {
                 .approved(requestParams.isApproved())
                 .expired(requestParams.isExpired())
                 .rejected(requestParams.rejected)
+                .createdAt(requestParams.getCreatedAt() == null ? Instant.now(clock) : requestParams.getCreatedAt())
                 .build()
         );
     }
@@ -61,6 +65,8 @@ public class JoinRequestFactory {
 
         @Builder.Default
         private int messageId = new Random().nextInt();
+
+        private Instant createdAt;
 
     }
 

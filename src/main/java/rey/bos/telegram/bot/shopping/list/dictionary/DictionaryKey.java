@@ -1,4 +1,4 @@
-package rey.bos.telegram.bot.shopping.list.bot.dictionary;
+package rey.bos.telegram.bot.shopping.list.dictionary;
 
 public enum DictionaryKey {
 
@@ -56,5 +56,7 @@ public enum DictionaryKey {
     ERROR_MEMBER_CANT_DISBAND_GROUP,
     DISBAND_GROUP_SUCCESS_MESSAGE,
     JOIN_REQUEST_CANCELLED,
+    JOIN_REQUEST_EXPIRED_SENDER_MESSAGE,
+    JOIN_REQUEST_EXPIRED_OWNER_MESSAGE,
 
 }

@@ -2,7 +2,6 @@ package rey.bos.telegram.bot.shopping.list.bot.handler.impl.action;
 
 import org.junit.ClassRule;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
@@ -20,24 +19,26 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import rey.bos.telegram.bot.shopping.list.Application;
 import rey.bos.telegram.bot.shopping.list.BaeldungPostgresqlContainer;
 import rey.bos.telegram.bot.shopping.list.bot.ShoppingListBot;
-import rey.bos.telegram.bot.shopping.list.bot.util.BotUtil;
-import rey.bos.telegram.bot.shopping.list.bot.util.MessageUtil;
 import rey.bos.telegram.bot.shopping.list.config.ApplicationConfig;
 import rey.bos.telegram.bot.shopping.list.factory.JoinRequestFactory;
 import rey.bos.telegram.bot.shopping.list.factory.UserFactory;
 import rey.bos.telegram.bot.shopping.list.factory.UserShoppingListFactory;
+import rey.bos.telegram.bot.shopping.list.factory.VerifyMessage;
 import rey.bos.telegram.bot.shopping.list.io.repository.params.JoinRequestParams;
 import rey.bos.telegram.bot.shopping.list.service.JoinRequestService;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
+import rey.bos.telegram.bot.shopping.list.util.BotUtil;
+import rey.bos.telegram.bot.shopping.list.util.MessageUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
-import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.when;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.MessageEntityType.MENTION;
+import static rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey.*;
 
 @SpringBootTest(classes = {Application.class, ApplicationConfig.class})
 @ActiveProfiles({"tc", "tc-auto", "stub"})
@@ -69,20 +70,8 @@ public class MentionUserHandlerTest {
         UserDto user = userFactory.createUser();
         Update update = createUpdateObjectWithJoinCommand(user, "@test", "@test");
         shoppingListBot.consume(update);
-        SendMessage message = getVerifySendMessage();
+        SendMessage message = VerifyMessage.getVerifySendMessage(telegramClient);
         assertThat(message.getText()).isEqualTo(botUtil.getText(user.getLanguageCode(), ERROR_TOO_MANY_MENTION_IN_JOIN));
-    }
-
-    private SendMessage getVerifySendMessage() throws TelegramApiException {
-        ArgumentCaptor<SendMessage> messageCapture = ArgumentCaptor.forClass(SendMessage.class);
-        verify(telegramClient, atLeast(1)).execute(messageCapture.capture());
-        return messageCapture.getValue();
-    }
-
-    private List<SendMessage> getVerifySendMessages() throws TelegramApiException {
-        ArgumentCaptor<SendMessage> messageCapture = ArgumentCaptor.forClass(SendMessage.class);
-        verify(telegramClient, atLeast(1)).execute(messageCapture.capture());
-        return messageCapture.getAllValues();
     }
 
     @Test
@@ -97,7 +86,7 @@ public class MentionUserHandlerTest {
         );
         Update update = createUpdateObjectWithJoinCommand(from, "@mention", null);
         shoppingListBot.consume(update);
-        SendMessage message = getVerifySendMessage();
+        SendMessage message = VerifyMessage.getVerifySendMessage(telegramClient);
         assertThat(message.getText()).isEqualTo(
             botUtil.getText(from.getLanguageCode(), ERROR_HAS_ACTIVE_JOIN_REQUEST)
                 .formatted(messageUtil.getLogin(to.getUserName()))
@@ -110,7 +99,7 @@ public class MentionUserHandlerTest {
         String mention = "@" + user.getUserName();
         Update update = createUpdateObjectWithJoinCommand(user, mention, null);
         shoppingListBot.consume(update);
-        SendMessage message = getVerifySendMessage();
+        SendMessage message = VerifyMessage.getVerifySendMessage(telegramClient);
         assertThat(message.getText()).isEqualTo(
             botUtil.getText(user.getLanguageCode(), ERROR_MENTION_THEMSELF).formatted(mention)
         );
@@ -122,7 +111,7 @@ public class MentionUserHandlerTest {
         String mention = "@test";
         Update update = createUpdateObjectWithJoinCommand(user, mention, null);
         shoppingListBot.consume(update);
-        SendMessage message = getVerifySendMessage();
+        SendMessage message = VerifyMessage.getVerifySendMessage(telegramClient);
         assertThat(message.getText()).isEqualTo(
             botUtil.getText(user.getLanguageCode(), USER_NOT_EXIST).formatted(mention)
         );
@@ -139,7 +128,7 @@ public class MentionUserHandlerTest {
         String mentionLogin = messageUtil.getLogin(otherUser.getUserName());
         Update update = createUpdateObjectWithJoinCommand(sender, mentionLogin, null);
         shoppingListBot.consume(update);
-        SendMessage message = getVerifySendMessage();
+        SendMessage message = VerifyMessage.getVerifySendMessage(telegramClient);
         assertThat(message.getText()).isEqualTo(
             botUtil.getText(sender.getLanguageCode(), ERROR_SENDER_IS_OWNER_ACTIVE_GROUP)
                 .formatted(memberLogin, mentionLogin, memberLogin)
@@ -157,7 +146,7 @@ public class MentionUserHandlerTest {
         String mentionLogin = messageUtil.getLogin(otherUser.getUserName());
         Update update = createUpdateObjectWithJoinCommand(sender, mentionLogin, null);
         shoppingListBot.consume(update);
-        SendMessage message = getVerifySendMessage();
+        SendMessage message = VerifyMessage.getVerifySendMessage(telegramClient);
         assertThat(message.getText()).isEqualTo(
             botUtil.getText(sender.getLanguageCode(), ERROR_SENDER_IS_MEMBER_OF_GROUP)
                 .formatted(ownerLogin, mentionLogin)
@@ -174,7 +163,7 @@ public class MentionUserHandlerTest {
             new TelegramApiRequestException("", new ApiResponse<>(null, HttpStatus.FORBIDDEN.value(), null, null, null))
         );
         shoppingListBot.consume(update);
-        SendMessage message = getVerifySendMessage();
+        SendMessage message = VerifyMessage.getVerifySendMessage(telegramClient);
         assertThat(message.getText()).isEqualTo(
             botUtil.getText(user.getLanguageCode(), CANT_SEND_MESSAGE).formatted(mentionLogin)
         );
@@ -192,7 +181,7 @@ public class MentionUserHandlerTest {
         when(telegramClient.execute(any(SendMessage.class))).thenReturn(Message.builder().messageId(messageId).build());
         shoppingListBot.consume(update);
 
-        List<SendMessage> messages = getVerifySendMessages();
+        List<SendMessage> messages = VerifyMessage.getVerifySendMessages(telegramClient);
 
         SendMessage mentionUserMessage = messages.get(messages.size() - 2);
         assertThat(mentionUserMessage.getText()).isEqualTo(
@@ -221,7 +210,7 @@ public class MentionUserHandlerTest {
         when(telegramClient.execute(any(SendMessage.class))).thenReturn(Message.builder().messageId(messageId).build());
         shoppingListBot.consume(update);
 
-        List<SendMessage> messages = getVerifySendMessages();
+        List<SendMessage> messages = VerifyMessage.getVerifySendMessages(telegramClient);
         SendMessage mentionUserMessage = messages.get(messages.size() - 2);
         String senderLogin = messageUtil.getLogin(sender.getUserName());
         String memberLogin = messageUtil.getLogin(member.getUserName());
@@ -244,7 +233,7 @@ public class MentionUserHandlerTest {
         when(telegramClient.execute(any(SendMessage.class))).thenReturn(Message.builder().messageId(messageId).build());
         shoppingListBot.consume(update);
 
-        List<SendMessage> messages = getVerifySendMessages();
+        List<SendMessage> messages = VerifyMessage.getVerifySendMessages(telegramClient);
         SendMessage mentionUserMessage = messages.get(messages.size() - 2);
         String senderLogin = messageUtil.getLogin(sender.getUserName());
         String memberLogin = messageUtil.getLogin(member.getUserName());

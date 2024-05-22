@@ -24,6 +24,9 @@ ALTER TABLE merge_request
 --changeset reybos:merge_request-rename_table
 ALTER TABLE merge_request RENAME TO join_request;
 
+--changeset reybos:join_request-create_index_created_at
+CREATE INDEX idx_created_at ON join_request (created_at);
+
 --changeset reybos:2 runOnChange:true
 COMMENT ON TABLE join_request IS 'Request from one user to another to merge lists';
 COMMENT ON COLUMN join_request.user_id IS 'The user who wants to join another list';

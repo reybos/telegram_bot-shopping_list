@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import rey.bos.telegram.bot.shopping.list.bot.handler.BotHandler;
-import rey.bos.telegram.bot.shopping.list.bot.util.MessageUtil;
+import rey.bos.telegram.bot.shopping.list.util.MessageUtil;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand.CONFIRM;

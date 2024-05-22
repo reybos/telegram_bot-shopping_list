@@ -6,8 +6,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import rey.bos.telegram.bot.shopping.list.bot.util.BotUtil;
-import rey.bos.telegram.bot.shopping.list.bot.util.MessageUtil;
+import rey.bos.telegram.bot.shopping.list.util.BotUtil;
+import rey.bos.telegram.bot.shopping.list.util.MessageUtil;
 import rey.bos.telegram.bot.shopping.list.io.entity.JoinRequest;
 import rey.bos.telegram.bot.shopping.list.io.entity.UserShoppingList;
 import rey.bos.telegram.bot.shopping.list.service.JoinRequestService;
@@ -17,7 +17,7 @@ import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 
 import java.util.Optional;
 
-import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.*;
+import static rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey.*;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand.ACCEPT_JOIN_REQUEST;
 
 @Slf4j

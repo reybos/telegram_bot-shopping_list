@@ -2,7 +2,6 @@ package rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback;
 
 import org.junit.ClassRule;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -17,23 +16,22 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 import org.testcontainers.containers.PostgreSQLContainer;
 import rey.bos.telegram.bot.shopping.list.Application;
 import rey.bos.telegram.bot.shopping.list.BaeldungPostgresqlContainer;
-import rey.bos.telegram.bot.shopping.list.bot.util.BotUtil;
-import rey.bos.telegram.bot.shopping.list.bot.util.MessageUtil;
 import rey.bos.telegram.bot.shopping.list.config.ApplicationConfig;
 import rey.bos.telegram.bot.shopping.list.factory.JoinRequestFactory;
 import rey.bos.telegram.bot.shopping.list.factory.UserFactory;
 import rey.bos.telegram.bot.shopping.list.factory.UserShoppingListFactory;
+import rey.bos.telegram.bot.shopping.list.factory.VerifyMessage;
 import rey.bos.telegram.bot.shopping.list.io.entity.UserShoppingList;
 import rey.bos.telegram.bot.shopping.list.service.UserShoppingListService;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
+import rey.bos.telegram.bot.shopping.list.util.BotUtil;
+import rey.bos.telegram.bot.shopping.list.util.MessageUtil;
 
 import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.atLeast;
-import static org.mockito.Mockito.verify;
-import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.*;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand.*;
+import static rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey.*;
 
 @SpringBootTest(classes = {Application.class, ApplicationConfig.class})
 @ActiveProfiles({"tc", "tc-auto", "stub"})
@@ -76,7 +74,7 @@ class AcceptJoinRequestHandlerTest {
         Update update = createUpdateObjectWithCallback(owner, CONFIRM.getCommand(), messageId);
         acceptJoinRequestHandler.handle(update, owner);
 
-        EditMessageText messageText = getVerifyEditMessageText();
+        EditMessageText messageText = VerifyMessage.getVerifyEditMessageText(telegramClient);
         assertThat(messageText.getText()).isEqualTo(
             botUtil.getText(owner.getLanguageCode(), CANT_FIND_ACTIVE_JOIN_REQUEST)
         );
@@ -99,14 +97,14 @@ class AcceptJoinRequestHandlerTest {
         Update update = createUpdateObjectWithCallback(owner, CONFIRM.getCommand(), messageId);
         acceptJoinRequestHandler.handle(update, owner);
 
-        EditMessageText ownerMsg = getVerifyEditMessageText();
+        EditMessageText ownerMsg = VerifyMessage.getVerifyEditMessageText(telegramClient);
         String senderLogin = messageUtil.getLogin(sender.getUserName());
         assertThat(ownerMsg.getText()).isEqualTo(
             botUtil.getText(owner.getLanguageCode(), JOIN_REQUEST_ACCEPTED_OWNER).formatted(senderLogin)
         );
         assertThat(ownerMsg.getMessageId()).isEqualTo(messageId);
 
-        SendMessage senderMsg = getVerifySendMessage();
+        SendMessage senderMsg = VerifyMessage.getVerifySendMessage(telegramClient);
         String ownerLogin = messageUtil.getLogin(owner.getUserName());
         assertThat(senderMsg.getText()).isEqualTo(
             botUtil.getText(owner.getLanguageCode(), JOIN_REQUEST_ACCEPTED_SENDER).formatted(ownerLogin)
@@ -156,14 +154,14 @@ class AcceptJoinRequestHandlerTest {
         Update update = createUpdateObjectWithCallback(owner, REJECT.getCommand(), messageId);
         acceptJoinRequestHandler.handle(update, owner);
 
-        EditMessageText ownerMsg = getVerifyEditMessageText();
+        EditMessageText ownerMsg = VerifyMessage.getVerifyEditMessageText(telegramClient);
         String senderLogin = messageUtil.getLogin(sender.getUserName());
         assertThat(ownerMsg.getText()).isEqualTo(
             botUtil.getText(owner.getLanguageCode(), OWNER_MSG_JOIN_REQUEST_REJECTED).formatted(senderLogin)
         );
         assertThat(ownerMsg.getMessageId()).isEqualTo(messageId);
 
-        SendMessage senderMsg = getVerifySendMessage();
+        SendMessage senderMsg = VerifyMessage.getVerifySendMessage(telegramClient);
         String ownerLogin = messageUtil.getLogin(owner.getUserName());
         assertThat(senderMsg.getText()).isEqualTo(
             botUtil.getText(owner.getLanguageCode(), SENDER_MSG_JOIN_REQUEST_REJECTED).formatted(ownerLogin)
@@ -184,18 +182,6 @@ class AcceptJoinRequestHandlerTest {
         message.setFrom(user);
         update.setMessage(message);
         return update;
-    }
-
-    private SendMessage getVerifySendMessage() throws TelegramApiException {
-        ArgumentCaptor<SendMessage> messageCapture = ArgumentCaptor.forClass(SendMessage.class);
-        verify(telegramClient, atLeast(1)).execute(messageCapture.capture());
-        return messageCapture.getValue();
-    }
-
-    private EditMessageText getVerifyEditMessageText() throws TelegramApiException {
-        ArgumentCaptor<EditMessageText> messageCapture = ArgumentCaptor.forClass(EditMessageText.class);
-        verify(telegramClient, atLeast(1)).execute(messageCapture.capture());
-        return messageCapture.getValue();
     }
 
 }

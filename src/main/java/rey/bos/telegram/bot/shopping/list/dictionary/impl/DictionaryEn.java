@@ -1,14 +1,14 @@
-package rey.bos.telegram.bot.shopping.list.bot.dictionary.impl;
+package rey.bos.telegram.bot.shopping.list.dictionary.impl;
 
 import org.springframework.stereotype.Component;
-import rey.bos.telegram.bot.shopping.list.bot.dictionary.Dictionary;
-import rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey;
+import rey.bos.telegram.bot.shopping.list.dictionary.Dictionary;
+import rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey;
 import rey.bos.telegram.bot.shopping.list.io.LanguageCode;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.*;
+import static rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey.*;
 
 @Component
 public class DictionaryEn implements Dictionary {
@@ -283,6 +283,15 @@ public class DictionaryEn implements Dictionary {
         );
         dictionary.put(JOIN_REQUEST_CANCELLED, """
             %s canceled the request to merge the list with you.
+            """
+        );
+        dictionary.put(JOIN_REQUEST_EXPIRED_SENDER_MESSAGE, """
+            Your request to merge lists with %s has expired.
+            Repeat the request if necessary.
+            """
+        );
+        dictionary.put(JOIN_REQUEST_EXPIRED_OWNER_MESSAGE, """
+            The request to merge the lists from %s has expired.
             """
         );
     }

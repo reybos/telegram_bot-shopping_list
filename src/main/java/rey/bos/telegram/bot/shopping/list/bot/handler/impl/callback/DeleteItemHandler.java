@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import rey.bos.telegram.bot.shopping.list.bot.handler.BotHandler;
-import rey.bos.telegram.bot.shopping.list.bot.util.ShoppingListHelper;
+import rey.bos.telegram.bot.shopping.list.bot.helper.ShoppingListHelper;
 import rey.bos.telegram.bot.shopping.list.io.entity.ShoppingList;
 import rey.bos.telegram.bot.shopping.list.service.ShoppingListItemService;
 import rey.bos.telegram.bot.shopping.list.service.ShoppingListService;

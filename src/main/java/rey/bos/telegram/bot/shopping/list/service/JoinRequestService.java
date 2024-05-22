@@ -18,4 +18,6 @@ public interface JoinRequestService {
 
     List<JoinRequest> clearActiveRequest(long userId);
 
+    List<JoinRequest> expireRequests(int hoursBeforeExpire);
+
 }

@@ -1,4 +1,4 @@
-package rey.bos.telegram.bot.shopping.list.bot.util;
+package rey.bos.telegram.bot.shopping.list.bot.helper;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -8,11 +8,12 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 import rey.bos.telegram.bot.shopping.list.io.repository.params.UserShoppingListGroupParams;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
+import rey.bos.telegram.bot.shopping.list.util.MessageUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.*;
+import static rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey.*;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand.*;
 
 @Component

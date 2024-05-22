@@ -1,4 +1,4 @@
-package rey.bos.telegram.bot.shopping.list.bot.util;
+package rey.bos.telegram.bot.shopping.list.bot.helper;
 
 import java.util.List;
 

@@ -7,9 +7,9 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageTe
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import rey.bos.telegram.bot.shopping.list.bot.handler.BotHandler;
-import rey.bos.telegram.bot.shopping.list.bot.util.BotUtil;
-import rey.bos.telegram.bot.shopping.list.bot.util.MessageUtil;
-import rey.bos.telegram.bot.shopping.list.bot.util.GroupHelper;
+import rey.bos.telegram.bot.shopping.list.util.BotUtil;
+import rey.bos.telegram.bot.shopping.list.util.MessageUtil;
+import rey.bos.telegram.bot.shopping.list.bot.helper.GroupHelper;
 import rey.bos.telegram.bot.shopping.list.io.repository.params.UserShoppingListGroupParams;
 import rey.bos.telegram.bot.shopping.list.service.UserShoppingListService;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;

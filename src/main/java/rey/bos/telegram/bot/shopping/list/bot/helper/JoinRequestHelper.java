@@ -1,18 +1,20 @@
-package rey.bos.telegram.bot.shopping.list.bot.util;
+package rey.bos.telegram.bot.shopping.list.bot.helper;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey;
+import rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey;
 import rey.bos.telegram.bot.shopping.list.io.repository.params.JoinRequestParams;
 import rey.bos.telegram.bot.shopping.list.io.repository.params.UserShoppingListGroupParams;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
+import rey.bos.telegram.bot.shopping.list.util.BotUtil;
+import rey.bos.telegram.bot.shopping.list.util.MessageUtil;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.*;
+import static rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey.*;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand.*;
 
 @Component

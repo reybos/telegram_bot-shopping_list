@@ -7,12 +7,12 @@ import org.springframework.util.CollectionUtils;
 import org.telegram.telegrambots.meta.api.objects.MessageEntity;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import rey.bos.telegram.bot.shopping.list.bot.handler.BotHandler;
-import rey.bos.telegram.bot.shopping.list.bot.util.BotUtil;
+import rey.bos.telegram.bot.shopping.list.util.BotUtil;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 
 import java.util.Arrays;
 
-import static rey.bos.telegram.bot.shopping.list.bot.dictionary.DictionaryKey.UNSUPPORTED_COMMAND;
+import static rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey.UNSUPPORTED_COMMAND;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.MessageEntityType.BOT_COMMAND;
 
 @Component

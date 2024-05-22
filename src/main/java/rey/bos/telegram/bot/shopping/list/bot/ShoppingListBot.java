@@ -17,7 +17,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 import rey.bos.telegram.bot.shopping.list.bot.handler.BotHandler;
 import rey.bos.telegram.bot.shopping.list.bot.handler.impl.command.MenuCommand;
-import rey.bos.telegram.bot.shopping.list.bot.util.BotUtil;
+import rey.bos.telegram.bot.shopping.list.util.BotUtil;
 import rey.bos.telegram.bot.shopping.list.service.UserService;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 import rey.bos.telegram.bot.shopping.list.shared.mapper.UserDtoMapper;
