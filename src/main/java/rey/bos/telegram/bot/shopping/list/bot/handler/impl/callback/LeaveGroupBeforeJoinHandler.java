@@ -13,6 +13,7 @@ import rey.bos.telegram.bot.shopping.list.service.UserShoppingListService;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 
 import java.util.List;
+import java.util.Optional;
 
 import static rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey.*;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand.LEAVE_GROUP_BEFORE_JOIN;
@@ -52,11 +53,13 @@ public class LeaveGroupBeforeJoinHandler extends BotHandlerDecision {
             user, messageId, LEAVE_GROUP_BEFORE_JOIN_SUCCESS_MESSAGE
         );
         botUtil.executeMethod(messageText);
-        UserDto owner = userService.findByIdOrThrow(ownerList.getUserId());
-        SendMessage sendMessage = messageUtil.buildSendMessage(
-            owner, USER_LEFT_YOUR_GROUP_MESSAGE, messageUtil.getLogin(user.getUserName())
-        );
-        botUtil.executeMethod(sendMessage);
+        Optional<UserDto> ownerO = userService.findActiveUserById(ownerList.getUserId());
+        if (ownerO.isPresent()) {
+            SendMessage sendMessage = messageUtil.buildSendMessage(
+                ownerO.get(), USER_LEFT_YOUR_GROUP_MESSAGE, messageUtil.getLogin(user.getUserName())
+            );
+            botUtil.executeMethod(sendMessage);
+        }
         return true;
     }
 

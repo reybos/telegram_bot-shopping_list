@@ -44,9 +44,11 @@ public class RemoveUserFromGroupHandler extends BotHandlerDecision {
             user, messageId, USER_REMOVED_FROM_GROUP_MESSAGE, messageUtil.getLogin(removedUser.getUserName())
         );
         botUtil.executeMethod(message);
-        String removedUserMessage = botUtil.getText(removedUser.getLanguageCode(), YOU_REMOVED_FROM_GROUP_MESSAGE)
-            .formatted(messageUtil.getLogin(user.getUserName()));
-        botUtil.sendMessage(removedUser.getTelegramId(), removedUserMessage);
+        if (!removedUser.isBlocked()) {
+            String removedUserMessage = botUtil.getText(removedUser.getLanguageCode(), YOU_REMOVED_FROM_GROUP_MESSAGE)
+                .formatted(messageUtil.getLogin(user.getUserName()));
+            botUtil.sendMessage(removedUser.getTelegramId(), removedUserMessage);
+        }
         return true;
     }
 

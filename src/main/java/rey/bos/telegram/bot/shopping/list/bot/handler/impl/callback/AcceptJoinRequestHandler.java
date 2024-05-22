@@ -71,9 +71,11 @@ public class AcceptJoinRequestHandler extends BotHandlerDecision {
             user, messageId, JOIN_REQUEST_ACCEPTED_OWNER, messageUtil.getLogin(sender.getUserName())
         );
         botUtil.executeMethod(ownerMessage);
-        String senderMessage = botUtil.getText(sender.getLanguageCode(), JOIN_REQUEST_ACCEPTED_SENDER)
-            .formatted(messageUtil.getLogin(user.getUserName()));
-        botUtil.sendMessage(sender.getTelegramId(), senderMessage);
+        if (!sender.isBlocked()) {
+            String senderMessage = botUtil.getText(sender.getLanguageCode(), JOIN_REQUEST_ACCEPTED_SENDER)
+                .formatted(messageUtil.getLogin(user.getUserName()));
+            botUtil.sendMessage(sender.getTelegramId(), senderMessage);
+        }
         return true;
     }
 
@@ -95,8 +97,10 @@ public class AcceptJoinRequestHandler extends BotHandlerDecision {
         );
         botUtil.executeMethod(ownerMsg);
         String ownerLogin = messageUtil.getLogin(user.getUserName());
-        SendMessage senderMessage = messageUtil.buildSendMessage(sender, SENDER_MSG_JOIN_REQUEST_REJECTED, ownerLogin);
-        botUtil.executeMethod(senderMessage);
+        if (!sender.isBlocked()) {
+            SendMessage senderMessage = messageUtil.buildSendMessage(sender, SENDER_MSG_JOIN_REQUEST_REJECTED, ownerLogin);
+            botUtil.executeMethod(senderMessage);
+        }
         return true;
     }
 

@@ -94,7 +94,9 @@ public class DictionaryRu implements Dictionary {
             Нет ❌"""
         );
         dictionary.put(USER_NOT_EXIST, """
-            %s не найден среди пользователей бота. Чтобы объединиться с пользователем в группу, попросите его начать использовать этого бота @shoppy_guru_bot
+            %s не найден среди пользователей бота, либо заблокировал его.
+            
+            Чтобы объединиться с пользователем в группу, он должен быть активным пользователем бота @shoppy_guru_bot
             """
         );
         dictionary.put(ERROR_SENDER_IS_OWNER_ACTIVE_GROUP, """
@@ -293,6 +295,14 @@ public class DictionaryRu implements Dictionary {
         );
         dictionary.put(JOIN_REQUEST_EXPIRED_OWNER_MESSAGE, """
             Заявка на объединение списков от %s просрочилась.
+            """
+        );
+        dictionary.put(OWNER_BLOCKED_BOT_YOU_REMOVED_FROM_GROUP_MESSAGE, """
+            %s заблокировал бота, вы исключены из его группы и продолжите использовать собственный список.
+            """
+        );
+        dictionary.put(USER_BLOCKED_BOT_AND_LEFT_YOUR_GROUP_MESSAGE, """
+            %s заблокировал бота и покинул вашу группу. Теперь у него нет доступа к вашему списку.
             """
         );
     }

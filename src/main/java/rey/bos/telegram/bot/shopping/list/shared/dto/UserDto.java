@@ -18,4 +18,6 @@ public class UserDto {
 
     private LanguageCode languageCode;
 
+    private boolean blocked;
+
 }

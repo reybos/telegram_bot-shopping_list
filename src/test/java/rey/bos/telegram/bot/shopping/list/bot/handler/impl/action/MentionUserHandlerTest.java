@@ -64,6 +64,8 @@ public class MentionUserHandlerTest {
     private MessageUtil messageUtil;
     @Autowired
     private UserShoppingListFactory userShoppingListFactory;
+    @Autowired
+    private BlockBotHandler blockBotHandler;
 
     @Test
     public void whenTryJoinWithTwoMentionThenError() throws TelegramApiException {
@@ -109,6 +111,20 @@ public class MentionUserHandlerTest {
     public void whenMentionUnknownUserThenError() throws TelegramApiException {
         UserDto user = userFactory.createUser();
         String mention = "@test";
+        Update update = createUpdateObjectWithJoinCommand(user, mention, null);
+        shoppingListBot.consume(update);
+        SendMessage message = VerifyMessage.getVerifySendMessage(telegramClient);
+        assertThat(message.getText()).isEqualTo(
+            botUtil.getText(user.getLanguageCode(), USER_NOT_EXIST).formatted(mention)
+        );
+    }
+
+    @Test
+    public void whenMentionBlockedUserThenError() throws TelegramApiException {
+        UserDto user = userFactory.createUser();
+        UserDto blockedUser = userFactory.createUser();
+        blockBotHandler.handle(new Update(), blockedUser);
+        String mention = messageUtil.getLogin(blockedUser.getUserName());
         Update update = createUpdateObjectWithJoinCommand(user, mention, null);
         shoppingListBot.consume(update);
         SendMessage message = VerifyMessage.getVerifySendMessage(telegramClient);
