@@ -100,37 +100,43 @@ public class DictionaryEn implements Dictionary {
             """
         );
         dictionary.put(ERROR_SENDER_IS_OWNER_ACTIVE_GROUP, """
-            You are currently in the same group as %s, which you own. To join a group with %s, you need to dissolve the current one, after that %s will use its own shopping list.
+            You are currently in the same group as %s, which you own. 
+            To join a group with %s, you need to dissolve the current one, after that %s will use its own shopping list.
             
             Disband the current group?
             """
         );
         dictionary.put(ERROR_SENDER_IS_MEMBER_OF_GROUP, """
-            You are currently in the same group as user %s. To join a group with %s, you need to exit the current one, after that the current shopping list will be unavailable.
+            You are currently in the same group as user %s.
+            To join a group with %s, you need to exit the current one, after that the current shopping list will be unavailable.
             
             Quit the group?
             """
         );
         dictionary.put(OWNER_ACCEPT_JOIN_REQUEST_WITHOUT_ACTIVE_GROUP, """
-            The user %s wants to share a shopping list with you. If you accept the request, you will become the owner of the list and will be able to add other users to the group.
+            The user %s wants to share a shopping list with you. 
+            If you accept the request, you will become the owner of the list and will be able to add other users to the group.
             
             Do you accept the request?
             """
         );
         dictionary.put(OWNER_ACCEPT_JOIN_REQUEST_WITH_OWN_ACTIVE_GROUP, """
-            User %s wants to share a shopping list with you. But you already keep a list with %s. If you accept the request, you will use the list together.
+            User %s wants to share a shopping list with you.
+            But you already keep a list with %s. If you accept the request, you will use the list together.
             
             Do you accept the request?
             """
         );
         dictionary.put(OWNER_ACCEPT_JOIN_REQUEST_WITH_ACTIVE_GROUP, """
-            User %s wants to share a shopping list with you. If you accept the request, you will become the owner of the list and will be able to add other users to the group. You will also leave the current group with %s and stop using the current shopping list.
+            User %s wants to share a shopping list with you.
+            If you accept the request, you will become the owner of the list and will be able to add other users to the group. You will also leave the current group with %s and stop using the current shopping list.
             
             Do you accept the request?
             """
         );
         dictionary.put(SEND_JOIN_REQUEST_SUCCESS, """
-            A request to merge the lists has been sent to the %s user, the request will be valid for 1 day. If it is not accepted during this time, you will need to resend the request.
+            A request to merge the lists has been sent to the %s user, the request will be valid for 1 day.
+            If it is not accepted during this time, you will need to resend the request.
             """
         );
         dictionary.put(CANT_SEND_MESSAGE, """
@@ -168,6 +174,7 @@ public class DictionaryEn implements Dictionary {
             Greetings %s! 👋
             I will help you easily keep a shopping list. You can use the list yourself or team up with other users. Add and edit purchases conveniently and quickly!
             
+            <b>What can I do:</b>
             🔸 Any message sent will be added to the list. Excluding commands and user mentions.
             🔸 Call the /list command to view the current list.
             🔸 Call the /clear command and after confirmation, I will clear the entire current list.

@@ -135,7 +135,8 @@ public class DictionaryRu implements Dictionary {
             """
         );
         dictionary.put(SEND_JOIN_REQUEST_SUCCESS, """
-            Запрос на объединение списков отправлен пользователю %s, заявка будет действовать в течении 1 суток. Если за это время она не будет принята, нужно будет отправить запрос повторно.
+            Запрос на объединение списков отправлен пользователю %s, заявка будет действовать в течении 1 суток. 
+            Если за это время она не будет принята, нужно будет отправить запрос повторно.
             """
         );
         dictionary.put(CANT_SEND_MESSAGE, """
@@ -292,6 +293,11 @@ public class DictionaryRu implements Dictionary {
         );
         dictionary.put(JOIN_REQUEST_CANCELLED, """
             %s отменил заявку на объединение списка с вами.
+            """
+        );
+        dictionary.put(JOIN_REQUEST_EXPIRED_SENDER_MESSAGE, """
+            Ваш запрос на объединение списков с %s просрочился.
+            Повторите запрос, если необходимо.
             """
         );
         dictionary.put(JOIN_REQUEST_EXPIRED_OWNER_MESSAGE, """
