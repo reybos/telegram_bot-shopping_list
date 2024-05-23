@@ -170,15 +170,16 @@ public class DictionaryEn implements Dictionary {
             
             🔸 Any message sent will be added to the list. Excluding commands and user mentions.
             🔸 Call the /list command to view the current list.
-            🔸 Call the /join command and I'll tell you how to make one shared list with another user.
-            🔸 Call the /show_group command to see who you are sharing a list with.
-            🔸 Call the /change_language command to change the language.
             🔸 Call the /clear command and after confirmation, I will clear the entire current list.
+            🔸 Call the /join command and I'll tell you how to make one shared list with another user.
+            🔸 Call the /group command to see who you are sharing a list with.
+            🔸 Call the /language command to change the language.
+            🔸 Call the /request command to enable/disable incoming list merge requests from other users
             
             Creator: @reybos
             """
         );
-        dictionary.put(CHANGE_LANGUAGE_COMMAND, """
+        dictionary.put(CHANGE_LANGUAGE_MESSAGE, """
             <b>Select the language of the bot</b>
             """
         );
@@ -192,7 +193,7 @@ public class DictionaryEn implements Dictionary {
             The language has been successfully changed ✅
             """
         );
-        dictionary.put(CLEAR_LIST_COMMAND, """
+        dictionary.put(CLEAR_LIST_COMMAND_MESSAGE, """
             All items in the current list will be deleted.
             
             Clear it?
@@ -302,6 +303,24 @@ public class DictionaryEn implements Dictionary {
         );
         dictionary.put(USER_BLOCKED_BOT_AND_LEFT_YOUR_GROUP_MESSAGE, """
             %s blocked the bot and left your group. Now he doesn't have access to your list.
+            """
+        );
+        dictionary.put(INCOMING_REQUEST_SETTING_MESSAGE, """
+            You have now %s the ability to receive requests to merge lists from other users.
+            
+            Turn it %s?
+            """
+        );
+        dictionary.put(INCOMING_REQUEST_SETTING_CANCEL_MESSAGE, """
+            The command to change the settings of incoming requests has been canceled.
+            """
+        );
+        dictionary.put(SWITCHED_JOIN_REQUEST_SETTING_MESSAGE, """
+            Requests to merge lists from other users are %s.
+            """
+        );
+        dictionary.put(OWNER_BLOCK_JOIN_REQUEST_MESSAGE, """
+            %s has forbidden incoming requests to merge lists.
             """
         );
     }

@@ -19,6 +19,7 @@ public enum CallBackCommand {
     LEAVE_GROUP("leave_group-"),
     REMOVE_USER_FROM_GROUP_CONFIRM("remove_user_from_group_confirm-"),
     REMOVE_USER_FROM_GROUP("remove_user_from_group-"),
+    INCOMING_REQUEST_SETTING("incoming_request_setting-"),
 
     CONFIRM("-yes"),
     REJECT("-no");

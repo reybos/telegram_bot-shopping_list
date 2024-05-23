@@ -20,4 +20,6 @@ public class UserDto {
 
     private boolean blocked;
 
+    private boolean joinRequestDisabled;
+
 }

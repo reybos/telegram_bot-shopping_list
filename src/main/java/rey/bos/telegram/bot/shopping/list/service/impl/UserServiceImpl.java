@@ -129,4 +129,12 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    @Override
+    public UserDto switchJoinRequestSetting(UserDto userDto) {
+        User user = findByUserIdOrThrow(userDto.getId());
+        user.setJoinRequestDisabled(!user.isJoinRequestDisabled());
+        user = userRepository.save(user);
+        return userDtoMapper.map(user);
+    }
+
 }

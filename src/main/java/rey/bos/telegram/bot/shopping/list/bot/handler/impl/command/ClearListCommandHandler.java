@@ -10,7 +10,7 @@ import rey.bos.telegram.bot.shopping.list.util.BotUtil;
 import rey.bos.telegram.bot.shopping.list.util.MessageUtil;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 
-import static rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey.CLEAR_LIST_COMMAND;
+import static rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey.CLEAR_LIST_COMMAND_MESSAGE;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand.CLEAR_LIST;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.command.MenuCommand.MENU_COMMAND_CLEAR_LIST;
 
@@ -25,7 +25,7 @@ public class ClearListCommandHandler extends BotHandler {
     @Override
     public boolean handle(Update update, UserDto user) {
         SendMessage message = messageUtil.buildSendMessageWithButtons(
-            user, CLEAR_LIST_COMMAND, messageUtil.buildYesNoButtons(user, CLEAR_LIST)
+            user, CLEAR_LIST_COMMAND_MESSAGE, messageUtil.buildYesNoButtons(user, CLEAR_LIST)
         );
         botUtil.executeMethod(message);
         return true;

@@ -25,4 +25,6 @@ public interface UserService {
 
     void blockUser(UserDto user);
 
+    UserDto switchJoinRequestSetting(UserDto user);
+
 }

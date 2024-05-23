@@ -26,6 +26,8 @@ public class UserFactory {
                 .userName(userParams.getUserName())
                 .firstName(userParams.getFirstName())
                 .languageCode(userParams.getLanguageCode())
+                .blocked(userParams.isBlocked())
+                .joinRequestDisabled(userParams.isJoinRequestDisabled())
                 .build()
         );
     }
@@ -49,6 +51,12 @@ public class UserFactory {
 
         @Builder.Default
         private LanguageCode languageCode = LanguageCode.EN;
+
+        @Builder.Default
+        private boolean blocked = false;
+
+        @Builder.Default
+        private boolean joinRequestDisabled = false;
 
     }
 
