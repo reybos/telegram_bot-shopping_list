@@ -19,6 +19,7 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import rey.bos.telegram.bot.shopping.list.Application;
 import rey.bos.telegram.bot.shopping.list.BaeldungPostgresqlContainer;
 import rey.bos.telegram.bot.shopping.list.bot.ShoppingListBot;
+import rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.IncomingRequestSettingHandler;
 import rey.bos.telegram.bot.shopping.list.config.ApplicationConfig;
 import rey.bos.telegram.bot.shopping.list.factory.JoinRequestFactory;
 import rey.bos.telegram.bot.shopping.list.factory.UserFactory;
@@ -66,6 +67,8 @@ public class MentionUserHandlerTest {
     private UserShoppingListFactory userShoppingListFactory;
     @Autowired
     private BlockBotHandler blockBotHandler;
+    @Autowired
+    private IncomingRequestSettingHandler requestSettingHandler;
 
     @Test
     public void whenTryJoinWithTwoMentionThenError() throws TelegramApiException {
@@ -130,6 +133,21 @@ public class MentionUserHandlerTest {
         SendMessage message = VerifyMessage.getVerifySendMessage(telegramClient);
         assertThat(message.getText()).isEqualTo(
             botUtil.getText(user.getLanguageCode(), USER_NOT_EXIST).formatted(mention)
+        );
+    }
+
+    @Test
+    public void whenOwnerRejectRequestsThenError() throws TelegramApiException {
+        UserDto user = userFactory.createUser();
+        UserDto owner = userFactory.createUser();
+        requestSettingHandler.handleAccept(owner, -1, -1);
+
+        String mention = messageUtil.getLogin(owner.getUserName());
+        Update update = createUpdateObjectWithJoinCommand(user, mention, null);
+        shoppingListBot.consume(update);
+        SendMessage message = VerifyMessage.getVerifySendMessage(telegramClient);
+        assertThat(message.getText()).isEqualTo(
+            botUtil.getText(user.getLanguageCode(), OWNER_BLOCK_JOIN_REQUEST_MESSAGE).formatted(mention)
         );
     }
 

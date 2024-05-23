@@ -60,7 +60,8 @@ public class MentionUserHandler extends BotHandler {
             return true;
         }
         Optional<UserDto> mentionUserO = userService.findActiveUserByLogin(mentionLogin);
-        if (isMentionUserNotExist(mentionUserO, mentionLogin, user)) {
+        if (isMentionUserNotExist(mentionUserO, mentionLogin, user)
+            || isMentionUserBlockRequests(mentionUserO.get(), mentionLogin, user)) {
             return true;
         }
 
@@ -129,6 +130,16 @@ public class MentionUserHandler extends BotHandler {
     private boolean isMentionUserNotExist(Optional<UserDto> mentionUserO, String mentionUserName, UserDto user) {
         if (mentionUserO.isEmpty()) {
             String message = botUtil.getText(user.getLanguageCode(), DictionaryKey.USER_NOT_EXIST)
+                .formatted(mentionUserName);
+            botUtil.sendMessage(user.getTelegramId(), message);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isMentionUserBlockRequests(UserDto mentionUser, String mentionUserName, UserDto user) {
+        if (mentionUser.isJoinRequestDisabled()) {
+            String message = botUtil.getText(user.getLanguageCode(), DictionaryKey.OWNER_BLOCK_JOIN_REQUEST_MESSAGE)
                 .formatted(mentionUserName);
             botUtil.sendMessage(user.getTelegramId(), message);
             return true;

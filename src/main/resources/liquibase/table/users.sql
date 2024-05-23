@@ -15,6 +15,10 @@ CREATE TABLE IF NOT EXISTS users
 ALTER TABLE users
     ADD COLUMN IF NOT EXISTS blocked BOOLEAN DEFAULT false NOT NULL;
 
+--changeset reybos:users_add_join_request_disabled_column
+ALTER TABLE users
+    ADD COLUMN IF NOT EXISTS join_request_disabled BOOLEAN DEFAULT false NOT NULL;
+
 --changeset reybos:2 runOnChange:true
 COMMENT ON TABLE users IS 'Users who have used the bot at least once';
 COMMENT ON COLUMN users.telegram_id IS 'User id in telegram';

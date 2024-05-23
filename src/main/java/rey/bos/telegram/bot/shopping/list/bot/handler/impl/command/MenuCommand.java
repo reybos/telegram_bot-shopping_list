@@ -9,17 +9,19 @@ import java.util.List;
 @Getter
 public enum MenuCommand {
 
-    MENU_COMMAND_SHOW_LIST("/show_list", """
-        view the current list 📋"""),
+    MENU_COMMAND_SHOW_LIST("/list", """
+        посмотреть список 📋"""),
     MENU_COMMAND_JOIN_USER("/join", """
-        merge lists with the user 🤝"""),
+        объединить списки 🤝"""),
     MENU_COMMAND_START("/start", ""),
-    MENU_COMMAND_CHANGE_LANGUAGE("/change_language", """
-        change language 🇺🇸"""),
+    MENU_COMMAND_CHANGE_LANGUAGE("/language", """
+        изменить язык ⚙️"""),
     MENU_COMMAND_CLEAR_LIST("/clear", """
-        clear list 🗑"""),
-    MENU_COMMAND_GROUP("/show_group", """
-        view your group 👥""");
+        очистить список 🗑"""),
+    MENU_COMMAND_GROUP("/group", """
+        посмотреть группу 👥"""),
+    MENU_COMMAND_INCOMING_REQUEST_SETTING("/request", """
+        входящие запросы ⚙️️"""),;
 
     private final String command;
     private final String description;
@@ -27,10 +29,11 @@ public enum MenuCommand {
     public static List<MenuCommand> getCommandsForMenu() {
         return List.of(
             MENU_COMMAND_SHOW_LIST,
+            MENU_COMMAND_CLEAR_LIST,
             MENU_COMMAND_JOIN_USER,
             MENU_COMMAND_GROUP,
             MENU_COMMAND_CHANGE_LANGUAGE,
-            MENU_COMMAND_CLEAR_LIST
+            MENU_COMMAND_INCOMING_REQUEST_SETTING
         );
     }
 
