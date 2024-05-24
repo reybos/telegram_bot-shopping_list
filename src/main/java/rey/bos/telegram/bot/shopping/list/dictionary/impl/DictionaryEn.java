@@ -174,6 +174,10 @@ public class DictionaryEn implements Dictionary {
             Greetings %s! 👋
             I will help you easily keep a shopping list. You can use the list yourself or team up with other users. Add and edit purchases conveniently and quickly!
             
+            %s
+            """
+        );
+        dictionary.put(HELP_COMMAND_MESSAGE, """
             <b>What can I do:</b>
             🔸 Any message sent will be added to the list. Excluding commands and user mentions.
             🔸 Call the /list command to view the current list.
