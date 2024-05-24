@@ -21,7 +21,9 @@ public enum MenuCommand {
     MENU_COMMAND_GROUP("/group", """
         посмотреть группу 👥"""),
     MENU_COMMAND_INCOMING_REQUEST_SETTING("/request", """
-        входящие запросы ⚙️️"""),;
+        входящие запросы ⚙️️"""),
+    MENU_COMMAND_HELP("/help", """
+        как пользоваться ❔️""");
 
     private final String command;
     private final String description;
@@ -33,7 +35,8 @@ public enum MenuCommand {
             MENU_COMMAND_JOIN_USER,
             MENU_COMMAND_GROUP,
             MENU_COMMAND_CHANGE_LANGUAGE,
-            MENU_COMMAND_INCOMING_REQUEST_SETTING
+            MENU_COMMAND_INCOMING_REQUEST_SETTING,
+            MENU_COMMAND_HELP
         );
     }
 
