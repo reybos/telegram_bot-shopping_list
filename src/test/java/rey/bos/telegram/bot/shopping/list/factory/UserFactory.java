@@ -7,6 +7,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import rey.bos.telegram.bot.shopping.list.io.LanguageCode;
+import rey.bos.telegram.bot.shopping.list.io.entity.User;
 import rey.bos.telegram.bot.shopping.list.service.UserService;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 
@@ -19,7 +20,7 @@ public class UserFactory {
 
     private final UserService userService;
 
-    public UserDto createUser(UserParams userParams) {
+    public User createUser(UserParams userParams) {
         return userService.createUser(
             UserDto.builder()
                 .telegramId(userParams.getTelegramId())
@@ -32,7 +33,7 @@ public class UserFactory {
         );
     }
 
-    public UserDto createUser() {
+    public User createUser() {
         return createUser(UserParams.builder().build());
     }
 

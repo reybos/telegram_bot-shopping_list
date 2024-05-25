@@ -5,13 +5,13 @@ import org.telegram.telegrambots.meta.api.objects.MessageEntity;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand;
 import rey.bos.telegram.bot.shopping.list.bot.handler.impl.command.MenuCommand;
-import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
+import rey.bos.telegram.bot.shopping.list.io.entity.User;
 
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.MessageEntityType.BOT_COMMAND;
 
 public abstract class BotHandler {
 
-    public abstract boolean handle(Update update, UserDto user);
+    public abstract boolean handle(Update update, User user);
 
     public abstract boolean support(Update update);
 

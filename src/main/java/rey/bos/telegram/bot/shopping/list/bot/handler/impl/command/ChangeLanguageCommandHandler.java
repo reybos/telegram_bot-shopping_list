@@ -7,7 +7,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
 import rey.bos.telegram.bot.shopping.list.bot.handler.BotHandler;
-import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
+import rey.bos.telegram.bot.shopping.list.io.entity.User;
 import rey.bos.telegram.bot.shopping.list.util.BotUtil;
 import rey.bos.telegram.bot.shopping.list.util.MessageUtil;
 
@@ -28,7 +28,7 @@ public class ChangeLanguageCommandHandler extends BotHandler {
     private final MessageUtil messageUtil;
 
     @Override
-    public boolean handle(Update update, UserDto user) {
+    public boolean handle(Update update, User user) {
         List<InlineKeyboardRow> buttons = List.of(new InlineKeyboardRow(
             messageUtil.buildButton(user.getLanguageCode(), ENGLISH_LANGUAGE, CHANGE_LANGUAGE.getCommand() + EN),
             messageUtil.buildButton(user.getLanguageCode(), RUSSIAN_LANGUAGE, CHANGE_LANGUAGE.getCommand() + RU)

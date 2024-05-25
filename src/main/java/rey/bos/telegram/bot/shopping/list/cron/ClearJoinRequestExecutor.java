@@ -7,12 +7,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
-import rey.bos.telegram.bot.shopping.list.util.BotUtil;
-import rey.bos.telegram.bot.shopping.list.util.MessageUtil;
 import rey.bos.telegram.bot.shopping.list.io.entity.JoinRequest;
+import rey.bos.telegram.bot.shopping.list.io.entity.User;
 import rey.bos.telegram.bot.shopping.list.service.JoinRequestService;
 import rey.bos.telegram.bot.shopping.list.service.UserService;
-import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
+import rey.bos.telegram.bot.shopping.list.util.BotUtil;
+import rey.bos.telegram.bot.shopping.list.util.MessageUtil;
 
 import java.util.List;
 
@@ -39,9 +39,9 @@ public class ClearJoinRequestExecutor {
             return;
         }
         for (JoinRequest joinRequest : expiredRequests) {
-            UserDto owner = userService.findByIdOrThrow(joinRequest.getOwnerId());
+            User owner = userService.findByIdOrThrow(joinRequest.getOwnerId());
             String ownerLogin = messageUtil.getLogin(owner.getUserName());
-            UserDto sender = userService.findByIdOrThrow(joinRequest.getUserId());
+            User sender = userService.findByIdOrThrow(joinRequest.getUserId());
             String senderLogin = messageUtil.getLogin(sender.getUserName());
 
             if (!owner.isBlocked()) {

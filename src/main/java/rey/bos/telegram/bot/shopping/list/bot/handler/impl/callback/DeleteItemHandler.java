@@ -7,9 +7,9 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import rey.bos.telegram.bot.shopping.list.bot.handler.BotHandler;
 import rey.bos.telegram.bot.shopping.list.bot.helper.ShoppingListHelper;
 import rey.bos.telegram.bot.shopping.list.io.entity.ShoppingList;
+import rey.bos.telegram.bot.shopping.list.io.entity.User;
 import rey.bos.telegram.bot.shopping.list.service.ShoppingListItemService;
 import rey.bos.telegram.bot.shopping.list.service.ShoppingListService;
-import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand.DELETE_ITEM;
 
@@ -25,7 +25,7 @@ public class DeleteItemHandler extends BotHandler {
     private final ShoppingListHelper shoppingListHelper;
 
     @Override
-    public boolean handle(Update update, UserDto user) {
+    public boolean handle(Update update, User user) {
         String data = update.getCallbackQuery().getData();
         long itemId = Long.parseLong(data.replaceFirst(command.getCommand(), ""));
         shoppingListItemService.deleteItemById(itemId);

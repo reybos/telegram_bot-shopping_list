@@ -5,18 +5,18 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import rey.bos.telegram.bot.shopping.list.util.BotUtil;
-import rey.bos.telegram.bot.shopping.list.util.MessageUtil;
+import rey.bos.telegram.bot.shopping.list.io.entity.User;
 import rey.bos.telegram.bot.shopping.list.io.entity.UserShoppingList;
 import rey.bos.telegram.bot.shopping.list.service.UserService;
 import rey.bos.telegram.bot.shopping.list.service.UserShoppingListService;
-import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
+import rey.bos.telegram.bot.shopping.list.util.BotUtil;
+import rey.bos.telegram.bot.shopping.list.util.MessageUtil;
 
 import java.util.List;
 import java.util.Optional;
 
-import static rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey.*;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand.LEAVE_GROUP_BEFORE_JOIN;
+import static rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey.*;
 
 @Slf4j
 @Component
@@ -37,7 +37,7 @@ public class LeaveGroupBeforeJoinHandler extends BotHandlerDecision {
     }
 
     @Override
-    public boolean handleAccept(UserDto user, int messageId, long callbackId) {
+    public boolean handleAccept(User user, int messageId, long callbackId) {
         UserShoppingList userShoppingList = userShoppingListService.findActiveUserShoppingList(user.getId());
         if (userShoppingList.isOwner()) {
             EditMessageText messageText = messageUtil.buildEditMessageText(
@@ -53,7 +53,7 @@ public class LeaveGroupBeforeJoinHandler extends BotHandlerDecision {
             user, messageId, LEAVE_GROUP_BEFORE_JOIN_SUCCESS_MESSAGE
         );
         botUtil.executeMethod(messageText);
-        Optional<UserDto> ownerO = userService.findActiveUserById(ownerList.getUserId());
+        Optional<User> ownerO = userService.findActiveUserById(ownerList.getUserId());
         if (ownerO.isPresent()) {
             SendMessage sendMessage = messageUtil.buildSendMessage(
                 ownerO.get(), USER_LEFT_YOUR_GROUP_MESSAGE, messageUtil.getLogin(user.getUserName())
@@ -64,7 +64,7 @@ public class LeaveGroupBeforeJoinHandler extends BotHandlerDecision {
     }
 
     @Override
-    public boolean handleReject(UserDto user, int messageId, long callbackId) {
+    public boolean handleReject(User user, int messageId, long callbackId) {
         EditMessageText message = messageUtil.buildEditMessageText(user, messageId, REJECT_JOINING_PROCCESS);
         botUtil.executeMethod(message);
         return true;

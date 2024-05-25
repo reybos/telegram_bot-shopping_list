@@ -16,9 +16,9 @@ import rey.bos.telegram.bot.shopping.list.config.ApplicationConfig;
 import rey.bos.telegram.bot.shopping.list.factory.JoinRequestFactory;
 import rey.bos.telegram.bot.shopping.list.factory.UserFactory;
 import rey.bos.telegram.bot.shopping.list.factory.VerifyMessage;
+import rey.bos.telegram.bot.shopping.list.io.entity.User;
 import rey.bos.telegram.bot.shopping.list.io.repository.params.JoinRequestParams;
 import rey.bos.telegram.bot.shopping.list.service.JoinRequestService;
-import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 import rey.bos.telegram.bot.shopping.list.util.BotUtil;
 import rey.bos.telegram.bot.shopping.list.util.MessageUtil;
 
@@ -59,9 +59,9 @@ class ClearJoinRequestExecutorTest {
 
     @Test
     public void whenRunThenCLearOldRequests() throws TelegramApiException {
-        UserDto user = userFactory.createUser();
+        User user = userFactory.createUser();
         String userLogin = messageUtil.getLogin(user.getUserName());
-        UserDto owner = userFactory.createUser();
+        User owner = userFactory.createUser();
         String ownerLogin = messageUtil.getLogin(owner.getUserName());
         joinRequestFactory.create(
             JoinRequestFactory.JoinRequestParams.builder()

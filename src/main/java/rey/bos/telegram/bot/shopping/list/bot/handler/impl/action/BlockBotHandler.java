@@ -7,17 +7,18 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import rey.bos.telegram.bot.shopping.list.bot.handler.BotHandler;
 import rey.bos.telegram.bot.shopping.list.bot.handler.ChatMemberStatus;
+import rey.bos.telegram.bot.shopping.list.io.entity.User;
 import rey.bos.telegram.bot.shopping.list.io.entity.UserShoppingList;
 import rey.bos.telegram.bot.shopping.list.service.UserService;
 import rey.bos.telegram.bot.shopping.list.service.UserShoppingListService;
-import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 import rey.bos.telegram.bot.shopping.list.util.BotUtil;
 import rey.bos.telegram.bot.shopping.list.util.MessageUtil;
 
 import java.util.List;
 import java.util.Optional;
 
-import static rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey.*;
+import static rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey.OWNER_BLOCKED_BOT_YOU_REMOVED_FROM_GROUP_MESSAGE;
+import static rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey.USER_BLOCKED_BOT_AND_LEFT_YOUR_GROUP_MESSAGE;
 
 @Component
 @RequiredArgsConstructor
@@ -30,14 +31,14 @@ public class BlockBotHandler extends BotHandler {
     private final UserShoppingListService userShoppingListService;
 
     @Override
-    public boolean handle(Update update, UserDto user) {
+    public boolean handle(Update update, User user) {
         UserShoppingList userShoppingList = userShoppingListService.findActiveUserShoppingList(user.getId());
-        userService.blockUser(user);
+        userService.blockUser(user.getId());
         if (userShoppingList.isOwner()) {
             List<Long> userIds = userShoppingListService.disbandGroup(user.getId());
-            List<UserDto> removedUsers = userService.findActiveUsersByIds(userIds);
+            List<User> removedUsers = userService.findActiveUsersByIds(userIds);
             String ownerLogin = messageUtil.getLogin(user.getUserName());
-            for (UserDto removedUser : removedUsers) {
+            for (User removedUser : removedUsers) {
                 SendMessage message = messageUtil.buildSendMessage(
                     removedUser, OWNER_BLOCKED_BOT_YOU_REMOVED_FROM_GROUP_MESSAGE, ownerLogin
                 );
@@ -47,7 +48,7 @@ public class BlockBotHandler extends BotHandler {
             List<UserShoppingList> group = userShoppingListService.findActiveGroupByUserId(user.getId());
             UserShoppingList ownerList = group.stream().filter(UserShoppingList::isOwner).toList().get(0);
             userShoppingListService.restoreMainList(user.getId());
-            Optional<UserDto> ownerO = userService.findActiveUserById(ownerList.getUserId());
+            Optional<User> ownerO = userService.findActiveUserById(ownerList.getUserId());
             if (ownerO.isPresent()) {
                 SendMessage sendMessage = messageUtil.buildSendMessage(
                     ownerO.get(), USER_BLOCKED_BOT_AND_LEFT_YOUR_GROUP_MESSAGE, messageUtil.getLogin(user.getUserName())

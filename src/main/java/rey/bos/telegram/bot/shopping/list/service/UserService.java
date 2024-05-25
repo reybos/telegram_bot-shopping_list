@@ -1,5 +1,7 @@
 package rey.bos.telegram.bot.shopping.list.service;
 
+import rey.bos.telegram.bot.shopping.list.io.LanguageCode;
+import rey.bos.telegram.bot.shopping.list.io.entity.User;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 
 import java.util.List;
@@ -7,24 +9,24 @@ import java.util.Optional;
 
 public interface UserService {
 
-    UserDto getOrCreateUser(UserDto userDto);
+    User getOrCreateUser(UserDto userDto);
 
-    UserDto createUser(UserDto userDto);
+    User createUser(UserDto userDto);
 
-    Optional<UserDto> findActiveUserByLogin(String login);
+    Optional<User> findActiveUserByLogin(String login);
 
-    Optional<UserDto> findActiveUserById(long userId);
+    Optional<User> findActiveUserById(long userId);
 
-    UserDto findByIdOrThrow(long userId);
+    User findByIdOrThrow(long userId);
 
-    UserDto findByTelegramOrThrow(long telegramId);
+    User findByTelegramOrThrow(long telegramId);
 
-    UserDto updateUser(UserDto user);
+    User updateUserLanguage(long userId, LanguageCode code);
 
-    List<UserDto> findActiveUsersByIds(List<Long> ids);
+    List<User> findActiveUsersByIds(List<Long> ids);
 
-    void blockUser(UserDto user);
+    void blockUser(long userId);
 
-    UserDto switchJoinRequestSetting(UserDto user);
+    User switchJoinRequestSetting(long userId);
 
 }

@@ -6,22 +6,21 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.message.Message;
 import rey.bos.telegram.bot.shopping.list.Application;
 import rey.bos.telegram.bot.shopping.list.config.ApplicationConfig;
 import rey.bos.telegram.bot.shopping.list.factory.UserFactory;
 import rey.bos.telegram.bot.shopping.list.factory.UserShoppingListFactory;
+import rey.bos.telegram.bot.shopping.list.io.entity.User;
 import rey.bos.telegram.bot.shopping.list.io.entity.UserShoppingList;
 import rey.bos.telegram.bot.shopping.list.service.UserShoppingListService;
-import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 
 import java.util.List;
 import java.util.Random;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand.*;
+import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand.CONFIRM;
+import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand.REMOVE_USER_FROM_GROUP;
 
 @SpringBootTest(classes = {Application.class, ApplicationConfig.class})
 @ActiveProfiles({"tc", "tc-auto", "stub"})
@@ -38,8 +37,8 @@ class RemoveUserFromGroupHandlerTest {
 
     @Test
     public void whenRemoveUserFromGroupThenSuccess() {
-        UserDto user = userFactory.createUser();
-        UserDto owner = userFactory.createUser();
+        User user = userFactory.createUser();
+        User owner = userFactory.createUser();
         userShoppingListFactory.joinUsersList(user, owner);
         UserShoppingList activeList = userShoppingListService.findActiveUserShoppingList(user.getId());
         assertThat(activeList.isOwner()).isFalse();
@@ -56,15 +55,17 @@ class RemoveUserFromGroupHandlerTest {
         assertThat(group).noneMatch(item -> item.getUserId() == user.getId());
     }
 
-    private Update createUpdateObjectWithCallback(UserDto userDto, long id, String decision) {
+    private Update createUpdateObjectWithCallback(User storedUser, long id, String decision) {
         Update update = new Update();
         CallbackQuery callbackQuery = new CallbackQuery();
         callbackQuery.setData(REMOVE_USER_FROM_GROUP.getCommand() + id + decision);
         Message message = new Message();
         message.setMessageId(new Random().nextInt());
         callbackQuery.setMessage(message);
-        User user = new User(userDto.getTelegramId(), userDto.getFirstName(), false);
-        user.setUserName(userDto.getUserName());
+        org.telegram.telegrambots.meta.api.objects.User user = new org.telegram.telegrambots.meta.api.objects.User(
+            storedUser.getTelegramId(), storedUser.getFirstName(), false
+        );
+        user.setUserName(storedUser.getUserName());
         callbackQuery.setFrom(user);
         update.setCallbackQuery(callbackQuery);
         return update;

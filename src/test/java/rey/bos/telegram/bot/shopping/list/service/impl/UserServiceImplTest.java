@@ -11,6 +11,7 @@ import rey.bos.telegram.bot.shopping.list.Application;
 import rey.bos.telegram.bot.shopping.list.BaeldungPostgresqlContainer;
 import rey.bos.telegram.bot.shopping.list.config.ApplicationConfig;
 import rey.bos.telegram.bot.shopping.list.io.LanguageCode;
+import rey.bos.telegram.bot.shopping.list.io.entity.User;
 import rey.bos.telegram.bot.shopping.list.io.entity.UserShoppingList;
 import rey.bos.telegram.bot.shopping.list.io.repository.UserShoppingListRepository;
 import rey.bos.telegram.bot.shopping.list.service.UserService;
@@ -39,21 +40,21 @@ class UserServiceImplTest {
     @Test
     void whenGetNewUserThenCreate() {
         UserDto input = buildUserWithRandomTelegramId();
-        UserDto userDto = userService.getOrCreateUser(input);
-        assertNotNull(userDto);
-        assertNotNull(userDto.getId());
-        assertThat(userDto).usingRecursiveComparison().ignoringFields("id").isEqualTo(input);
+        User user = userService.getOrCreateUser(input);
+        assertNotNull(user);
+        assertNotNull(user.getId());
+        assertThat(user).usingRecursiveComparison().ignoringFields("id").isEqualTo(input);
 
-        List<UserShoppingList> userShoppingLists = userShoppingListRepository.findByUserId(userDto.getId());
+        List<UserShoppingList> userShoppingLists = userShoppingListRepository.findByUserId(user.getId());
         assertThat(userShoppingLists.size()).isNotZero();
     }
 
     @Test
     void whenGetOldUserThenNotCreate() {
         UserDto input = buildUserWithRandomTelegramId();
-        UserDto userDto1 = userService.getOrCreateUser(input);
-        UserDto userDto2 = userService.getOrCreateUser(input);
-        assertThat(userDto1.getId()).isEqualTo(userDto2.getId());
+        User user1 = userService.getOrCreateUser(input);
+        User user2 = userService.getOrCreateUser(input);
+        assertThat(user1.getId()).isEqualTo(user2.getId());
     }
 
     private UserDto buildUserWithRandomTelegramId() {

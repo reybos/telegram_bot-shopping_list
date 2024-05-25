@@ -6,12 +6,12 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import rey.bos.telegram.bot.shopping.list.bot.handler.BotHandler;
-import rey.bos.telegram.bot.shopping.list.util.BotUtil;
 import rey.bos.telegram.bot.shopping.list.bot.helper.GroupHelper;
+import rey.bos.telegram.bot.shopping.list.io.entity.User;
 import rey.bos.telegram.bot.shopping.list.io.entity.UserShoppingList;
 import rey.bos.telegram.bot.shopping.list.io.repository.params.UserShoppingListGroupParams;
 import rey.bos.telegram.bot.shopping.list.service.UserShoppingListService;
-import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
+import rey.bos.telegram.bot.shopping.list.util.BotUtil;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ public class ShowGroupCommandHandler extends BotHandler {
     private final BotUtil botUtil;
 
     @Override
-    public boolean handle(Update update, UserDto user) {
+    public boolean handle(Update update, User user) {
         UserShoppingList activeList = userShoppingListService.findActiveUserShoppingList(user.getId());
         List<UserShoppingListGroupParams> group = userShoppingListService.findActiveGroupByListId(
             activeList.getShoppingListId()

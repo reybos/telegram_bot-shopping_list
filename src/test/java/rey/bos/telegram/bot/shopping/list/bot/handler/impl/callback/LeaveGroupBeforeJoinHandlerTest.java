@@ -15,9 +15,9 @@ import rey.bos.telegram.bot.shopping.list.config.ApplicationConfig;
 import rey.bos.telegram.bot.shopping.list.factory.UserFactory;
 import rey.bos.telegram.bot.shopping.list.factory.UserShoppingListFactory;
 import rey.bos.telegram.bot.shopping.list.factory.VerifyMessage;
+import rey.bos.telegram.bot.shopping.list.io.entity.User;
 import rey.bos.telegram.bot.shopping.list.io.entity.UserShoppingList;
 import rey.bos.telegram.bot.shopping.list.service.UserShoppingListService;
-import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 import rey.bos.telegram.bot.shopping.list.util.BotUtil;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -46,8 +46,8 @@ class LeaveGroupBeforeJoinHandlerTest {
 
     @Test
     public void whenLeaveGroupThenSuccess() {
-        UserDto user = userFactory.createUser();
-        UserDto owner = userFactory.createUser();
+        User user = userFactory.createUser();
+        User owner = userFactory.createUser();
         userShoppingListFactory.joinUsersList(user, owner);
         UserShoppingList activeList = userShoppingListService.findActiveUserShoppingList(user.getId());
         assertThat(activeList.isOwner()).isFalse();
@@ -58,8 +58,8 @@ class LeaveGroupBeforeJoinHandlerTest {
 
     @Test
     public void whenLeaveOwnGroupThenError() throws TelegramApiException {
-        UserDto user = userFactory.createUser();
-        UserDto owner = userFactory.createUser();
+        User user = userFactory.createUser();
+        User owner = userFactory.createUser();
         userShoppingListFactory.joinUsersList(user, owner);
 
         leaveGroupBeforeJoinHandler.handleAccept(owner, -1, -1);

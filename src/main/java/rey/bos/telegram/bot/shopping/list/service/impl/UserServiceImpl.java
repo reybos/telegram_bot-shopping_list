@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.CollectionUtils;
+import rey.bos.telegram.bot.shopping.list.io.LanguageCode;
 import rey.bos.telegram.bot.shopping.list.io.entity.ShoppingList;
 import rey.bos.telegram.bot.shopping.list.io.entity.User;
 import rey.bos.telegram.bot.shopping.list.io.entity.UserShoppingList;
@@ -30,7 +31,7 @@ public class UserServiceImpl implements UserService {
     private final TransactionTemplate transactionTemplate;
 
     @Override
-    public UserDto getOrCreateUser(UserDto userDto) {
+    public User getOrCreateUser(UserDto userDto) {
         Optional<User> userO = userRepository.findByTelegramId(userDto.getTelegramId());
         if (userO.isPresent()) {
             User user = userO.get();
@@ -43,13 +44,13 @@ public class UserServiceImpl implements UserService {
                 user.setBlocked(false);
                 user = userRepository.save(user);
             }
-            return userDtoMapper.map(user);
+            return user;
         }
         return createUser(userDto);
     }
 
     @Override
-    public UserDto createUser(UserDto userDto) {
+    public User createUser(UserDto userDto) {
         User storedUser = transactionTemplate.execute(status -> {
             User user = userDtoMapper.map(userDto);
             user.setBlocked(false);
@@ -64,35 +65,32 @@ public class UserServiceImpl implements UserService {
             userShoppingListRepository.save(userShoppingList);
             return user;
         });
-        return userDtoMapper.map(storedUser);
+        return storedUser;
     }
 
     @Override
-    public Optional<UserDto> findActiveUserByLogin(String login) {
+    public Optional<User> findActiveUserByLogin(String login) {
         String userName = login.replaceFirst("@", "");
-        Optional<User> userO = userRepository.findByUserNameAndBlocked(userName, false);
-        return userO.map(userDtoMapper::map);
+        return userRepository.findByUserNameAndBlocked(userName, false);
     }
 
     @Override
-    public Optional<UserDto> findActiveUserById(long userId) {
-        Optional<User> userO = userRepository.findByIdAndBlocked(userId, false);
-        return userO.map(userDtoMapper::map);
+    public Optional<User> findActiveUserById(long userId) {
+        return userRepository.findByIdAndBlocked(userId, false);
     }
 
     @Override
-    public UserDto findByIdOrThrow(long userId) {
-        User user = findByUserIdOrThrow(userId);
-        return userDtoMapper.map(user);
+    public User findByIdOrThrow(long userId) {
+        return findByUserIdOrThrow(userId);
     }
 
     @Override
-    public UserDto findByTelegramOrThrow(long telegramId) {
+    public User findByTelegramOrThrow(long telegramId) {
         Optional<User> userO = userRepository.findByTelegramId(telegramId);
         if (userO.isEmpty()) {
             throw new NoSuchElementException("The user with the telegramId=" + telegramId + " was not found");
         }
-        return userDtoMapper.map(userO.get());
+        return userO.get();
     }
 
     private User findByUserIdOrThrow(long userId) {
@@ -104,37 +102,32 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto updateUser(UserDto userDto) {
-        User user = findByUserIdOrThrow(userDto.getId());
-        user.setUserName(user.getUserName());
-        user.setFirstName(userDto.getFirstName());
-        user.setLanguageCode(userDto.getLanguageCode());
-        user = userRepository.save(user);
-        return userDtoMapper.map(user);
+    public User updateUserLanguage(long userId, LanguageCode code) {
+        User user = findByUserIdOrThrow(userId);
+        user.setLanguageCode(code);
+        return userRepository.save(user);
     }
 
     @Override
-    public List<UserDto> findActiveUsersByIds(List<Long> ids) {
+    public List<User> findActiveUsersByIds(List<Long> ids) {
         if (CollectionUtils.isEmpty(ids)) {
             return new ArrayList<>();
         }
-        List<User> users = userRepository.findByIds(ids);
-        return userDtoMapper.map(users);
+        return userRepository.findByIds(ids);
     }
 
     @Override
-    public void blockUser(UserDto userDto) {
-        User user = findByUserIdOrThrow(userDto.getId());
+    public void blockUser(long userId) {
+        User user = findByUserIdOrThrow(userId);
         user.setBlocked(true);
         userRepository.save(user);
     }
 
     @Override
-    public UserDto switchJoinRequestSetting(UserDto userDto) {
-        User user = findByUserIdOrThrow(userDto.getId());
+    public User switchJoinRequestSetting(long userId) {
+        User user = findByUserIdOrThrow(userId);
         user.setJoinRequestDisabled(!user.isJoinRequestDisabled());
-        user = userRepository.save(user);
-        return userDtoMapper.map(user);
+        return userRepository.save(user);
     }
 
 }

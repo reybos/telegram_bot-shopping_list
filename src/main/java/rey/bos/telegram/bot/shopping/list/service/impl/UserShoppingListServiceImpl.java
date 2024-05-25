@@ -6,13 +6,13 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import rey.bos.telegram.bot.shopping.list.io.entity.JoinRequest;
+import rey.bos.telegram.bot.shopping.list.io.entity.User;
 import rey.bos.telegram.bot.shopping.list.io.entity.UserShoppingList;
 import rey.bos.telegram.bot.shopping.list.io.repository.JoinRequestRepository;
 import rey.bos.telegram.bot.shopping.list.io.repository.UserShoppingListRepository;
 import rey.bos.telegram.bot.shopping.list.io.repository.params.UserShoppingListGroupParams;
 import rey.bos.telegram.bot.shopping.list.service.UserService;
 import rey.bos.telegram.bot.shopping.list.service.UserShoppingListService;
-import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 
 import java.util.List;
 
@@ -46,7 +46,7 @@ public class UserShoppingListServiceImpl implements UserShoppingListService {
     public void changeSenderActiveList(JoinRequest joinRequest, UserShoppingList newList) {
         joinRequest.setApproved(true);
         joinRequestRepository.save(joinRequest);
-        UserDto sender = userService.findByIdOrThrow(joinRequest.getUserId());
+        User sender = userService.findByIdOrThrow(joinRequest.getUserId());
         List<UserShoppingList> currSenderLists = userShoppingListRepository.findByUserIdAndActive(sender.getId(), true);
         checkListCount(currSenderLists, sender.getId());
         UserShoppingList currSenderList = currSenderLists.get(0);

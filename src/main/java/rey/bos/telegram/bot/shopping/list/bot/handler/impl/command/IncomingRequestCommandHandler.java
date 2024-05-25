@@ -7,7 +7,7 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import rey.bos.telegram.bot.shopping.list.bot.handler.BotHandler;
 import rey.bos.telegram.bot.shopping.list.bot.helper.IncomingRequestCommandHelper;
-import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
+import rey.bos.telegram.bot.shopping.list.io.entity.User;
 import rey.bos.telegram.bot.shopping.list.util.BotUtil;
 import rey.bos.telegram.bot.shopping.list.util.MessageUtil;
 
@@ -25,7 +25,7 @@ public class IncomingRequestCommandHandler extends BotHandler {
     private final IncomingRequestCommandHelper requestCommandHelper;
 
     @Override
-    public boolean handle(Update update, UserDto user) {
+    public boolean handle(Update update, User user) {
         SendMessage message = messageUtil.buildSendMessageWithButtons(
             user, INCOMING_REQUEST_SETTING_MESSAGE, messageUtil.buildYesNoButtons(user, INCOMING_REQUEST_SETTING),
             requestCommandHelper.getConditionMessage(user), requestCommandHelper.getProposalMessage(user)

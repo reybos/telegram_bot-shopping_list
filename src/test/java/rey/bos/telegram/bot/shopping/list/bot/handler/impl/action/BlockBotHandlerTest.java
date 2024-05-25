@@ -7,7 +7,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.telegram.telegrambots.meta.api.objects.MessageEntity;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.message.Message;
 import org.testcontainers.containers.PostgreSQLContainer;
 import rey.bos.telegram.bot.shopping.list.Application;
@@ -17,10 +16,10 @@ import rey.bos.telegram.bot.shopping.list.bot.handler.impl.command.MenuCommand;
 import rey.bos.telegram.bot.shopping.list.config.ApplicationConfig;
 import rey.bos.telegram.bot.shopping.list.factory.UserFactory;
 import rey.bos.telegram.bot.shopping.list.factory.UserShoppingListFactory;
+import rey.bos.telegram.bot.shopping.list.io.entity.User;
 import rey.bos.telegram.bot.shopping.list.io.entity.UserShoppingList;
 import rey.bos.telegram.bot.shopping.list.service.UserService;
 import rey.bos.telegram.bot.shopping.list.service.UserShoppingListService;
-import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 
 import java.util.List;
 import java.util.Optional;
@@ -51,9 +50,9 @@ class BlockBotHandlerTest {
 
     @Test
     public void whenBlockBotThenBlockUser() {
-        UserDto user = userFactory.createUser();
+        User user = userFactory.createUser();
         blockBotHandler.handle(new Update(), user);
-        Optional<UserDto> userO = userService.findActiveUserById(user.getId());
+        Optional<User> userO = userService.findActiveUserById(user.getId());
         assertThat(userO).isEmpty();
         user = userService.findByIdOrThrow(user.getId());
         assertThat(user.isBlocked()).isTrue();
@@ -61,7 +60,7 @@ class BlockBotHandlerTest {
 
     @Test
     public void whenBlockBotAndRestartThenUnblockUser() {
-        UserDto user = userFactory.createUser();
+        User user = userFactory.createUser();
         blockBotHandler.handle(new Update(), user);
         user = userService.findByIdOrThrow(user.getId());
         assertThat(user.isBlocked()).isTrue();
@@ -73,8 +72,8 @@ class BlockBotHandlerTest {
 
     @Test
     public void whenBlockBotAndOwnGroupThenDisbandGroup() {
-        UserDto owner = userFactory.createUser();
-        UserDto user = userFactory.createUser();
+        User owner = userFactory.createUser();
+        User user = userFactory.createUser();
         userShoppingListFactory.joinUsersList(user, owner);
         UserShoppingList activeList = userShoppingListService.findActiveUserShoppingList(user.getId());
         assertThat(activeList.isOwner()).isFalse();
@@ -85,8 +84,8 @@ class BlockBotHandlerTest {
 
     @Test
     public void whenBlockBotAndMemberGroupThenLeaveGroup() {
-        UserDto owner = userFactory.createUser();
-        UserDto user = userFactory.createUser();
+        User owner = userFactory.createUser();
+        User user = userFactory.createUser();
         userShoppingListFactory.joinUsersList(user, owner);
         List<UserShoppingList> lists = userShoppingListService.findActiveGroupByUserId(owner.getId());
         assertThat(lists.size()).isEqualTo(2);
@@ -95,7 +94,7 @@ class BlockBotHandlerTest {
         assertThat(lists.size()).isEqualTo(1);
     }
 
-    private Update createUpdateObjectWithStartCommand(UserDto userDto) {
+    private Update createUpdateObjectWithStartCommand(User storedUser) {
         Update update = new Update();
         Message message = new Message();
         String command = MenuCommand.MENU_COMMAND_START.getCommand();
@@ -108,8 +107,10 @@ class BlockBotHandlerTest {
                 .text(command)
                 .build()
         ));
-        User user = new User(userDto.getTelegramId(), userDto.getFirstName(), false);
-        user.setUserName(userDto.getUserName());
+        org.telegram.telegrambots.meta.api.objects.User user = new org.telegram.telegrambots.meta.api.objects.User(
+            storedUser.getTelegramId(), storedUser.getFirstName(), false
+        );
+        user.setUserName(storedUser.getUserName());
         message.setFrom(user);
         update.setMessage(message);
         return update;

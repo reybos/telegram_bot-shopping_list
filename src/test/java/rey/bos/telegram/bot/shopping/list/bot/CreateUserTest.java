@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.message.Message;
 import org.testcontainers.containers.PostgreSQLContainer;
 import rey.bos.telegram.bot.shopping.list.Application;
@@ -17,8 +16,9 @@ import rey.bos.telegram.bot.shopping.list.BaeldungPostgresqlContainer;
 import rey.bos.telegram.bot.shopping.list.config.ApplicationConfig;
 import rey.bos.telegram.bot.shopping.list.factory.UserFactory;
 import rey.bos.telegram.bot.shopping.list.io.LanguageCode;
+import rey.bos.telegram.bot.shopping.list.io.entity.User;
 import rey.bos.telegram.bot.shopping.list.service.UserService;
-import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
+import rey.bos.telegram.bot.shopping.list.shared.mapper.UserDtoMapper;
 
 import java.util.Random;
 
@@ -38,6 +38,8 @@ public class CreateUserTest {
     private UserService userService;
     @Autowired
     private UserFactory userFactory;
+    @Autowired
+    private UserDtoMapper userDtoMapper;
 
     @ParameterizedTest
     @CsvSource({",EN", "en,EN", "ru,RU", "arn,EN"})
@@ -47,8 +49,8 @@ public class CreateUserTest {
         String userName = RandomStringUtils.randomAlphanumeric(10);
         Update update = createUpdateObjectWithUser(telegramId, languageCode, firstName, userName);
         shoppingListBot.consume(update);
-        UserDto storedUser = userService.findByTelegramOrThrow(telegramId);
-        UserDto expectedUser = UserDto.builder()
+        User storedUser = userService.findByTelegramOrThrow(telegramId);
+        User expectedUser = User.builder()
             .userName(userName)
             .languageCode(expectedLanguageCode)
             .firstName(firstName)
@@ -59,15 +61,15 @@ public class CreateUserTest {
 
     @Test
     public void whenUserChangedThenSuccess() {
-        UserDto user = userFactory.createUser(
+        User user = userFactory.createUser(
             UserFactory.UserParams.builder().userName("abc").firstName("123").build()
         );
         String userName = "userName";
         String firstName = "firstName";
         user.setUserName(userName);
         user.setFirstName(firstName);
-        userService.getOrCreateUser(user);
-        UserDto storedUser = userService.findByIdOrThrow(user.getId());
+        userService.getOrCreateUser(userDtoMapper.map(user));
+        User storedUser = userService.findByIdOrThrow(user.getId());
         assertThat(storedUser.getUserName()).isEqualTo(userName);
         assertThat(storedUser.getFirstName()).isEqualTo(firstName);
     }
@@ -77,7 +79,9 @@ public class CreateUserTest {
     ) {
         Update update = new Update();
         Message message = new Message();
-        User user = new User(telegramId, firstName, false);
+        org.telegram.telegrambots.meta.api.objects.User user = new org.telegram.telegrambots.meta.api.objects.User(
+            telegramId, firstName, false
+        );
         user.setUserName(userName);
         user.setLanguageCode(languageCode);
         message.setFrom(user);

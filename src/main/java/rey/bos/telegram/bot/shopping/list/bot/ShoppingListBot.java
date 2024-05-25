@@ -11,16 +11,16 @@ import org.telegram.telegrambots.longpolling.starter.SpringLongPollingBot;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 import rey.bos.telegram.bot.shopping.list.bot.handler.BotHandler;
 import rey.bos.telegram.bot.shopping.list.bot.handler.impl.command.MenuCommand;
-import rey.bos.telegram.bot.shopping.list.util.BotUtil;
+import rey.bos.telegram.bot.shopping.list.io.entity.User;
 import rey.bos.telegram.bot.shopping.list.service.UserService;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 import rey.bos.telegram.bot.shopping.list.shared.mapper.UserDtoMapper;
+import rey.bos.telegram.bot.shopping.list.util.BotUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,7 +77,7 @@ public class ShoppingListBot implements SpringLongPollingBot, LongPollingSingleT
 
     @Override
     public void consume(Update update) {
-        UserDto user = getOrCreateUser(update);
+        User user = getOrCreateUser(update);
         boolean handled = false;
         for (BotHandler handler : handlers) {
             if (handler.support(update)) {
@@ -89,8 +89,8 @@ public class ShoppingListBot implements SpringLongPollingBot, LongPollingSingleT
         }
     }
 
-    public UserDto getOrCreateUser(Update update) {
-        User user;
+    public User getOrCreateUser(Update update) {
+        org.telegram.telegrambots.meta.api.objects.User user;
         if (update.hasMyChatMember()) {
             user = update.getMyChatMember().getFrom();
         } else if (update.hasCallbackQuery()) {

@@ -6,19 +6,19 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import rey.bos.telegram.bot.shopping.list.util.BotUtil;
-import rey.bos.telegram.bot.shopping.list.util.MessageUtil;
 import rey.bos.telegram.bot.shopping.list.io.entity.JoinRequest;
+import rey.bos.telegram.bot.shopping.list.io.entity.User;
 import rey.bos.telegram.bot.shopping.list.io.entity.UserShoppingList;
 import rey.bos.telegram.bot.shopping.list.service.JoinRequestService;
 import rey.bos.telegram.bot.shopping.list.service.UserService;
 import rey.bos.telegram.bot.shopping.list.service.UserShoppingListService;
-import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
+import rey.bos.telegram.bot.shopping.list.util.BotUtil;
+import rey.bos.telegram.bot.shopping.list.util.MessageUtil;
 
 import java.util.Optional;
 
-import static rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey.*;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand.ACCEPT_JOIN_REQUEST;
+import static rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey.*;
 
 @Slf4j
 @Component
@@ -43,7 +43,7 @@ public class AcceptJoinRequestHandler extends BotHandlerDecision {
     }
 
     @Override
-    public boolean handleAccept(UserDto user, int messageId, long callbackId) {
+    public boolean handleAccept(User user, int messageId, long callbackId) {
         Optional<JoinRequest> joinRequestO = joinRequestService.findRequest(user.getId(), messageId);
         if (joinRequestO.isEmpty()) {
             EditMessageText message = messageUtil.buildEditMessageText(
@@ -66,7 +66,7 @@ public class AcceptJoinRequestHandler extends BotHandlerDecision {
             log.error(e.getMessage(), e);
             return false;
         }
-        UserDto sender = userService.findByIdOrThrow(joinRequest.getUserId());
+        User sender = userService.findByIdOrThrow(joinRequest.getUserId());
         EditMessageText ownerMessage = messageUtil.buildEditMessageText(
             user, messageId, JOIN_REQUEST_ACCEPTED_OWNER, messageUtil.getLogin(sender.getUserName())
         );
@@ -80,7 +80,7 @@ public class AcceptJoinRequestHandler extends BotHandlerDecision {
     }
 
     @Override
-    public boolean handleReject(UserDto user, int messageId, long callbackId) {
+    public boolean handleReject(User user, int messageId, long callbackId) {
         Optional<JoinRequest> joinRequestO = joinRequestService.rejectRequest(user.getId(), messageId);
         if (joinRequestO.isEmpty()) {
             EditMessageText message = messageUtil.buildEditMessageText(
@@ -90,7 +90,7 @@ public class AcceptJoinRequestHandler extends BotHandlerDecision {
             return true;
         }
         JoinRequest joinRequest = joinRequestO.get();
-        UserDto sender = userService.findByIdOrThrow(joinRequest.getUserId());
+        User sender = userService.findByIdOrThrow(joinRequest.getUserId());
         String senderLogin = messageUtil.getLogin(sender.getUserName());
         EditMessageText ownerMsg = messageUtil.buildEditMessageText(
             user, messageId, OWNER_MSG_JOIN_REQUEST_REJECTED, senderLogin
@@ -98,7 +98,9 @@ public class AcceptJoinRequestHandler extends BotHandlerDecision {
         botUtil.executeMethod(ownerMsg);
         String ownerLogin = messageUtil.getLogin(user.getUserName());
         if (!sender.isBlocked()) {
-            SendMessage senderMessage = messageUtil.buildSendMessage(sender, SENDER_MSG_JOIN_REQUEST_REJECTED, ownerLogin);
+            SendMessage senderMessage = messageUtil.buildSendMessage(
+                sender, SENDER_MSG_JOIN_REQUEST_REJECTED, ownerLogin
+            );
             botUtil.executeMethod(senderMessage);
         }
         return true;

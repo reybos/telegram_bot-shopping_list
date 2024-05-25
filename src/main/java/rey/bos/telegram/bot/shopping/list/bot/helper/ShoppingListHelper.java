@@ -9,18 +9,21 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import rey.bos.telegram.bot.shopping.list.io.LanguageCode;
 import rey.bos.telegram.bot.shopping.list.io.entity.ShoppingList;
 import rey.bos.telegram.bot.shopping.list.io.entity.ShoppingListItem;
+import rey.bos.telegram.bot.shopping.list.io.entity.User;
 import rey.bos.telegram.bot.shopping.list.io.repository.params.MessageParams;
 import rey.bos.telegram.bot.shopping.list.service.MessageShoppingListService;
-import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 import rey.bos.telegram.bot.shopping.list.util.BotUtil;
 import rey.bos.telegram.bot.shopping.list.util.MessageUtil;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
-import static rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey.*;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand.DELETE_ITEM;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand.REFRESH_LIST;
 import static rey.bos.telegram.bot.shopping.list.bot.helper.RefreshButtonIcon.REFRESH_BUTTON_COLOR;
+import static rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey.*;
 
 @Component
 @RequiredArgsConstructor
@@ -30,7 +33,7 @@ public class ShoppingListHelper {
     private final MessageShoppingListService messageShoppingListService;
     private final MessageUtil messageUtil;
 
-    public SendMessage buildShoppingListSendMessage(UserDto user, ShoppingList shoppingList) {
+    public SendMessage buildShoppingListSendMessage(User user, ShoppingList shoppingList) {
         return SendMessage.builder()
             .parseMode("HTML")
             .chatId(user.getTelegramId())
@@ -65,13 +68,13 @@ public class ShoppingListHelper {
         messages.forEach(msg -> refreshListMessage(shoppingList, msg));
     }
 
-    public void refreshUserList(UserDto userDto, int messageId, ShoppingList shoppingList) {
+    public void refreshUserList(User user, int messageId, ShoppingList shoppingList) {
         refreshListMessage(
             shoppingList,
             MessageParams.builder()
                 .messageId(messageId)
-                .languageCode(userDto.getLanguageCode())
-                .telegramId(userDto.getTelegramId())
+                .languageCode(user.getLanguageCode())
+                .telegramId(user.getTelegramId())
                 .build()
         );
     }

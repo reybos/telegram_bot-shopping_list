@@ -5,14 +5,14 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import rey.bos.telegram.bot.shopping.list.bot.handler.BotHandler;
 import rey.bos.telegram.bot.shopping.list.bot.handler.ChatMemberStatus;
-import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
+import rey.bos.telegram.bot.shopping.list.io.entity.User;
 
 @Component
 @Slf4j
 public class BeforeStartHandler extends BotHandler {
 
     @Override
-    public boolean handle(Update update, UserDto user) {
+    public boolean handle(Update update, User user) {
         log.info("Received a request before the /start command for the user with telegramId = " + user.getTelegramId());
         return true;
     }
