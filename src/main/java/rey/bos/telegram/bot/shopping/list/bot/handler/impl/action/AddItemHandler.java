@@ -32,6 +32,7 @@ public class AddItemHandler extends BotHandler {
     @Override
     public boolean handle(Update update, User user) {
         String item = update.getMessage().getText();
+        logCall(user.getId(), "add item to list", item);
         if (item.length() > MAX_ITEM_LENGTH) {
             botUtil.sendMessageByKey(user.getTelegramId(), user.getLanguageCode(), ERROR_ITEM_ADD_TOO_LONG_ITEM);
             return true;

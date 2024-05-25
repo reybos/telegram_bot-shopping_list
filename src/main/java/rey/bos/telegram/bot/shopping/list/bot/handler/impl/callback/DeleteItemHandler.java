@@ -28,6 +28,7 @@ public class DeleteItemHandler extends BotHandler {
     public boolean handle(Update update, User user) {
         String data = update.getCallbackQuery().getData();
         long itemId = Long.parseLong(data.replaceFirst(command.getCommand(), ""));
+        logCall(user.getId(), command.getCommand(), String.valueOf(itemId));
         shoppingListItemService.deleteItemById(itemId);
         ShoppingList shoppingList;
         try {

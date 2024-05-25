@@ -29,6 +29,7 @@ public class ChangeLanguageCommandHandler extends BotHandler {
 
     @Override
     public boolean handle(Update update, User user) {
+        logCall(user.getId(), MENU_COMMAND_CHANGE_LANGUAGE.getCommand(), "");
         List<InlineKeyboardRow> buttons = List.of(new InlineKeyboardRow(
             messageUtil.buildButton(user.getLanguageCode(), ENGLISH_LANGUAGE, CHANGE_LANGUAGE.getCommand() + EN),
             messageUtil.buildButton(user.getLanguageCode(), RUSSIAN_LANGUAGE, CHANGE_LANGUAGE.getCommand() + RU)

@@ -20,6 +20,7 @@ public class HelpCommandHandler extends BotHandler {
 
     @Override
     public boolean handle(Update update, User user) {
+        logCall(user.getId(), MENU_COMMAND_HELP.getCommand(), "");
         String text = botUtil.getText(user.getLanguageCode(), HELP_COMMAND_MESSAGE);
         botUtil.sendMessage(user.getTelegramId(), text);
         return true;

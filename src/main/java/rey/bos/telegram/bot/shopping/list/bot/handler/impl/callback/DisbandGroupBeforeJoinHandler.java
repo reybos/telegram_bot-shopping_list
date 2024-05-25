@@ -37,6 +37,7 @@ public class DisbandGroupBeforeJoinHandler extends BotHandlerDecision {
 
     @Override
     public boolean handleAccept(User user, int messageId, long callbackId) {
+        logCall(user.getId(), command.getCommand(), "");
         UserShoppingList userShoppingList = userShoppingListService.findActiveUserShoppingList(user.getId());
         if (!userShoppingList.isOwner()) {
             EditMessageText messageText = messageUtil.buildEditMessageText(
@@ -46,6 +47,7 @@ public class DisbandGroupBeforeJoinHandler extends BotHandlerDecision {
             return true;
         }
         List<Long> userIds = userShoppingListService.disbandGroup(user.getId());
+        logCall(user.getId(), command.getCommand(), userIds.toString());
 
         EditMessageText ownerMessage = messageUtil.buildEditMessageText(user, messageId, DISBAND_GROUP_SUCCESS_MESSAGE);
         botUtil.executeMethod(ownerMessage);

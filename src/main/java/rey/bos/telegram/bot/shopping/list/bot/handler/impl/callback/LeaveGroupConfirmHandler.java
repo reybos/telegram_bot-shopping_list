@@ -26,6 +26,7 @@ public class LeaveGroupConfirmHandler extends BotHandler {
 
     @Override
     public boolean handle(Update update, User user) {
+        logCall(user.getId(), command.getCommand(), "");
         int messageId = update.getCallbackQuery().getMessage().getMessageId();
         EditMessageText message = messageUtil.buildEditMessageTextWithButtons(
             user, messageId, LEAVE_GROUP_CONFIRM_MESSAGE, messageUtil.buildYesNoButtons(user, LEAVE_GROUP)

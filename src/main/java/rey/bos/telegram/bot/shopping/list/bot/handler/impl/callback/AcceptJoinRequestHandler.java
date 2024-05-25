@@ -44,6 +44,7 @@ public class AcceptJoinRequestHandler extends BotHandlerDecision {
 
     @Override
     public boolean handleAccept(User user, int messageId, long callbackId) {
+        logCall(user.getId(), command.getCommand(), String.valueOf(messageId));
         Optional<JoinRequest> joinRequestO = joinRequestService.findRequest(user.getId(), messageId);
         if (joinRequestO.isEmpty()) {
             EditMessageText message = messageUtil.buildEditMessageText(

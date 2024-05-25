@@ -37,6 +37,7 @@ public class ClearSentJoinRequestHandler extends BotHandlerDecision {
     @Override
     public boolean handleAccept(User user, int messageId, long callbackId) {
         List<JoinRequest> requests = joinRequestService.clearActiveRequest(user.getId());
+        logCall(user.getId(), command.getCommand(), requests.stream().map(JoinRequest::getId).toList().toString());
         EditMessageText message = messageUtil.buildEditMessageText(user, messageId, ACTIVE_JOIN_REQUEST_CLEARED);
         botUtil.executeMethod(message);
         for (JoinRequest request : requests) {

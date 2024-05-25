@@ -27,6 +27,7 @@ public class ChangeLanguageHandler extends BotHandler {
     public boolean handle(Update update, User user) {
         String data = update.getCallbackQuery().getData();
         String languageStr = data.replaceFirst(command.getCommand(), "");
+        logCall(user.getId(), command.getCommand(), languageStr);
         LanguageCode language = LanguageCode.valueOf(languageStr);
         user = userService.updateUserLanguage(user.getId(), language);
         botUtil.sendMessageByKey(user.getTelegramId(), user.getLanguageCode(), CHANGE_LANGUAGE_SUCCESS);

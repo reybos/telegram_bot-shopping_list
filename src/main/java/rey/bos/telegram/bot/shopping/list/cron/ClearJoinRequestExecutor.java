@@ -38,6 +38,7 @@ public class ClearJoinRequestExecutor {
         if (CollectionUtils.isEmpty(expiredRequests)) {
             return;
         }
+        log.info("Clear " + expiredRequests.stream().map(JoinRequest::getId).toList());
         for (JoinRequest joinRequest : expiredRequests) {
             User owner = userService.findByIdOrThrow(joinRequest.getOwnerId());
             String ownerLogin = messageUtil.getLogin(owner.getUserName());

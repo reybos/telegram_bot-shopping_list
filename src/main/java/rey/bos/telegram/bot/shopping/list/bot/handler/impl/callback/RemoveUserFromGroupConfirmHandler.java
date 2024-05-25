@@ -32,6 +32,7 @@ public class RemoveUserFromGroupConfirmHandler extends BotHandler {
     public boolean handle(Update update, User user) {
         CallbackQuery query = update.getCallbackQuery();
         String data = query.getData();
+        logCall(user.getId(), command.getCommand(), data);
         int messageId = query.getMessage().getMessageId();
         long userListId = messageUtil.getIdByText(data, command.getCommand());
         UserShoppingListGroupParams userShoppingList = userShoppingListService.getUserListParamsById(userListId);

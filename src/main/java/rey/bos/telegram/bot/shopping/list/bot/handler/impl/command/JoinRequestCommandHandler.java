@@ -20,6 +20,7 @@ public class JoinRequestCommandHandler extends BotHandler {
 
     @Override
     public boolean handle(Update update, User user) {
+        logCall(user.getId(), MENU_COMMAND_JOIN_USER.getCommand(), "");
         botUtil.sendMessageByKey(
             user.getTelegramId(), user.getLanguageCode(), DictionaryKey.JOIN_COMMAND_MESSAGE
         );

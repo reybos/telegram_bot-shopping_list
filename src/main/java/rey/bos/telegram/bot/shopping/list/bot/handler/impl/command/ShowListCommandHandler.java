@@ -36,6 +36,7 @@ public class ShowListCommandHandler extends BotHandler {
 
     @Override
     public boolean handle(Update update, User user) {
+        logCall(user.getId(), MENU_COMMAND_SHOW_LIST.getCommand(), "");
         ShoppingList shoppingList;
         try {
             shoppingList = shoppingListService.findActiveList(user.getId());
