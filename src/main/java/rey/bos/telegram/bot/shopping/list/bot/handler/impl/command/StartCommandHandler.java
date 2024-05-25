@@ -23,7 +23,7 @@ public class StartCommandHandler extends BotHandler {
 
     @Override
     public boolean handle(Update update, User user) {
-        logCall(user.getId(), MENU_COMMAND_SHOW_LIST.getCommand(), "");
+        logCall(user.getId(), MENU_COMMAND_START.getCommand(), "");
         String login = messageUtil.getLogin(user.getUserName());
         String text = botUtil.getText(user.getLanguageCode(), GREETING_FOR_START)
             .formatted(login, botUtil.getText(user.getLanguageCode(), HELP_COMMAND_MESSAGE));

@@ -15,7 +15,6 @@ import rey.bos.telegram.bot.shopping.list.util.BotUtil;
 
 import java.util.List;
 
-import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.command.MenuCommand.MENU_COMMAND_CHANGE_LANGUAGE;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.command.MenuCommand.MENU_COMMAND_GROUP;
 
 @Component
