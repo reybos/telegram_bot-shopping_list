@@ -7,8 +7,8 @@ import lombok.Setter;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import rey.bos.telegram.bot.shopping.list.io.entity.JoinRequest;
+import rey.bos.telegram.bot.shopping.list.io.entity.User;
 import rey.bos.telegram.bot.shopping.list.io.repository.JoinRequestRepository;
-import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -25,11 +25,11 @@ public class JoinRequestFactory {
 
     public JoinRequest create(JoinRequestParams requestParams) {
         if (requestParams.getUserId() == null) {
-            UserDto from = userFactory.createUser();
+            User from = userFactory.createUser();
             requestParams.setUserId(from.getId());
         }
         if (requestParams.getOwnerId() == null) {
-            UserDto to = userFactory.createUser();
+            User to = userFactory.createUser();
             requestParams.setOwnerId(to.getId());
         }
         return joinRequestRepository.save(

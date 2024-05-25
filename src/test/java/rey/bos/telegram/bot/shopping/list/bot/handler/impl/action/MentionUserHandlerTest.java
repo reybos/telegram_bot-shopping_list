@@ -10,7 +10,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.ApiResponse;
 import org.telegram.telegrambots.meta.api.objects.MessageEntity;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.message.Message;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
@@ -25,9 +24,9 @@ import rey.bos.telegram.bot.shopping.list.factory.JoinRequestFactory;
 import rey.bos.telegram.bot.shopping.list.factory.UserFactory;
 import rey.bos.telegram.bot.shopping.list.factory.UserShoppingListFactory;
 import rey.bos.telegram.bot.shopping.list.factory.VerifyMessage;
+import rey.bos.telegram.bot.shopping.list.io.entity.User;
 import rey.bos.telegram.bot.shopping.list.io.repository.params.JoinRequestParams;
 import rey.bos.telegram.bot.shopping.list.service.JoinRequestService;
-import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 import rey.bos.telegram.bot.shopping.list.util.BotUtil;
 import rey.bos.telegram.bot.shopping.list.util.MessageUtil;
 
@@ -72,7 +71,7 @@ public class MentionUserHandlerTest {
 
     @Test
     public void whenTryJoinWithTwoMentionThenError() throws TelegramApiException {
-        UserDto user = userFactory.createUser();
+        User user = userFactory.createUser();
         Update update = createUpdateObjectWithJoinCommand(user, "@test", "@test");
         shoppingListBot.consume(update);
         SendMessage message = VerifyMessage.getVerifySendMessage(telegramClient);
@@ -81,8 +80,8 @@ public class MentionUserHandlerTest {
 
     @Test
     public void whenCurrUserHasActiveRequestThenError() throws TelegramApiException {
-        UserDto from = userFactory.createUser();
-        UserDto to = userFactory.createUser();
+        User from = userFactory.createUser();
+        User to = userFactory.createUser();
         joinRequestFactory.create(
             JoinRequestFactory.JoinRequestParams.builder()
                 .userId(from.getId())
@@ -100,7 +99,7 @@ public class MentionUserHandlerTest {
 
     @Test
     public void whenMentionThemSelfThenError() throws TelegramApiException {
-        UserDto user = userFactory.createUser();
+        User user = userFactory.createUser();
         String mention = "@" + user.getUserName();
         Update update = createUpdateObjectWithJoinCommand(user, mention, null);
         shoppingListBot.consume(update);
@@ -112,7 +111,7 @@ public class MentionUserHandlerTest {
 
     @Test
     public void whenMentionUnknownUserThenError() throws TelegramApiException {
-        UserDto user = userFactory.createUser();
+        User user = userFactory.createUser();
         String mention = "@test";
         Update update = createUpdateObjectWithJoinCommand(user, mention, null);
         shoppingListBot.consume(update);
@@ -124,8 +123,8 @@ public class MentionUserHandlerTest {
 
     @Test
     public void whenMentionBlockedUserThenError() throws TelegramApiException {
-        UserDto user = userFactory.createUser();
-        UserDto blockedUser = userFactory.createUser();
+        User user = userFactory.createUser();
+        User blockedUser = userFactory.createUser();
         blockBotHandler.handle(new Update(), blockedUser);
         String mention = messageUtil.getLogin(blockedUser.getUserName());
         Update update = createUpdateObjectWithJoinCommand(user, mention, null);
@@ -138,8 +137,8 @@ public class MentionUserHandlerTest {
 
     @Test
     public void whenOwnerRejectRequestsThenError() throws TelegramApiException {
-        UserDto user = userFactory.createUser();
-        UserDto owner = userFactory.createUser();
+        User user = userFactory.createUser();
+        User owner = userFactory.createUser();
         requestSettingHandler.handleAccept(owner, -1, -1);
 
         String mention = messageUtil.getLogin(owner.getUserName());
@@ -153,12 +152,12 @@ public class MentionUserHandlerTest {
 
     @Test
     public void whenCurrUserHasOwnActiveGroupThenError() throws TelegramApiException {
-        UserDto sender = userFactory.createUser();
-        UserDto member = userFactory.createUser();
+        User sender = userFactory.createUser();
+        User member = userFactory.createUser();
         userShoppingListFactory.joinUsersList(member, sender);
         String memberLogin = messageUtil.getLogin(member.getUserName());
 
-        UserDto otherUser = userFactory.createUser();
+        User otherUser = userFactory.createUser();
         String mentionLogin = messageUtil.getLogin(otherUser.getUserName());
         Update update = createUpdateObjectWithJoinCommand(sender, mentionLogin, null);
         shoppingListBot.consume(update);
@@ -171,12 +170,12 @@ public class MentionUserHandlerTest {
 
     @Test
     public void whenCurrUserIsMemberActiveGroupThenError() throws TelegramApiException {
-        UserDto sender = userFactory.createUser();
-        UserDto owner = userFactory.createUser();
+        User sender = userFactory.createUser();
+        User owner = userFactory.createUser();
         userShoppingListFactory.joinUsersList(sender, owner);
         String ownerLogin = messageUtil.getLogin(owner.getUserName());
 
-        UserDto otherUser = userFactory.createUser();
+        User otherUser = userFactory.createUser();
         String mentionLogin = messageUtil.getLogin(otherUser.getUserName());
         Update update = createUpdateObjectWithJoinCommand(sender, mentionLogin, null);
         shoppingListBot.consume(update);
@@ -189,8 +188,8 @@ public class MentionUserHandlerTest {
 
     @Test
     public void whenSendMsgToMentionUserThenForbidden() throws TelegramApiException {
-        UserDto user = userFactory.createUser();
-        UserDto mentionUser = userFactory.createUser();
+        User user = userFactory.createUser();
+        User mentionUser = userFactory.createUser();
         String mentionLogin = messageUtil.getLogin(mentionUser.getUserName());
         Update update = createUpdateObjectWithJoinCommand(user, mentionLogin, null);
         when(telegramClient.execute(any(SendMessage.class))).thenThrow(
@@ -205,9 +204,9 @@ public class MentionUserHandlerTest {
 
     @Test
     public void whenCurrUserCreateJoinRequestToUserWithoutActiveGroupThenSuccess() throws TelegramApiException {
-        UserDto user = userFactory.createUser();
+        User user = userFactory.createUser();
         String userLogin = messageUtil.getLogin(user.getUserName());
-        UserDto mentionUser = userFactory.createUser();
+        User mentionUser = userFactory.createUser();
 
         String mentionLogin = messageUtil.getLogin(mentionUser.getUserName());
         Update update = createUpdateObjectWithJoinCommand(user, mentionLogin, null);
@@ -233,9 +232,9 @@ public class MentionUserHandlerTest {
 
     @Test
     public void whenCurrUserCreateJoinRequestToUserWithActiveGroupThenSuccess() throws TelegramApiException {
-        UserDto sender = userFactory.createUser();
-        UserDto owner = userFactory.createUser();
-        UserDto member = userFactory.createUser();
+        User sender = userFactory.createUser();
+        User owner = userFactory.createUser();
+        User member = userFactory.createUser();
         userShoppingListFactory.joinUsersList(owner, member);
 
         String ownerLogin = messageUtil.getLogin(owner.getUserName());
@@ -256,9 +255,9 @@ public class MentionUserHandlerTest {
 
     @Test
     public void whenCurrUserCreateJoinRequestToUserWithOwnActiveGroupThenSuccess() throws TelegramApiException {
-        UserDto sender = userFactory.createUser();
-        UserDto owner = userFactory.createUser();
-        UserDto member = userFactory.createUser();
+        User sender = userFactory.createUser();
+        User owner = userFactory.createUser();
+        User member = userFactory.createUser();
         userShoppingListFactory.joinUsersList(member, owner);
 
         String ownerLogin = messageUtil.getLogin(owner.getUserName());
@@ -277,14 +276,16 @@ public class MentionUserHandlerTest {
         );
     }
 
-    private Update createUpdateObjectWithJoinCommand(UserDto userDto, String mention1, String mention2) {
+    private Update createUpdateObjectWithJoinCommand(User storedUser, String mention1, String mention2) {
         Update update = new Update();
         Message message = new Message();
         String text = (mention1 == null ? "" : mention1) + (mention2 == null ? "" : " " + mention2);
         message.setText(text);
         message.setEntities(buildEntities(mention1, mention2));
-        User user = new User(userDto.getTelegramId(), userDto.getFirstName(), false);
-        user.setUserName(userDto.getUserName());
+        org.telegram.telegrambots.meta.api.objects.User user = new org.telegram.telegrambots.meta.api.objects.User(
+            storedUser.getTelegramId(), storedUser.getFirstName(), false
+        );
+        user.setUserName(storedUser.getUserName());
         message.setFrom(user);
         update.setMessage(message);
         return update;

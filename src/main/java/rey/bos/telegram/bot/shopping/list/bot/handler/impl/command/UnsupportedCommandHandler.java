@@ -7,13 +7,13 @@ import org.springframework.util.CollectionUtils;
 import org.telegram.telegrambots.meta.api.objects.MessageEntity;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import rey.bos.telegram.bot.shopping.list.bot.handler.BotHandler;
+import rey.bos.telegram.bot.shopping.list.io.entity.User;
 import rey.bos.telegram.bot.shopping.list.util.BotUtil;
-import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 
 import java.util.Arrays;
 
-import static rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey.UNSUPPORTED_COMMAND;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.MessageEntityType.BOT_COMMAND;
+import static rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey.UNSUPPORTED_COMMAND;
 
 @Component
 @RequiredArgsConstructor
@@ -23,7 +23,7 @@ public class UnsupportedCommandHandler extends BotHandler {
     private final BotUtil botUtil;
 
     @Override
-    public boolean handle(Update update, UserDto user) {
+    public boolean handle(Update update, User user) {
         botUtil.sendMessageByKey(user.getTelegramId(), user.getLanguageCode(), UNSUPPORTED_COMMAND);
         return true;
     }

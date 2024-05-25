@@ -6,15 +6,15 @@ import org.springframework.util.CollectionUtils;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardRow;
+import rey.bos.telegram.bot.shopping.list.io.entity.User;
 import rey.bos.telegram.bot.shopping.list.io.repository.params.UserShoppingListGroupParams;
-import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 import rey.bos.telegram.bot.shopping.list.util.MessageUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey.*;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand.*;
+import static rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey.*;
 
 @Component
 @RequiredArgsConstructor
@@ -22,7 +22,7 @@ public class GroupHelper {
 
     private final MessageUtil messageUtil;
 
-    public SendMessage buildGroupMessage(UserDto user, List<UserShoppingListGroupParams> group) {
+    public SendMessage buildGroupMessage(User user, List<UserShoppingListGroupParams> group) {
         UserShoppingListGroupParams owner = group.stream().filter(UserShoppingListGroupParams::isOwner).toList().get(0);
         group = group.stream().filter(item -> item.getUserId() != user.getId()).toList();
         if (CollectionUtils.isEmpty(group)) {
@@ -34,7 +34,7 @@ public class GroupHelper {
         }
     }
 
-    private SendMessage buildOwnerGroup(UserDto user, List<UserShoppingListGroupParams> group) {
+    private SendMessage buildOwnerGroup(User user, List<UserShoppingListGroupParams> group) {
         return messageUtil.buildSendMessageWithButtons(user, OWNER_GROUP_MESSAGE, buildItems(group));
     }
 
@@ -51,7 +51,7 @@ public class GroupHelper {
         return rows;
     }
 
-    private SendMessage buildMemberGroup(UserDto user, UserShoppingListGroupParams owner) {
+    private SendMessage buildMemberGroup(User user, UserShoppingListGroupParams owner) {
         List<InlineKeyboardRow> buttons = List.of(new InlineKeyboardRow(
             messageUtil.buildButton(
                 user.getLanguageCode(), LEAVE_GROUP_BUTTON, LEAVE_GROUP_CONFIRM.getCommand()
@@ -63,7 +63,7 @@ public class GroupHelper {
     }
 
     public EditMessageText buildRemoveUserFromGroup(
-        UserDto user, int messageId, UserShoppingListGroupParams userShoppingList
+        User user, int messageId, UserShoppingListGroupParams userShoppingList
     ) {
         return messageUtil.buildEditMessageTextWithButtons(
             user, messageId, REMOVE_USER_FROM_GROUP_CONFIRM_MESSAGE,

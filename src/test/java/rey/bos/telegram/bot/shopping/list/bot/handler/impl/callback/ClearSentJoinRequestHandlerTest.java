@@ -12,8 +12,8 @@ import rey.bos.telegram.bot.shopping.list.config.ApplicationConfig;
 import rey.bos.telegram.bot.shopping.list.factory.JoinRequestFactory;
 import rey.bos.telegram.bot.shopping.list.factory.UserFactory;
 import rey.bos.telegram.bot.shopping.list.io.entity.JoinRequest;
+import rey.bos.telegram.bot.shopping.list.io.entity.User;
 import rey.bos.telegram.bot.shopping.list.io.repository.JoinRequestRepository;
-import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 
 import java.util.List;
 
@@ -38,7 +38,7 @@ class ClearSentJoinRequestHandlerTest {
 
     @Test
     public void whenClearSentRequestThenSuccess() {
-        UserDto user = userFactory.createUser();
+        User user = userFactory.createUser();
         joinRequestFactory.create(JoinRequestFactory.JoinRequestParams.builder().userId(user.getId()).build());
         List<JoinRequest> requests = joinRequestRepository.findActiveRequestByUserId(user.getId());
         assertThat(requests.size()).isEqualTo(1);

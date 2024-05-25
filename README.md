@@ -55,13 +55,57 @@ This telegram bot provides the ability to keep a shopping list, and its key feat
 
 <h3><a name="project_structure">Project structure</a>&nbsp;&nbsp;<a href="#menu">&#9650;</a></h3>
 
-<p>
-    TODO
-</p>
+<pre><code>.
+├── README.md
+├── img
+└── src
+    ├── main
+    │   ├── java/.../list
+    │   │            ├── Application.java
+    │   │            ├── bot
+    │   │            │   ├── handler
+    │   │            │   │   └── impl
+    │   │            │   │       ├── action
+    │   │            │   │       ├── callback
+    │   │            │   │       └── command
+    │   │            │   └── helper
+    │   │            ├── config
+    │   │            ├── cron
+    │   │            ├── dictionary
+    │   │            │   └── impl
+    │   │            ├── io
+    │   │            │   ├── entity
+    │   │            │   └── repository
+    │   │            │       └── params
+    │   │            ├── service
+    │   │            │   └── impl
+    │   │            ├── shared
+    │   │            │   ├── dto
+    │   │            │   └── mapper
+    │   │            └── util
+    │   └── resources
+    │       ├── application.properties
+    │       └── liquibase
+    │           └── table
+    └── test
+        ├── java/.../list
+        │            ├── bot
+        │            │   └── handler
+        │            │       └── impl
+        │            │           ├── action
+        │            │           └── callback
+        │            ├── config
+        │            ├── cron
+        │            ├── factory
+        │            └── service
+        │                └── impl
+        └── resources
+            └── application.properties
+</code></pre>
 
 <h3><a name="db_scheme">Database schema</a>&nbsp;&nbsp;<a href="#menu">&#9650;</a></h3>
 
 <p align="center">
-  <img src="img/2.png" height="600" title="general view">
+  <img src="img/2.png" height="700" title="general view">
 </p>
 

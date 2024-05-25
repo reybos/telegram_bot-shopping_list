@@ -5,17 +5,17 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import rey.bos.telegram.bot.shopping.list.util.BotUtil;
-import rey.bos.telegram.bot.shopping.list.util.MessageUtil;
+import rey.bos.telegram.bot.shopping.list.io.entity.User;
 import rey.bos.telegram.bot.shopping.list.io.entity.UserShoppingList;
 import rey.bos.telegram.bot.shopping.list.service.UserService;
 import rey.bos.telegram.bot.shopping.list.service.UserShoppingListService;
-import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
+import rey.bos.telegram.bot.shopping.list.util.BotUtil;
+import rey.bos.telegram.bot.shopping.list.util.MessageUtil;
 
 import java.util.List;
 
-import static rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey.*;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand.DISBAND_GROUP_BEFORE_JOIN;
+import static rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey.*;
 
 @Slf4j
 @Component
@@ -36,7 +36,7 @@ public class DisbandGroupBeforeJoinHandler extends BotHandlerDecision {
     }
 
     @Override
-    public boolean handleAccept(UserDto user, int messageId, long callbackId) {
+    public boolean handleAccept(User user, int messageId, long callbackId) {
         UserShoppingList userShoppingList = userShoppingListService.findActiveUserShoppingList(user.getId());
         if (!userShoppingList.isOwner()) {
             EditMessageText messageText = messageUtil.buildEditMessageText(
@@ -50,9 +50,9 @@ public class DisbandGroupBeforeJoinHandler extends BotHandlerDecision {
         EditMessageText ownerMessage = messageUtil.buildEditMessageText(user, messageId, DISBAND_GROUP_SUCCESS_MESSAGE);
         botUtil.executeMethod(ownerMessage);
 
-        List<UserDto> removedUsers = userService.findActiveUsersByIds(userIds);
+        List<User> removedUsers = userService.findActiveUsersByIds(userIds);
         String ownerLogin = messageUtil.getLogin(user.getUserName());
-        for (UserDto removedUser : removedUsers) {
+        for (User removedUser : removedUsers) {
             SendMessage message = messageUtil.buildSendMessage(removedUser, YOU_REMOVED_FROM_GROUP_MESSAGE, ownerLogin);
             botUtil.executeMethod(message);
         }
@@ -60,7 +60,7 @@ public class DisbandGroupBeforeJoinHandler extends BotHandlerDecision {
     }
 
     @Override
-    public boolean handleReject(UserDto user, int messageId, long callbackId) {
+    public boolean handleReject(User user, int messageId, long callbackId) {
         EditMessageText message = messageUtil.buildEditMessageText(user, messageId, REJECT_JOINING_PROCCESS);
         botUtil.executeMethod(message);
         return true;

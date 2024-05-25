@@ -9,7 +9,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.message.Message;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
@@ -21,9 +20,9 @@ import rey.bos.telegram.bot.shopping.list.factory.JoinRequestFactory;
 import rey.bos.telegram.bot.shopping.list.factory.UserFactory;
 import rey.bos.telegram.bot.shopping.list.factory.UserShoppingListFactory;
 import rey.bos.telegram.bot.shopping.list.factory.VerifyMessage;
+import rey.bos.telegram.bot.shopping.list.io.entity.User;
 import rey.bos.telegram.bot.shopping.list.io.entity.UserShoppingList;
 import rey.bos.telegram.bot.shopping.list.service.UserShoppingListService;
-import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 import rey.bos.telegram.bot.shopping.list.util.BotUtil;
 import rey.bos.telegram.bot.shopping.list.util.MessageUtil;
 
@@ -60,8 +59,8 @@ class AcceptJoinRequestHandlerTest {
 
     @Test
     public void whenAcceptExpiredRequestThenError() throws TelegramApiException {
-        UserDto sender = userFactory.createUser();
-        UserDto owner = userFactory.createUser();
+        User sender = userFactory.createUser();
+        User owner = userFactory.createUser();
         int messageId = new Random().nextInt();
         joinRequestFactory.create(
             JoinRequestFactory.JoinRequestParams.builder()
@@ -82,9 +81,9 @@ class AcceptJoinRequestHandlerTest {
 
     @Test
     public void whenAcceptRequestWithOwnGroupThenSuccess() throws TelegramApiException {
-        UserDto sender = userFactory.createUser();
-        UserDto owner = userFactory.createUser();
-        UserDto member = userFactory.createUser();
+        User sender = userFactory.createUser();
+        User owner = userFactory.createUser();
+        User member = userFactory.createUser();
         userShoppingListFactory.joinUsersList(member, owner);
         int messageId = new Random().nextInt();
         joinRequestFactory.create(
@@ -113,9 +112,9 @@ class AcceptJoinRequestHandlerTest {
 
     @Test
     public void whenAcceptRequestAndMemberOtherGroupThenSuccess() {
-        UserDto sender = userFactory.createUser();
-        UserDto owner = userFactory.createUser();
-        UserDto otherUser = userFactory.createUser();
+        User sender = userFactory.createUser();
+        User owner = userFactory.createUser();
+        User otherUser = userFactory.createUser();
         userShoppingListFactory.joinUsersList(owner, otherUser);
         int messageId = new Random().nextInt();
         joinRequestFactory.create(
@@ -140,8 +139,8 @@ class AcceptJoinRequestHandlerTest {
 
     @Test
     public void whenRejectRequestThenSuccess() throws TelegramApiException {
-        UserDto sender = userFactory.createUser();
-        UserDto owner = userFactory.createUser();
+        User sender = userFactory.createUser();
+        User owner = userFactory.createUser();
         userShoppingListFactory.joinUsersList(sender, owner);
         int messageId = new Random().nextInt();
         joinRequestFactory.create(
@@ -168,17 +167,19 @@ class AcceptJoinRequestHandlerTest {
         );
     }
 
-    private Update createUpdateObjectWithCallback(UserDto userDto, String decision, Integer messageId) {
+    private Update createUpdateObjectWithCallback(User storedUser, String decision, Integer messageId) {
         Update update = new Update();
         CallbackQuery callbackQuery = new CallbackQuery();
-        String data = ACCEPT_JOIN_REQUEST.getCommand() + userDto.getId() + (decision == null ? "" : decision);
+        String data = ACCEPT_JOIN_REQUEST.getCommand() + storedUser.getId() + (decision == null ? "" : decision);
         callbackQuery.setData(data);
         Message message = new Message();
         message.setMessageId(messageId == null ? new Random().nextInt() : messageId);
         callbackQuery.setMessage(message);
         update.setCallbackQuery(callbackQuery);
-        User user = new User(userDto.getTelegramId(), userDto.getFirstName(), false);
-        user.setUserName(userDto.getUserName());
+        org.telegram.telegrambots.meta.api.objects.User user = new org.telegram.telegrambots.meta.api.objects.User(
+            storedUser.getTelegramId(), storedUser.getFirstName(), false
+        );
+        user.setUserName(storedUser.getUserName());
         message.setFrom(user);
         update.setMessage(message);
         return update;

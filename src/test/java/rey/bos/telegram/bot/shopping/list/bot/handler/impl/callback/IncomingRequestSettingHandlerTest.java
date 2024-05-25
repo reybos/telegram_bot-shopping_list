@@ -10,11 +10,10 @@ import rey.bos.telegram.bot.shopping.list.Application;
 import rey.bos.telegram.bot.shopping.list.BaeldungPostgresqlContainer;
 import rey.bos.telegram.bot.shopping.list.config.ApplicationConfig;
 import rey.bos.telegram.bot.shopping.list.factory.UserFactory;
+import rey.bos.telegram.bot.shopping.list.io.entity.User;
 import rey.bos.telegram.bot.shopping.list.service.UserService;
-import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = {Application.class, ApplicationConfig.class})
 @ActiveProfiles({"tc", "tc-auto", "stub"})
@@ -33,7 +32,7 @@ class IncomingRequestSettingHandlerTest {
 
     @Test
     public void whenChangeIncomingRequestSettingThenSuccess() {
-        UserDto user = userFactory.createUser();
+        User user = userFactory.createUser();
         assertThat(user.isJoinRequestDisabled()).isFalse();
         requestSettingHandler.handleAccept(user, -1, -1);
         user = userService.findByIdOrThrow(user.getId());

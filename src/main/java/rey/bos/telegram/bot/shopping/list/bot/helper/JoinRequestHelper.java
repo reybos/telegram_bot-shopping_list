@@ -5,17 +5,17 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey;
+import rey.bos.telegram.bot.shopping.list.io.entity.User;
 import rey.bos.telegram.bot.shopping.list.io.repository.params.JoinRequestParams;
 import rey.bos.telegram.bot.shopping.list.io.repository.params.UserShoppingListGroupParams;
-import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 import rey.bos.telegram.bot.shopping.list.util.BotUtil;
 import rey.bos.telegram.bot.shopping.list.util.MessageUtil;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey.*;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand.*;
+import static rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey.*;
 
 @Component
 @RequiredArgsConstructor
@@ -24,7 +24,7 @@ public class JoinRequestHelper {
     private final BotUtil botUtil;
     private final MessageUtil messageUtil;
 
-    public SendMessage buildHasRequestMessage(UserDto user, List<JoinRequestParams> requestParams) {
+    public SendMessage buildHasRequestMessage(User user, List<JoinRequestParams> requestParams) {
         String users = requestParams.stream()
             .map(JoinRequestParams::getOwnerUserName)
             .collect(Collectors.joining(", "));
@@ -34,7 +34,7 @@ public class JoinRequestHelper {
     }
 
     public SendMessage buildHasActiveGroupMessage(
-        List<UserShoppingListGroupParams> group, UserDto user, String mentionUser
+        List<UserShoppingListGroupParams> group, User user, String mentionUser
     ) {
         String groupUsers = messageUtil.getLoginsExcludingCurrentUser(group, user);
         return messageUtil.buildSendMessageWithButtons(
@@ -44,7 +44,7 @@ public class JoinRequestHelper {
     }
 
     public SendMessage buildLeaveGroupMessage(
-        List<UserShoppingListGroupParams> group, UserDto user, String mentionUser
+        List<UserShoppingListGroupParams> group, User user, String mentionUser
     ) {
         String currentGroupOwner = messageUtil.getGroupOwnerLogin(group);
         return messageUtil.buildSendMessageWithButtons(
@@ -53,7 +53,7 @@ public class JoinRequestHelper {
         );
     }
 
-    public SendMessage buildAcceptJoinRequestWithoutActiveGroup(UserDto currUser, UserDto mentionUser) {
+    public SendMessage buildAcceptJoinRequestWithoutActiveGroup(User currUser, User mentionUser) {
         String text = botUtil.getText(
             mentionUser.getLanguageCode(), DictionaryKey.OWNER_ACCEPT_JOIN_REQUEST_WITHOUT_ACTIVE_GROUP
         ).formatted(messageUtil.getLogin(currUser.getUserName()));
@@ -62,7 +62,7 @@ public class JoinRequestHelper {
     }
 
     public SendMessage buildAcceptJoinRequestWithOwnActiveGroup(
-        UserDto currUser, UserDto mentionUser, List<UserShoppingListGroupParams> group
+        User currUser, User mentionUser, List<UserShoppingListGroupParams> group
     ) {
         String groupUsers = messageUtil.getLoginsExcludingCurrentUser(group, mentionUser);
         String text = botUtil.getText(
@@ -73,7 +73,7 @@ public class JoinRequestHelper {
     }
 
     public SendMessage buildAcceptJoinRequestWithActiveGroup(
-        UserDto currUser, UserDto mentionUser, List<UserShoppingListGroupParams> group
+        User currUser, User mentionUser, List<UserShoppingListGroupParams> group
     ) {
         String currentGroupOwner = messageUtil.getGroupOwnerLogin(group);
         String text = botUtil.getText(
@@ -83,7 +83,7 @@ public class JoinRequestHelper {
         return buildAcceptJoinRequest(mentionUser, text);
     }
 
-    public SendMessage buildAcceptJoinRequest(UserDto user, String text) {
+    public SendMessage buildAcceptJoinRequest(User user, String text) {
         return SendMessage.builder()
             .parseMode("HTML")
             .chatId(user.getTelegramId())

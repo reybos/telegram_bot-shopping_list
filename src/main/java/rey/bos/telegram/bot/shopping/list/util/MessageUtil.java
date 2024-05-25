@@ -11,8 +11,8 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand;
 import rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey;
 import rey.bos.telegram.bot.shopping.list.io.LanguageCode;
+import rey.bos.telegram.bot.shopping.list.io.entity.User;
 import rey.bos.telegram.bot.shopping.list.io.repository.params.UserShoppingListGroupParams;
-import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,7 +29,7 @@ public class MessageUtil {
 
     private final BotUtil botUtil;
 
-    public String getLoginsExcludingCurrentUser(List<UserShoppingListGroupParams> group, UserDto user) {
+    public String getLoginsExcludingCurrentUser(List<UserShoppingListGroupParams> group, User user) {
         return group.stream()
             .map(UserShoppingListGroupParams::getUserName)
             .filter(name -> !name.equals(user.getUserName()))
@@ -55,7 +55,7 @@ public class MessageUtil {
         return "@" + userName;
     }
 
-    public EditMessageText buildEditMessageText(UserDto user, int messageId, DictionaryKey messageKey, Object... args) {
+    public EditMessageText buildEditMessageText(User user, int messageId, DictionaryKey messageKey, Object... args) {
         return buildEditMessageText(user.getTelegramId(), user.getLanguageCode(), messageId, messageKey, args);
     }
 
@@ -66,7 +66,7 @@ public class MessageUtil {
     }
 
     public EditMessageText buildEditMessageTextWithButtons(
-        UserDto user, int messageId, DictionaryKey messageKey, List<InlineKeyboardRow> buttons, Object... args
+        User user, int messageId, DictionaryKey messageKey, List<InlineKeyboardRow> buttons, Object... args
     ) {
         return buildEditMessageTextWithButtons(
             user.getTelegramId(), user.getLanguageCode(), messageId, messageKey, buttons, args
@@ -94,12 +94,12 @@ public class MessageUtil {
             .text(botUtil.getText(code, messageKey).formatted(args));
     }
 
-    public SendMessage buildSendMessage(UserDto user, DictionaryKey messageKey, Object... args) {
+    public SendMessage buildSendMessage(User user, DictionaryKey messageKey, Object... args) {
         return sendMessageTextBuilder(user.getTelegramId(), user.getLanguageCode(), messageKey, args).build();
     }
 
     public SendMessage buildSendMessageWithButtons(
-        UserDto user, DictionaryKey messageKey, List<InlineKeyboardRow> buttons, Object... args
+        User user, DictionaryKey messageKey, List<InlineKeyboardRow> buttons, Object... args
     ) {
         return sendMessageTextBuilder(user.getTelegramId(), user.getLanguageCode(), messageKey, args)
             .replyMarkup(InlineKeyboardMarkup.builder()
@@ -117,7 +117,7 @@ public class MessageUtil {
             .text(botUtil.getText(code, messageKey).formatted(args));
     }
 
-    public List<InlineKeyboardRow> buildYesNoButtons(UserDto user, CallBackCommand command) {
+    public List<InlineKeyboardRow> buildYesNoButtons(User user, CallBackCommand command) {
         return buildYesNoButtons(user.getId(), user.getLanguageCode(), command);
     }
 

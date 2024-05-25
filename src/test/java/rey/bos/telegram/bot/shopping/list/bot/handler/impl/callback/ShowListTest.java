@@ -8,7 +8,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.MessageEntity;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.message.Message;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
@@ -21,9 +20,9 @@ import rey.bos.telegram.bot.shopping.list.factory.ShoppingListItemFactory;
 import rey.bos.telegram.bot.shopping.list.factory.UserFactory;
 import rey.bos.telegram.bot.shopping.list.io.entity.MessageShoppingList;
 import rey.bos.telegram.bot.shopping.list.io.entity.ShoppingList;
+import rey.bos.telegram.bot.shopping.list.io.entity.User;
 import rey.bos.telegram.bot.shopping.list.service.MessageShoppingListService;
 import rey.bos.telegram.bot.shopping.list.service.ShoppingListService;
-import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 
 import java.util.List;
 import java.util.Optional;
@@ -58,7 +57,7 @@ public class ShowListTest {
 
     @Test
     public void whenShowListCommandExecuteThenSaveMessageId() throws TelegramApiException {
-        UserDto user = userFactory.createUser();
+        User user = userFactory.createUser();
         ShoppingList shoppingList = shoppingListService.findActiveList(user.getId());
         shoppingListItemFactory.addItem(shoppingList);
 
@@ -75,7 +74,7 @@ public class ShowListTest {
 
     @Test
     public void whenShowListCommandExecuteTwiceThenSaveLastMessageId() throws TelegramApiException {
-        UserDto user = userFactory.createUser();
+        User user = userFactory.createUser();
         ShoppingList shoppingList = shoppingListService.findActiveList(user.getId());
         shoppingListItemFactory.addItem(shoppingList);
 
@@ -98,7 +97,7 @@ public class ShowListTest {
         assertThat(storedMessage2).isNotEmpty();
     }
 
-    private Update createUpdateObjectWithCommand(UserDto userDto, String command) {
+    private Update createUpdateObjectWithCommand(User storedUser, String command) {
         Update update = new Update();
         Message message = new Message();
         message.setText(command);
@@ -110,8 +109,10 @@ public class ShowListTest {
                 .text(command)
                 .build()
         ));
-        User user = new User(userDto.getTelegramId(), userDto.getFirstName(), false);
-        user.setUserName(userDto.getUserName());
+        org.telegram.telegrambots.meta.api.objects.User user = new org.telegram.telegrambots.meta.api.objects.User(
+            storedUser.getTelegramId(), storedUser.getFirstName(), false
+        );
+        user.setUserName(storedUser.getUserName());
         message.setFrom(user);
         update.setMessage(message);
         return update;

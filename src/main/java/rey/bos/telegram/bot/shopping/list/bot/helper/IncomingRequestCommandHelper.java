@@ -2,7 +2,7 @@ package rey.bos.telegram.bot.shopping.list.bot.helper;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
+import rey.bos.telegram.bot.shopping.list.io.entity.User;
 
 import static rey.bos.telegram.bot.shopping.list.io.LanguageCode.EN;
 import static rey.bos.telegram.bot.shopping.list.io.LanguageCode.RU;
@@ -11,7 +11,7 @@ import static rey.bos.telegram.bot.shopping.list.io.LanguageCode.RU;
 @RequiredArgsConstructor
 public class IncomingRequestCommandHelper {
 
-    public String getConditionMessage(UserDto user) {
+    public String getConditionMessage(User user) {
         if (user.getLanguageCode() == RU) {
             return user.isJoinRequestDisabled() ? "выключена" : "включена";
         } else if (user.getLanguageCode() == EN) {
@@ -20,7 +20,7 @@ public class IncomingRequestCommandHelper {
         return "";
     }
 
-    public String getProposalMessage(UserDto user) {
+    public String getProposalMessage(User user) {
         if (user.getLanguageCode() == RU) {
             return user.isJoinRequestDisabled() ? "Включить" : "Выключить";
         } else if (user.getLanguageCode() == EN) {
@@ -29,7 +29,7 @@ public class IncomingRequestCommandHelper {
         return "";
     }
 
-    public String getSwitchResultMessage(UserDto user) {
+    public String getSwitchResultMessage(User user) {
         if (user.getLanguageCode() == RU) {
             return user.isJoinRequestDisabled() ? "выключены" : "включены";
         } else if (user.getLanguageCode() == EN) {

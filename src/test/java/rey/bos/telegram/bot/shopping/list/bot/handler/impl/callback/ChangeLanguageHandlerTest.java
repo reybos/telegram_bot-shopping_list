@@ -7,7 +7,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.message.Message;
 import org.testcontainers.containers.PostgreSQLContainer;
 import rey.bos.telegram.bot.shopping.list.Application;
@@ -15,8 +14,8 @@ import rey.bos.telegram.bot.shopping.list.BaeldungPostgresqlContainer;
 import rey.bos.telegram.bot.shopping.list.config.ApplicationConfig;
 import rey.bos.telegram.bot.shopping.list.factory.UserFactory;
 import rey.bos.telegram.bot.shopping.list.io.LanguageCode;
+import rey.bos.telegram.bot.shopping.list.io.entity.User;
 import rey.bos.telegram.bot.shopping.list.service.UserService;
-import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand.CHANGE_LANGUAGE;
@@ -38,17 +37,17 @@ class ChangeLanguageHandlerTest {
 
     @Test
     public void whenChangeLanguageThenSuccess() {
-        UserDto userDto = userFactory.createUser(
+        User user = userFactory.createUser(
             UserFactory.UserParams.builder().languageCode(LanguageCode.RU).build()
         );
         LanguageCode newLanguage = LanguageCode.EN;
-        Update update = createUpdateObjectWithCallback(userDto, newLanguage);
-        changeLanguageHandler.handle(update, userDto);
-        UserDto stored = userService.findByIdOrThrow(userDto.getId());
+        Update update = createUpdateObjectWithCallback(user, newLanguage);
+        changeLanguageHandler.handle(update, user);
+        User stored = userService.findByIdOrThrow(user.getId());
         assertThat(stored.getLanguageCode()).isEqualTo(newLanguage);
     }
 
-    private Update createUpdateObjectWithCallback(UserDto userDto, LanguageCode code) {
+    private Update createUpdateObjectWithCallback(User storesUser, LanguageCode code) {
         Update update = new Update();
         CallbackQuery callbackQuery = new CallbackQuery();
         String data = CHANGE_LANGUAGE.getCommand() + code;
@@ -56,8 +55,10 @@ class ChangeLanguageHandlerTest {
         Message message = new Message();
         callbackQuery.setMessage(message);
         update.setCallbackQuery(callbackQuery);
-        User user = new User(userDto.getTelegramId(), userDto.getFirstName(), false);
-        user.setUserName(userDto.getUserName());
+        org.telegram.telegrambots.meta.api.objects.User user = new org.telegram.telegrambots.meta.api.objects.User(
+            storesUser.getTelegramId(), storesUser.getFirstName(), false
+        );
+        user.setUserName(storesUser.getUserName());
         message.setFrom(user);
         update.setMessage(message);
         return update;

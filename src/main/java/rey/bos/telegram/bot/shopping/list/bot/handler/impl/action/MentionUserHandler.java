@@ -12,25 +12,25 @@ import org.telegram.telegrambots.meta.api.objects.message.Message;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
-import rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey;
 import rey.bos.telegram.bot.shopping.list.bot.handler.BotHandler;
-import rey.bos.telegram.bot.shopping.list.util.BotUtil;
 import rey.bos.telegram.bot.shopping.list.bot.helper.JoinRequestHelper;
-import rey.bos.telegram.bot.shopping.list.util.MessageUtil;
+import rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey;
 import rey.bos.telegram.bot.shopping.list.io.entity.ShoppingList;
+import rey.bos.telegram.bot.shopping.list.io.entity.User;
 import rey.bos.telegram.bot.shopping.list.io.repository.params.JoinRequestParams;
 import rey.bos.telegram.bot.shopping.list.io.repository.params.UserShoppingListGroupParams;
 import rey.bos.telegram.bot.shopping.list.service.JoinRequestService;
 import rey.bos.telegram.bot.shopping.list.service.ShoppingListService;
 import rey.bos.telegram.bot.shopping.list.service.UserService;
 import rey.bos.telegram.bot.shopping.list.service.impl.UserShoppingListServiceImpl;
-import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
+import rey.bos.telegram.bot.shopping.list.util.BotUtil;
+import rey.bos.telegram.bot.shopping.list.util.MessageUtil;
 
 import java.util.List;
 import java.util.Optional;
 
-import static rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey.SEND_JOIN_REQUEST_SUCCESS;
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.MessageEntityType.MENTION;
+import static rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey.SEND_JOIN_REQUEST_SUCCESS;
 
 @Component
 @RequiredArgsConstructor
@@ -47,7 +47,7 @@ public class MentionUserHandler extends BotHandler {
     private final MessageUtil messageUtil;
 
     @Override
-    public boolean handle(Update update, UserDto user) {
+    public boolean handle(Update update, User user) {
         List<MessageEntity> mention = update.getMessage().getEntities().stream()
             .filter(entity -> entity.getType().equals(MENTION.getDescription()))
             .toList();
@@ -59,13 +59,13 @@ public class MentionUserHandler extends BotHandler {
         if (isMentionedHimself(user, mentionLogin)) {
             return true;
         }
-        Optional<UserDto> mentionUserO = userService.findActiveUserByLogin(mentionLogin);
+        Optional<User> mentionUserO = userService.findActiveUserByLogin(mentionLogin);
         if (isMentionUserNotExist(mentionUserO, mentionLogin, user)
             || isMentionUserBlockRequests(mentionUserO.get(), mentionLogin, user)) {
             return true;
         }
 
-        UserDto mentionUser = mentionUserO.get();
+        User mentionUser = mentionUserO.get();
         SendMessage mentionUserMessage;
         try {
             ShoppingList mentionUserShoppingList = shoppingListService.findActiveList(mentionUser.getId());
@@ -99,7 +99,7 @@ public class MentionUserHandler extends BotHandler {
         return true;
     }
 
-    private boolean hasTooManyMentions(List<MessageEntity> mention, UserDto user) {
+    private boolean hasTooManyMentions(List<MessageEntity> mention, User user) {
         if (mention.size() != 1) {
             botUtil.sendMessageByKey(
                 user.getTelegramId(), user.getLanguageCode(), DictionaryKey.ERROR_TOO_MANY_MENTION_IN_JOIN
@@ -109,7 +109,7 @@ public class MentionUserHandler extends BotHandler {
         return false;
     }
 
-    private boolean hasActiveJoinRequests(UserDto user) {
+    private boolean hasActiveJoinRequests(User user) {
         List<JoinRequestParams> requestParams = joinRequestService.findActiveJoinRequest(user.getId());
         if (!requestParams.isEmpty()) {
             SendMessage message = joinRequestHelper.buildHasRequestMessage(user, requestParams);
@@ -119,15 +119,17 @@ public class MentionUserHandler extends BotHandler {
         return false;
     }
 
-    private boolean isMentionedHimself(UserDto user, String mentionLogin) {
+    private boolean isMentionedHimself(User user, String mentionLogin) {
         if (mentionLogin.replaceFirst("@", "").equals(user.getUserName())) {
-            botUtil.sendMessageByKey(user.getTelegramId(), user.getLanguageCode(), DictionaryKey.ERROR_MENTION_THEMSELF);
+            botUtil.sendMessageByKey(
+                user.getTelegramId(), user.getLanguageCode(), DictionaryKey.ERROR_MENTION_THEMSELF
+            );
             return true;
         }
         return false;
     }
 
-    private boolean isMentionUserNotExist(Optional<UserDto> mentionUserO, String mentionUserName, UserDto user) {
+    private boolean isMentionUserNotExist(Optional<User> mentionUserO, String mentionUserName, User user) {
         if (mentionUserO.isEmpty()) {
             String message = botUtil.getText(user.getLanguageCode(), DictionaryKey.USER_NOT_EXIST)
                 .formatted(mentionUserName);
@@ -137,7 +139,7 @@ public class MentionUserHandler extends BotHandler {
         return false;
     }
 
-    private boolean isMentionUserBlockRequests(UserDto mentionUser, String mentionUserName, UserDto user) {
+    private boolean isMentionUserBlockRequests(User mentionUser, String mentionUserName, User user) {
         if (mentionUser.isJoinRequestDisabled()) {
             String message = botUtil.getText(user.getLanguageCode(), DictionaryKey.OWNER_BLOCK_JOIN_REQUEST_MESSAGE)
                 .formatted(mentionUserName);
@@ -147,7 +149,7 @@ public class MentionUserHandler extends BotHandler {
         return false;
     }
 
-    private boolean hasActiveGroup(ShoppingList shoppingList, UserDto user, String mentionUser) {
+    private boolean hasActiveGroup(ShoppingList shoppingList, User user, String mentionUser) {
         List<UserShoppingListGroupParams> group = userShoppingListService.findActiveGroupByListId(
             shoppingList.getId()
         );
@@ -166,7 +168,7 @@ public class MentionUserHandler extends BotHandler {
     }
 
     private SendMessage buildMentionUserMessage(
-        UserDto currUser, UserDto mentionUser, ShoppingList mentionUserShoppingList
+        User currUser, User mentionUser, ShoppingList mentionUserShoppingList
     ) {
         List<UserShoppingListGroupParams> group = userShoppingListService.findActiveGroupByListId(
             mentionUserShoppingList.getId()

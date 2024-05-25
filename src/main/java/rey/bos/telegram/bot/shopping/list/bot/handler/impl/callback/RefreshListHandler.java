@@ -7,8 +7,8 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import rey.bos.telegram.bot.shopping.list.bot.handler.BotHandler;
 import rey.bos.telegram.bot.shopping.list.bot.helper.ShoppingListHelper;
 import rey.bos.telegram.bot.shopping.list.io.entity.ShoppingList;
+import rey.bos.telegram.bot.shopping.list.io.entity.User;
 import rey.bos.telegram.bot.shopping.list.service.ShoppingListService;
-import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand.REFRESH_LIST;
 
@@ -23,7 +23,7 @@ public class RefreshListHandler extends BotHandler {
     private final ShoppingListService shoppingListService;
 
     @Override
-    public boolean handle(Update update, UserDto user) {
+    public boolean handle(Update update, User user) {
         int messageId = update.getCallbackQuery().getMessage().getMessageId();
         ShoppingList shoppingList = shoppingListService.findActiveList(user.getId());
         shoppingListHelper.refreshUserList(user, messageId, shoppingList);

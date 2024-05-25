@@ -5,8 +5,8 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageText;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import rey.bos.telegram.bot.shopping.list.bot.helper.IncomingRequestCommandHelper;
+import rey.bos.telegram.bot.shopping.list.io.entity.User;
 import rey.bos.telegram.bot.shopping.list.service.UserService;
-import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
 import rey.bos.telegram.bot.shopping.list.util.BotUtil;
 import rey.bos.telegram.bot.shopping.list.util.MessageUtil;
 
@@ -33,8 +33,8 @@ public class IncomingRequestSettingHandler extends BotHandlerDecision {
     }
 
     @Override
-    public boolean handleAccept(UserDto user, int messageId, long callbackId) {
-        user = userService.switchJoinRequestSetting(user);
+    public boolean handleAccept(User user, int messageId, long callbackId) {
+        user = userService.switchJoinRequestSetting(user.getId());
         EditMessageText message = messageUtil.buildEditMessageText(
             user, messageId, SWITCHED_JOIN_REQUEST_SETTING_MESSAGE, requestCommandHelper.getSwitchResultMessage(user)
         );
@@ -43,7 +43,7 @@ public class IncomingRequestSettingHandler extends BotHandlerDecision {
     }
 
     @Override
-    public boolean handleReject(UserDto user, int messageId, long callbackId) {
+    public boolean handleReject(User user, int messageId, long callbackId) {
         EditMessageText message = messageUtil.buildEditMessageText(
             user, messageId, INCOMING_REQUEST_SETTING_CANCEL_MESSAGE
         );
