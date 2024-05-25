@@ -9,7 +9,7 @@ import rey.bos.telegram.bot.shopping.list.io.entity.User;
 import rey.bos.telegram.bot.shopping.list.util.BotUtil;
 import rey.bos.telegram.bot.shopping.list.util.MessageUtil;
 
-import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.command.MenuCommand.*;
+import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.command.MenuCommand.MENU_COMMAND_START;
 import static rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey.GREETING_FOR_START;
 import static rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey.HELP_COMMAND_MESSAGE;
 
