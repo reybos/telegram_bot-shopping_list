@@ -32,6 +32,7 @@ public class BlockBotHandler extends BotHandler {
 
     @Override
     public boolean handle(Update update, User user) {
+        logCall(user.getId(), "block bot", "");
         UserShoppingList userShoppingList = userShoppingListService.findActiveUserShoppingList(user.getId());
         userService.blockUser(user.getId());
         if (userShoppingList.isOwner()) {

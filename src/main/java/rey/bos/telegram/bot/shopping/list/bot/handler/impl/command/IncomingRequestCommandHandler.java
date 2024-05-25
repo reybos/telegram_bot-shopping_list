@@ -26,6 +26,7 @@ public class IncomingRequestCommandHandler extends BotHandler {
 
     @Override
     public boolean handle(Update update, User user) {
+        logCall(user.getId(), MENU_COMMAND_INCOMING_REQUEST_SETTING.getCommand(), "");
         SendMessage message = messageUtil.buildSendMessageWithButtons(
             user, INCOMING_REQUEST_SETTING_MESSAGE, messageUtil.buildYesNoButtons(user, INCOMING_REQUEST_SETTING),
             requestCommandHelper.getConditionMessage(user), requestCommandHelper.getProposalMessage(user)

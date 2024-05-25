@@ -24,6 +24,7 @@ public class ClearListCommandHandler extends BotHandler {
 
     @Override
     public boolean handle(Update update, User user) {
+        logCall(user.getId(), MENU_COMMAND_CLEAR_LIST.getCommand(), "");
         SendMessage message = messageUtil.buildSendMessageWithButtons(
             user, CLEAR_LIST_COMMAND_MESSAGE, messageUtil.buildYesNoButtons(user, CLEAR_LIST)
         );

@@ -51,6 +51,7 @@ public class MentionUserHandler extends BotHandler {
         List<MessageEntity> mention = update.getMessage().getEntities().stream()
             .filter(entity -> entity.getType().equals(MENTION.getDescription()))
             .toList();
+        logCall(user.getId(), "join list", mention.toString());
         if (hasTooManyMentions(mention, user) || hasActiveJoinRequests(user)) {
             return true;
         }

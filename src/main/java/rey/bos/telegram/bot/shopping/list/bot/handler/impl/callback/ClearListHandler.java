@@ -35,6 +35,7 @@ public class ClearListHandler extends BotHandlerDecision {
 
     @Override
     public boolean handleAccept(User user, int messageId, long callbackId) {
+        logCall(user.getId(), command.getCommand(), "");
         try {
             shoppingListService.clearActiveList(user.getId());
         } catch (IllegalStateException e) {

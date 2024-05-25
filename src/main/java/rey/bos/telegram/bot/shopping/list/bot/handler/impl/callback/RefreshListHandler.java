@@ -24,6 +24,7 @@ public class RefreshListHandler extends BotHandler {
 
     @Override
     public boolean handle(Update update, User user) {
+        logCall(user.getId(), command.getCommand(), "");
         int messageId = update.getCallbackQuery().getMessage().getMessageId();
         ShoppingList shoppingList = shoppingListService.findActiveList(user.getId());
         shoppingListHelper.refreshUserList(user, messageId, shoppingList);

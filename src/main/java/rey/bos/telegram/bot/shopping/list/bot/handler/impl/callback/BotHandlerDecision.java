@@ -21,6 +21,7 @@ public abstract class BotHandlerDecision extends BotHandler {
         String data = query.getData();
         int messageId = query.getMessage().getMessageId();
         long callbackId = messageUtil.getIdByText(data, command.getCommand());
+        logCall(user.getId(), command.getCommand(), data);
 
         return data.endsWith(CONFIRM.getCommand())
             ? handleAccept(user, messageId, callbackId)
