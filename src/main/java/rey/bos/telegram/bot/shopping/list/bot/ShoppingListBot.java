@@ -2,7 +2,6 @@ package rey.bos.telegram.bot.shopping.list.bot;
 
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.longpolling.BotSession;
 import org.telegram.telegrambots.longpolling.interfaces.LongPollingUpdateConsumer;
@@ -16,6 +15,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 import rey.bos.telegram.bot.shopping.list.bot.handler.BotHandler;
 import rey.bos.telegram.bot.shopping.list.bot.handler.impl.command.MenuCommand;
+import rey.bos.telegram.bot.shopping.list.config.ShoppingListBotProperty;
 import rey.bos.telegram.bot.shopping.list.io.entity.User;
 import rey.bos.telegram.bot.shopping.list.service.UserService;
 import rey.bos.telegram.bot.shopping.list.shared.dto.UserDto;
@@ -35,20 +35,18 @@ public class ShoppingListBot implements SpringLongPollingBot, LongPollingSingleT
     private final BotUtil botUtil;
     private final UserDtoMapper userDtoMapper;
     private final UserService userService;
-
-
-    @Value("${telegram.token}")
-    private String botToken;
+    private final ShoppingListBotProperty property;
 
     public ShoppingListBot(
         TelegramClient telegramClient, List<BotHandler> handlers, BotUtil botUtil,
-        UserDtoMapper userDtoMapper, UserService userService
+        UserDtoMapper userDtoMapper, UserService userService, ShoppingListBotProperty property
     ) {
         this.telegramClient = telegramClient;
         this.handlers = handlers;
         this.botUtil = botUtil;
         this.userDtoMapper = userDtoMapper;
         this.userService = userService;
+        this.property = property;
         setCommands();
     }
 
@@ -67,7 +65,7 @@ public class ShoppingListBot implements SpringLongPollingBot, LongPollingSingleT
 
     @Override
     public String getBotToken() {
-        return botToken;
+        return property.getToken();
     }
 
     @Override
