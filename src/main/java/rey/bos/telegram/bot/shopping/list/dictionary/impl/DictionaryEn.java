@@ -66,6 +66,8 @@ public class DictionaryEn implements Dictionary {
         dictionary.put(JOIN_COMMAND_MESSAGE, """
             To merge shopping list with another user, send the bot the username of another user, for example @login, we will send him a request to merge.
             When combining lists, you will use a shared list with another user, your current list will become inactive.
+            
+            %s
             """
         );
         dictionary.put(ERROR_TOO_MANY_MENTION_IN_JOIN, """

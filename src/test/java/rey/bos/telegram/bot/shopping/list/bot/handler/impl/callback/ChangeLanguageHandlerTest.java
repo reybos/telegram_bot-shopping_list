@@ -8,6 +8,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.message.Message;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.testcontainers.containers.PostgreSQLContainer;
 import rey.bos.telegram.bot.shopping.list.Application;
 import rey.bos.telegram.bot.shopping.list.BaeldungPostgresqlContainer;
@@ -36,7 +37,7 @@ class ChangeLanguageHandlerTest {
     private ChangeLanguageHandler changeLanguageHandler;
 
     @Test
-    public void whenChangeLanguageThenSuccess() {
+    public void whenChangeLanguageThenSuccess() throws TelegramApiException {
         User user = userFactory.createUser(
             UserFactory.UserParams.builder().languageCode(LanguageCode.RU).build()
         );
@@ -53,6 +54,7 @@ class ChangeLanguageHandlerTest {
         String data = CHANGE_LANGUAGE.getCommand() + code;
         callbackQuery.setData(data);
         Message message = new Message();
+        message.setMessageId(-1);
         callbackQuery.setMessage(message);
         update.setCallbackQuery(callbackQuery);
         org.telegram.telegrambots.meta.api.objects.User user = new org.telegram.telegrambots.meta.api.objects.User(

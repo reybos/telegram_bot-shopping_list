@@ -1,6 +1,7 @@
 package rey.bos.telegram.bot.shopping.list.bot.helper;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -16,6 +17,8 @@ import java.util.stream.Collectors;
 
 import static rey.bos.telegram.bot.shopping.list.bot.handler.impl.callback.CallBackCommand.*;
 import static rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey.*;
+import static rey.bos.telegram.bot.shopping.list.io.LanguageCode.EN;
+import static rey.bos.telegram.bot.shopping.list.io.LanguageCode.RU;
 
 @Component
 @RequiredArgsConstructor
@@ -92,6 +95,22 @@ public class JoinRequestHelper {
                 .keyboard(messageUtil.buildYesNoButtons(user, ACCEPT_JOIN_REQUEST))
                 .build())
             .build();
+    }
+
+    public String getUserWithoutLoginMessage(User user) {
+        boolean isNumericLogin = StringUtils.isNumeric(user.getUserName());
+        if (user.getLanguageCode() == RU) {
+            return isNumericLogin
+                ? "<b>ВАЖНО!</b> Так как у вас нет логина в телеграмм, чтобы прислать вам запрос на объединение, " +
+                "дайте другому пользователю этот логин: @" + user.getUserName() + " и пусть он пришлет его боту"
+                : "";
+        } else if (user.getLanguageCode() == EN) {
+            return isNumericLogin
+                ? "<b>IMPORTANT!</b> Since you do not have a telegram login to send you a merge request, give another " +
+                "user this login: @" + user.getUserName() + " and let him send it to the bot"
+                : "";
+        }
+        return "";
     }
 
 }

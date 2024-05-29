@@ -276,6 +276,26 @@ public class MentionUserHandlerTest {
         );
     }
 
+    @Test
+    public void whenCreateJoinRequestToUserWithUserNameThenSuccess() throws TelegramApiException {
+        User sender = userFactory.createUser(UserFactory.UserParams.builder().userName(null).build());
+        User owner = userFactory.createUser(UserFactory.UserParams.builder().userName(null).build());
+
+        String ownerLogin = messageUtil.getLogin(owner.getUserName());
+        Update update = createUpdateObjectWithJoinCommand(sender, ownerLogin, null);
+        int messageId = new Random().nextInt();
+        when(telegramClient.execute(any(SendMessage.class))).thenReturn(Message.builder().messageId(messageId).build());
+        shoppingListBot.consume(update);
+
+        List<SendMessage> messages = VerifyMessage.getVerifySendMessages(telegramClient);
+        SendMessage mentionUserMessage = messages.get(messages.size() - 2);
+        String senderLogin = messageUtil.getLogin(sender.getUserName());
+        assertThat(mentionUserMessage.getText()).isEqualTo(
+            botUtil.getText(owner.getLanguageCode(), OWNER_ACCEPT_JOIN_REQUEST_WITHOUT_ACTIVE_GROUP)
+                .formatted(senderLogin)
+        );
+    }
+
     private Update createUpdateObjectWithJoinCommand(User storedUser, String mention1, String mention2) {
         Update update = new Update();
         Message message = new Message();

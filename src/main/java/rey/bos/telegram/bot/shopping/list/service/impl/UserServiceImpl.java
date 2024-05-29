@@ -36,7 +36,8 @@ public class UserServiceImpl implements UserService {
         if (userO.isPresent()) {
             User user = userO.get();
             if (
-                !user.getUserName().equals(userDto.getUserName()) || !user.getFirstName().equals(userDto.getFirstName())
+                (userDto.getUserName() != null && !user.getUserName().equals(userDto.getUserName()))
+                    || !user.getFirstName().equals(userDto.getFirstName())
                     || user.isBlocked()
             ) {
                 user.setUserName(userDto.getUserName());
@@ -53,6 +54,9 @@ public class UserServiceImpl implements UserService {
     public User createUser(UserDto userDto) {
         User storedUser = transactionTemplate.execute(status -> {
             User user = userDtoMapper.map(userDto);
+            if (user.getUserName() == null) {
+                user.setUserName(String.valueOf(user.getTelegramId()));
+            }
             user.setBlocked(false);
             user = userRepository.save(user);
             ShoppingList shoppingList = shoppingListRepository.save(new ShoppingList());

@@ -74,6 +74,22 @@ public class CreateUserTest {
         assertThat(storedUser.getFirstName()).isEqualTo(firstName);
     }
 
+    @Test
+    public void whenUserEmptyThenSuccess() {
+        long telegramId = new Random().nextLong();
+        String firstName = RandomStringUtils.randomAlphanumeric(10);
+        Update update = createUpdateObjectWithUser(telegramId, "ru", firstName, null);
+        shoppingListBot.consume(update);
+        User storedUser = userService.findByTelegramOrThrow(telegramId);
+        User expectedUser = User.builder()
+            .userName(String.valueOf(telegramId))
+            .languageCode(LanguageCode.RU)
+            .firstName(firstName)
+            .telegramId(telegramId)
+            .build();
+        assertThat(storedUser).usingRecursiveComparison().ignoringFields("id").isEqualTo(expectedUser);
+    }
+
     private Update createUpdateObjectWithUser(
         long telegramId, String languageCode, String firstName, String userName
     ) {
