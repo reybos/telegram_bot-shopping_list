@@ -13,7 +13,7 @@
     </li>
 </ul>
 
-<h2><a name="about_the_project">About the project </a>&nbsp;&nbsp;<a href="#menu">&#9650;</a></h2>
+<h2><a name="about_the_project">About the project</a>&nbsp;&nbsp;<a href="#menu">&#9650;</a></h2>
 
 <p align="center">
   <img src="media/demo.gif" height="650" title="demo">
