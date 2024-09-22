@@ -22,8 +22,8 @@ import static rey.bos.telegram.bot.shopping.list.dictionary.DictionaryKey.*;
 @Slf4j
 public class AddItemHandler extends BotHandler {
 
-    public final static int MAX_ITEM_LENGTH = 30;
-    public final static int MAX_ITEM_NUMBER = 30;
+    public final static int MAX_ITEM_LENGTH = 45;
+    public final static int MAX_ITEM_NUMBER = 100;
 
     private final BotUtil botUtil;
     private final ShoppingListService shoppingListService;
