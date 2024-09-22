@@ -9,6 +9,10 @@ CREATE TABLE IF NOT EXISTS list_item
     created_at TIMESTAMPTZ                 NOT NULL DEFAULT NOW()
 );
 
+--changeset reybos:change_value
+ALTER TABLE list_item ALTER COLUMN value TYPE VARCHAR(45);
+
+
 --changeset reybos:2 runOnChange:true
 COMMENT ON TABLE list_item IS 'User records';
 COMMENT ON COLUMN list_item.list_id IS 'The list that the record belongs to';
