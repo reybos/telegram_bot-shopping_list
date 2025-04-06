@@ -1,4 +1,4 @@
-# Telegram bot - shopping list [@shoppy_guru_bot](https://t.me/shoppy_guru_bot)
+# Telegram bot - shopping list
 
 <a name="menu"></a>
 <ul>
